@@ -1,0 +1,555 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0B8E0BA918A2099100863181 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BA818A2099100863181 /* Foundation.framework */; };
+		0B8E0BAB18A2099100863181 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BAA18A2099100863181 /* CoreGraphics.framework */; };
+		0B8E0BAD18A2099100863181 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BAC18A2099100863181 /* UIKit.framework */; };
+		0B8E0BB318A2099100863181 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B8E0BB118A2099100863181 /* InfoPlist.strings */; };
+		0B8E0BB518A2099100863181 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BB418A2099100863181 /* main.m */; };
+		0B8E0BB918A2099100863181 /* SocialSchedulerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BB818A2099100863181 /* SocialSchedulerAppDelegate.m */; };
+		0B8E0BBC18A2099100863181 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B8E0BBA18A2099100863181 /* Main.storyboard */; };
+		0B8E0BBF18A2099100863181 /* SocialSchedulerFirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BBE18A2099100863181 /* SocialSchedulerFirstViewController.m */; };
+		0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BC118A2099100863181 /* SocialSchedulerSecondViewController.m */; };
+		0B8E0BC418A2099100863181 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B8E0BC318A2099100863181 /* Images.xcassets */; };
+		0B8E0BCB18A2099100863181 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BCA18A2099100863181 /* XCTest.framework */; };
+		0B8E0BCC18A2099100863181 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BA818A2099100863181 /* Foundation.framework */; };
+		0B8E0BCD18A2099100863181 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BAC18A2099100863181 /* UIKit.framework */; };
+		0B8E0BD518A2099100863181 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B8E0BD318A2099100863181 /* InfoPlist.strings */; };
+		0B8E0BD718A2099100863181 /* UMDSocialSchedulerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BD618A2099100863181 /* UMDSocialSchedulerTests.m */; };
+		0B8E0BE118A3270E00863181 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BE018A3270E00863181 /* FacebookSDK.framework */; };
+		0B8E0BE318A3272500863181 /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0B8E0BE218A3272500863181 /* FBUserSettingsViewResources.bundle */; };
+		0B8E0BED18A3569400863181 /* ControllerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BE618A3569400863181 /* ControllerInfo.m */; };
+		0B8E0BEE18A3569400863181 /* FlatTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BE818A3569400863181 /* FlatTheme.m */; };
+		0B8E0BEF18A3569400863181 /* StoryboardInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BEA18A3569400863181 /* StoryboardInfo.m */; };
+		0B8E0BF018A3569400863181 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BEC18A3569400863181 /* Utils.m */; };
+		0B8E0BF318A3701500863181 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BF218A3701500863181 /* LoginViewController.m */; };
+		0B8E0BF718A5EB8100863181 /* FacebookFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BF618A5EB8100863181 /* FacebookFriendsViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0B8E0BCE18A2099100863181 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0B8E0B9D18A2099100863181 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0B8E0BA418A2099100863181;
+			remoteInfo = UMDSocialScheduler;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0B8E0BA518A2099100863181 /* UMDSocialScheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UMDSocialScheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8E0BA818A2099100863181 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		0B8E0BAA18A2099100863181 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		0B8E0BAC18A2099100863181 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		0B8E0BB018A2099100863181 /* UMDSocialScheduler-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UMDSocialScheduler-Info.plist"; sourceTree = "<group>"; };
+		0B8E0BB218A2099100863181 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0B8E0BB418A2099100863181 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		0B8E0BB618A2099100863181 /* UMDSocialScheduler-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UMDSocialScheduler-Prefix.pch"; sourceTree = "<group>"; };
+		0B8E0BB718A2099100863181 /* SocialSchedulerAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocialSchedulerAppDelegate.h; sourceTree = "<group>"; };
+		0B8E0BB818A2099100863181 /* SocialSchedulerAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SocialSchedulerAppDelegate.m; sourceTree = "<group>"; };
+		0B8E0BBB18A2099100863181 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		0B8E0BBD18A2099100863181 /* SocialSchedulerFirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocialSchedulerFirstViewController.h; sourceTree = "<group>"; };
+		0B8E0BBE18A2099100863181 /* SocialSchedulerFirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SocialSchedulerFirstViewController.m; sourceTree = "<group>"; };
+		0B8E0BC018A2099100863181 /* SocialSchedulerSecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SocialSchedulerSecondViewController.h; sourceTree = "<group>"; };
+		0B8E0BC118A2099100863181 /* SocialSchedulerSecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SocialSchedulerSecondViewController.m; sourceTree = "<group>"; };
+		0B8E0BC318A2099100863181 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		0B8E0BC918A2099100863181 /* UMDSocialSchedulerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UMDSocialSchedulerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8E0BCA18A2099100863181 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		0B8E0BD218A2099100863181 /* UMDSocialSchedulerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UMDSocialSchedulerTests-Info.plist"; sourceTree = "<group>"; };
+		0B8E0BD418A2099100863181 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0B8E0BD618A2099100863181 /* UMDSocialSchedulerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMDSocialSchedulerTests.m; sourceTree = "<group>"; };
+		0B8E0BE018A3270E00863181 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		0B8E0BE218A3272500863181 /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FBUserSettingsViewResources.bundle; path = FacebookSDK.framework/Versions/A/Resources/FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
+		0B8E0BE518A3569400863181 /* ControllerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ControllerInfo.h; sourceTree = "<group>"; };
+		0B8E0BE618A3569400863181 /* ControllerInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ControllerInfo.m; sourceTree = "<group>"; };
+		0B8E0BE718A3569400863181 /* FlatTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlatTheme.h; sourceTree = "<group>"; };
+		0B8E0BE818A3569400863181 /* FlatTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlatTheme.m; sourceTree = "<group>"; };
+		0B8E0BE918A3569400863181 /* StoryboardInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryboardInfo.h; sourceTree = "<group>"; };
+		0B8E0BEA18A3569400863181 /* StoryboardInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoryboardInfo.m; sourceTree = "<group>"; };
+		0B8E0BEB18A3569400863181 /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utils.h; sourceTree = "<group>"; };
+		0B8E0BEC18A3569400863181 /* Utils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utils.m; sourceTree = "<group>"; };
+		0B8E0BF118A3701500863181 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		0B8E0BF218A3701500863181 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		0B8E0BF518A5EB8100863181 /* FacebookFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookFriendsViewController.h; sourceTree = "<group>"; };
+		0B8E0BF618A5EB8100863181 /* FacebookFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookFriendsViewController.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0B8E0BA218A2099100863181 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8E0BAB18A2099100863181 /* CoreGraphics.framework in Frameworks */,
+				0B8E0BE118A3270E00863181 /* FacebookSDK.framework in Frameworks */,
+				0B8E0BAD18A2099100863181 /* UIKit.framework in Frameworks */,
+				0B8E0BA918A2099100863181 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8E0BC618A2099100863181 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8E0BCB18A2099100863181 /* XCTest.framework in Frameworks */,
+				0B8E0BCD18A2099100863181 /* UIKit.framework in Frameworks */,
+				0B8E0BCC18A2099100863181 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0B8E0B9C18A2099100863181 = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BE418A3569400863181 /* Utils */,
+				0B8E0BE218A3272500863181 /* FBUserSettingsViewResources.bundle */,
+				0B8E0BAE18A2099100863181 /* UMDSocialScheduler */,
+				0B8E0BD018A2099100863181 /* UMDSocialSchedulerTests */,
+				0B8E0BA718A2099100863181 /* Frameworks */,
+				0B8E0BA618A2099100863181 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0B8E0BA618A2099100863181 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BA518A2099100863181 /* UMDSocialScheduler.app */,
+				0B8E0BC918A2099100863181 /* UMDSocialSchedulerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0B8E0BA718A2099100863181 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BE018A3270E00863181 /* FacebookSDK.framework */,
+				0B8E0BA818A2099100863181 /* Foundation.framework */,
+				0B8E0BAA18A2099100863181 /* CoreGraphics.framework */,
+				0B8E0BAC18A2099100863181 /* UIKit.framework */,
+				0B8E0BCA18A2099100863181 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0B8E0BAE18A2099100863181 /* UMDSocialScheduler */ = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BF418A3704500863181 /* Views */,
+				0B8E0BB718A2099100863181 /* SocialSchedulerAppDelegate.h */,
+				0B8E0BB818A2099100863181 /* SocialSchedulerAppDelegate.m */,
+				0B8E0BBA18A2099100863181 /* Main.storyboard */,
+				0B8E0BC318A2099100863181 /* Images.xcassets */,
+				0B8E0BAF18A2099100863181 /* Supporting Files */,
+			);
+			path = UMDSocialScheduler;
+			sourceTree = "<group>";
+		};
+		0B8E0BAF18A2099100863181 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BB018A2099100863181 /* UMDSocialScheduler-Info.plist */,
+				0B8E0BB118A2099100863181 /* InfoPlist.strings */,
+				0B8E0BB418A2099100863181 /* main.m */,
+				0B8E0BB618A2099100863181 /* UMDSocialScheduler-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0B8E0BD018A2099100863181 /* UMDSocialSchedulerTests */ = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BD618A2099100863181 /* UMDSocialSchedulerTests.m */,
+				0B8E0BD118A2099100863181 /* Supporting Files */,
+			);
+			path = UMDSocialSchedulerTests;
+			sourceTree = "<group>";
+		};
+		0B8E0BD118A2099100863181 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BD218A2099100863181 /* UMDSocialSchedulerTests-Info.plist */,
+				0B8E0BD318A2099100863181 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0B8E0BE418A3569400863181 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BE518A3569400863181 /* ControllerInfo.h */,
+				0B8E0BE618A3569400863181 /* ControllerInfo.m */,
+				0B8E0BE718A3569400863181 /* FlatTheme.h */,
+				0B8E0BE818A3569400863181 /* FlatTheme.m */,
+				0B8E0BE918A3569400863181 /* StoryboardInfo.h */,
+				0B8E0BEA18A3569400863181 /* StoryboardInfo.m */,
+				0B8E0BEB18A3569400863181 /* Utils.h */,
+				0B8E0BEC18A3569400863181 /* Utils.m */,
+			);
+			name = Utils;
+			path = UMDSocialScheduler/Utils;
+			sourceTree = "<group>";
+		};
+		0B8E0BF418A3704500863181 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0B8E0BF118A3701500863181 /* LoginViewController.h */,
+				0B8E0BF218A3701500863181 /* LoginViewController.m */,
+				0B8E0BBD18A2099100863181 /* SocialSchedulerFirstViewController.h */,
+				0B8E0BBE18A2099100863181 /* SocialSchedulerFirstViewController.m */,
+				0B8E0BC018A2099100863181 /* SocialSchedulerSecondViewController.h */,
+				0B8E0BC118A2099100863181 /* SocialSchedulerSecondViewController.m */,
+				0B8E0BF518A5EB8100863181 /* FacebookFriendsViewController.h */,
+				0B8E0BF618A5EB8100863181 /* FacebookFriendsViewController.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0B8E0BA418A2099100863181 /* UMDSocialScheduler */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0B8E0BDA18A2099100863181 /* Build configuration list for PBXNativeTarget "UMDSocialScheduler" */;
+			buildPhases = (
+				0B8E0BA118A2099100863181 /* Sources */,
+				0B8E0BA218A2099100863181 /* Frameworks */,
+				0B8E0BA318A2099100863181 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UMDSocialScheduler;
+			productName = UMDSocialScheduler;
+			productReference = 0B8E0BA518A2099100863181 /* UMDSocialScheduler.app */;
+			productType = "com.apple.product-type.application";
+		};
+		0B8E0BC818A2099100863181 /* UMDSocialSchedulerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0B8E0BDD18A2099100863181 /* Build configuration list for PBXNativeTarget "UMDSocialSchedulerTests" */;
+			buildPhases = (
+				0B8E0BC518A2099100863181 /* Sources */,
+				0B8E0BC618A2099100863181 /* Frameworks */,
+				0B8E0BC718A2099100863181 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0B8E0BCF18A2099100863181 /* PBXTargetDependency */,
+			);
+			name = UMDSocialSchedulerTests;
+			productName = UMDSocialSchedulerTests;
+			productReference = 0B8E0BC918A2099100863181 /* UMDSocialSchedulerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0B8E0B9D18A2099100863181 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = SocialScheduler;
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = DTech;
+				TargetAttributes = {
+					0B8E0BC818A2099100863181 = {
+						TestTargetID = 0B8E0BA418A2099100863181;
+					};
+				};
+			};
+			buildConfigurationList = 0B8E0BA018A2099100863181 /* Build configuration list for PBXProject "UMDSocialScheduler" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 0B8E0B9C18A2099100863181;
+			productRefGroup = 0B8E0BA618A2099100863181 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0B8E0BA418A2099100863181 /* UMDSocialScheduler */,
+				0B8E0BC818A2099100863181 /* UMDSocialSchedulerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0B8E0BA318A2099100863181 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8E0BE318A3272500863181 /* FBUserSettingsViewResources.bundle in Resources */,
+				0B8E0BC418A2099100863181 /* Images.xcassets in Resources */,
+				0B8E0BB318A2099100863181 /* InfoPlist.strings in Resources */,
+				0B8E0BBC18A2099100863181 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8E0BC718A2099100863181 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8E0BD518A2099100863181 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0B8E0BA118A2099100863181 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8E0BBF18A2099100863181 /* SocialSchedulerFirstViewController.m in Sources */,
+				0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */,
+				0B8E0BF718A5EB8100863181 /* FacebookFriendsViewController.m in Sources */,
+				0B8E0BEE18A3569400863181 /* FlatTheme.m in Sources */,
+				0B8E0BF018A3569400863181 /* Utils.m in Sources */,
+				0B8E0BB518A2099100863181 /* main.m in Sources */,
+				0B8E0BF318A3701500863181 /* LoginViewController.m in Sources */,
+				0B8E0BEF18A3569400863181 /* StoryboardInfo.m in Sources */,
+				0B8E0BED18A3569400863181 /* ControllerInfo.m in Sources */,
+				0B8E0BB918A2099100863181 /* SocialSchedulerAppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0B8E0BC518A2099100863181 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B8E0BD718A2099100863181 /* UMDSocialSchedulerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0B8E0BCF18A2099100863181 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0B8E0BA418A2099100863181 /* UMDSocialScheduler */;
+			targetProxy = 0B8E0BCE18A2099100863181 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		0B8E0BB118A2099100863181 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0B8E0BB218A2099100863181 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		0B8E0BBA18A2099100863181 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0B8E0BBB18A2099100863181 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		0B8E0BD318A2099100863181 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0B8E0BD418A2099100863181 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0B8E0BD818A2099100863181 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		0B8E0BD918A2099100863181 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0B8E0BDB18A2099100863181 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
+				INFOPLIST_FILE = "UMDSocialScheduler/UMDSocialScheduler-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		0B8E0BDC18A2099100863181 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler,
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
+				INFOPLIST_FILE = "UMDSocialScheduler/UMDSocialScheduler-Info.plist";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		0B8E0BDE18A2099100863181 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/UMDSocialScheduler.app/UMDSocialScheduler";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "UMDSocialSchedulerTests/UMDSocialSchedulerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		0B8E0BDF18A2099100863181 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/UMDSocialScheduler.app/UMDSocialScheduler";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
+				INFOPLIST_FILE = "UMDSocialSchedulerTests/UMDSocialSchedulerTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0B8E0BA018A2099100863181 /* Build configuration list for PBXProject "UMDSocialScheduler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B8E0BD818A2099100863181 /* Debug */,
+				0B8E0BD918A2099100863181 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0B8E0BDA18A2099100863181 /* Build configuration list for PBXNativeTarget "UMDSocialScheduler" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B8E0BDB18A2099100863181 /* Debug */,
+				0B8E0BDC18A2099100863181 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0B8E0BDD18A2099100863181 /* Build configuration list for PBXNativeTarget "UMDSocialSchedulerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0B8E0BDE18A2099100863181 /* Debug */,
+				0B8E0BDF18A2099100863181 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0B8E0B9D18A2099100863181 /* Project object */;
+}
