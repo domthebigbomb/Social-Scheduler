@@ -24,14 +24,15 @@
 {
     [super viewDidLoad];
     count = 0;
-    zoomScript = @"document.body.style.zoom = 2.0;";
+    zoomScript = @"document.body.style.zoom = 1.5;";
     _scheduleFound = NO;
+    
 }
 
 
 -(void)viewDidAppear:(BOOL)animated{
     _visibleWebView.delegate = self;
-
+    
     if(_scheduleFound == YES){
         NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
         [header appendString:@"<head><style type='text/css'>html, body {	height: 100%;	padding: 0;	margin: 0;} "];
@@ -41,6 +42,11 @@
         NSString *footer = @"</div></div></body></html>";
         _htmlString = [NSString stringWithFormat:@"%@ %@ %@ %@",header,body,_htmlString,footer];
         [_visibleWebView loadHTMLString:_htmlString baseURL:nil];
+        //courses = [_courses mutableCopy];
+        [[NSUserDefaults standardUserDefaults] setObject:_htmlString forKey:@"Schedule"];
+        [[NSUserDefaults standardUserDefaults] setObject:_courses forKey:@"Courses"];
+        //NSLog(@"HTML: %@",_htmlString);
+
     }else{
         [self performSegueWithIdentifier:@"ShowLogin" sender:self];
     }
@@ -63,7 +69,7 @@
 
 -(UIImage *)cropImage:(UIImage *)scheduleImage{
     UIImage *croppedImage = [[UIImage alloc] init];
-    NSArray *RGBarray = [self getRGBAsFromImage:scheduleImage atX:0 andY:0 count:[scheduleImage size].height * [scheduleImage size].width];
+    NSArray *RGBarray =    [self getRGBAsFromImage:scheduleImage atX:0 andY:0 count:[scheduleImage size].height * [scheduleImage size].width];
     int yIndex = [scheduleImage size].height/3;
     int xIndex = 0;
     int originalWidth = [scheduleImage size].width;
@@ -73,7 +79,7 @@
         xIndex++;
         currentPixel = [RGBarray objectAtIndex:yIndex*originalWidth+xIndex];
     }
-    NSLog([NSString stringWithFormat:@"%d",xIndex]);
+    NSLog(@"%d",xIndex);
     CGRect rect = CGRectMake(10, -30, 2*([scheduleImage size].width), 1.2*[scheduleImage size].height);
     CGImageRef imageRef = CGImageCreateWithImageInRect([scheduleImage CGImage], rect);
     croppedImage = [UIImage imageWithCGImage:imageRef];

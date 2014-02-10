@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface FacebookFriendsViewController : UIViewController
+#import <FacebookSDK/FacebookSDK.h>
+@interface FacebookFriendsViewController : UIViewController<FBLoginViewDelegate,UITableViewDataSource>
+@property (weak, nonatomic) IBOutlet UITableView *contactTableView;
 
 @end

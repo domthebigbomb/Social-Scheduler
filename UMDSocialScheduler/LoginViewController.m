@@ -7,8 +7,8 @@
 //
 
 #import "LoginViewController.h"
-#import "FlatTheme.h"
 #import "SocialSchedulerFirstViewController.h"
+#import <YAJL/YAJL.h>
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *usernameField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
@@ -23,8 +23,8 @@
 - (IBAction)login:(UIButton *)sender;
 @property (strong, nonatomic) UIWebView *webPage;
 @property (strong, nonatomic)UITapGestureRecognizer *tap;
-@property CGPoint originalCenter;
 @property (strong, nonatomic) UIAlertView *alertMsg;
+@property CGPoint originalCenter;
 
 @end
 
@@ -34,6 +34,8 @@
     NSString *htmlScript;
     NSString *htmlString;
     NSString *testURL;
+    NSString *courseString;
+    NSMutableDictionary *courses;
     int count;
 }
 
@@ -60,6 +62,8 @@
     testURL = @"http://testudo.umd.edu/ssched/index.html";
     htmlScript = @"document.body.innerHTML";
     
+    courses = [[NSMutableDictionary alloc] init];
+    
     _webPage = [[UIWebView alloc] init];
     
     _tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
@@ -68,7 +72,7 @@
     self.originalCenter = self.view.center;
     
     [self loadDesignElements];
-}
+    }
 
 -(void)loadDesignElements{
     // NSString* fontName = @"Avenir-Book";
@@ -91,20 +95,7 @@
     [_webPage stringByEvaluatingJavaScriptFromString:loginScript];
     htmlString = [_webPage stringByEvaluatingJavaScriptFromString:htmlScript];
     if(count == 2){
-        if([htmlString rangeOfString:@"alertErrorTitle"].location == NSNotFound){
-            NSLog(@"Login Success");
-            htmlString = [_webPage stringByEvaluatingJavaScriptFromString:htmlScript];
-            NSLog(@"HTML Retrieved");
-            htmlString = [htmlString substringFromIndex:[htmlString rangeOfString:@"--><center>"].location];
-            htmlString = [htmlString substringFromIndex:3];
-            NSLog(@"Trimmed first half");
-            htmlString = [htmlString substringToIndex:[htmlString rangeOfString:@"</center>"].location];
-            //String brodder = "jonathan";
-            [_activityIndicator stopAnimating];
-            _webPage.delegate = nil;
-            NSLog(@"%@",htmlString);
-            [self performSegueWithIdentifier:@"ShowSchedule" sender:self];
-        }else{
+        if([htmlString rangeOfString:@"alertErrorTitle"].location != NSNotFound){
             NSLog(@"Login Failed");
             count = 0;
             htmlString = @"";
@@ -114,6 +105,44 @@
             [_activityIndicator stopAnimating];
             [_usernameField setEnabled:YES];
             [_passwordField setEnabled:YES];
+        }else if ([htmlString rangeOfString:@"An Error occurred while running this application"].location != NSNotFound){
+            _alertMsg = [[UIAlertView alloc] initWithTitle:@"Server Error" message:@"There seems to be a problem loading schedules. Please contact the Office of the Registrar if problem persists" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+            [_alertMsg show];
+            [_activityIndicator stopAnimating];
+            [_usernameField setEnabled:YES];
+            [_passwordField setEnabled:YES];
+        }else{
+            NSLog(@"Login Success");
+            courseString = [NSString stringWithString:htmlString];
+            // Prepare the html page
+            htmlString = [_webPage stringByEvaluatingJavaScriptFromString:htmlScript];
+            NSLog(@"HTML Retrieved");
+            htmlString = [htmlString substringFromIndex:[htmlString rangeOfString:@"--><center>"].location];
+            htmlString = [htmlString substringFromIndex:3];
+            NSLog(@"Trimmed first half");
+            htmlString = [htmlString substringToIndex:[htmlString rangeOfString:@"</center>"].location];
+            
+            // Extract courses
+            NSString *searchString = @"<input type=\"hidden\" name=\"schedstr\" value=\"";
+            searchString = @"href=\"javascript:bookstorelist(\'";
+            courseString = [courseString substringFromIndex:[courseString rangeOfString:searchString].location + [searchString length]];
+            courseString = [courseString substringToIndex:[courseString rangeOfString:@"\'"].location];
+            NSUInteger index;
+            while(![courseString isEqualToString:@""]){
+                index =[courseString rangeOfString:@"|"].location;
+                NSString *class = [courseString substringToIndex:index];
+                courseString = [courseString substringFromIndex:index + 1];
+                index =[courseString rangeOfString:@"/"].location;
+                NSString *section = [courseString substringToIndex: index];
+                courseString = [courseString substringFromIndex:index + 1];
+                [courses setObject:section forKey:class];
+            }
+            //String brodder = "jonathan";
+            [_activityIndicator stopAnimating];
+            _webPage.delegate = nil;
+            //NSLog(@"\n%@",courseString);
+            [self performSegueWithIdentifier:@"ShowSchedule" sender:self];
+            
             
         }
     }
@@ -179,8 +208,16 @@
         SocialSchedulerFirstViewController *scheduleController = (SocialSchedulerFirstViewController *)segue.destinationViewController;
         NSString *webPageCode = htmlString;
         scheduleController.htmlString = webPageCode;
+        scheduleController.courses = courses;
         scheduleController.scheduleFound = YES;
     }
+}
+
+-(NSString *)cleanUpSpecialCharactersOfString:(NSString *)stringToClean{
+    stringToClean = [stringToClean stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
+    stringToClean = [stringToClean stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"];
+    
+    return stringToClean;
 }
 
 - (IBAction)login:(UIButton *)sender {
@@ -188,13 +225,18 @@
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"Please complete enter both University ID (Not a number) and Password" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
     }else{
-    loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",_usernameField.text,_passwordField.text];
-    [self performSelector:@selector(hideKeyboard)];
-    _webPage.delegate = self;
-    [_usernameField setEnabled:NO];
-    [_passwordField setEnabled:NO];
-    [_activityIndicator startAnimating];
-    [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:scheduleURL]]];
+        NSString *username = _usernameField.text;
+        NSString *password = _passwordField.text;
+        username = [self cleanUpSpecialCharactersOfString:username];
+        password = [self cleanUpSpecialCharactersOfString:password];
+        loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",username,password];
+        NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
+        [self performSelector:@selector(hideKeyboard)];
+        _webPage.delegate = self;
+        [_usernameField setEnabled:NO];
+        [_passwordField setEnabled:NO];
+        [_activityIndicator startAnimating];
+        [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:scheduleURL]]];
     }
 }
 @end

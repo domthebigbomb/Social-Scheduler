@@ -7,14 +7,24 @@
 //
 
 #import "SocialSchedulerAppDelegate.h"
-
+#import <FacebookSDK/FacebookSDK.h>
 @implementation SocialSchedulerAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    static BOOL loggedIn = NO;
     return YES;
 }
+
+
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+    
+    // Handle the user leaving the app while the Facebook login dialog is being shown
+    // For example: when the user presses the iOS "home" button while the login dialog is active
+    [FBAppCall handleDidBecomeActive];
+}
+
 							
 - (void)applicationWillResignActive:(UIApplication *)application
 {
@@ -31,11 +41,6 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

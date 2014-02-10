@@ -10,6 +10,7 @@
 
 @interface SocialSchedulerFirstViewController : UIViewController<UIWebViewDelegate>
 
+@property (strong,nonatomic) NSMutableDictionary *courses;
 @property (strong,nonatomic) NSString *htmlString;
 @property BOOL scheduleFound;
 

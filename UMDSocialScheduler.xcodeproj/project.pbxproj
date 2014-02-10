@@ -30,6 +30,9 @@
 		0B8E0BF018A3569400863181 /* Utils.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BEC18A3569400863181 /* Utils.m */; };
 		0B8E0BF318A3701500863181 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BF218A3701500863181 /* LoginViewController.m */; };
 		0B8E0BF718A5EB8100863181 /* FacebookFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BF618A5EB8100863181 /* FacebookFriendsViewController.m */; };
+		0BA0CB8718A86F8B005AAFD5 /* CourseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0CB8618A86F8B005AAFD5 /* CourseCell.m */; };
+		0BA0CB8A18A87CD2005AAFD5 /* ContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0CB8918A87CD2005AAFD5 /* ContactCell.m */; };
+		0BA0CB8C18A88409005AAFD5 /* YAJL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BA0CB8B18A88409005AAFD5 /* YAJL.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +81,11 @@
 		0B8E0BF218A3701500863181 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		0B8E0BF518A5EB8100863181 /* FacebookFriendsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FacebookFriendsViewController.h; sourceTree = "<group>"; };
 		0B8E0BF618A5EB8100863181 /* FacebookFriendsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FacebookFriendsViewController.m; sourceTree = "<group>"; };
+		0BA0CB8518A86F8B005AAFD5 /* CourseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CourseCell.h; sourceTree = "<group>"; };
+		0BA0CB8618A86F8B005AAFD5 /* CourseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CourseCell.m; sourceTree = "<group>"; };
+		0BA0CB8818A87CD2005AAFD5 /* ContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactCell.h; sourceTree = "<group>"; };
+		0BA0CB8918A87CD2005AAFD5 /* ContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactCell.m; sourceTree = "<group>"; };
+		0BA0CB8B18A88409005AAFD5 /* YAJL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = YAJL.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +96,7 @@
 				0B8E0BAB18A2099100863181 /* CoreGraphics.framework in Frameworks */,
 				0B8E0BE118A3270E00863181 /* FacebookSDK.framework in Frameworks */,
 				0B8E0BAD18A2099100863181 /* UIKit.framework in Frameworks */,
+				0BA0CB8C18A88409005AAFD5 /* YAJL.framework in Frameworks */,
 				0B8E0BA918A2099100863181 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,6 +138,7 @@
 		0B8E0BA718A2099100863181 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0BA0CB8B18A88409005AAFD5 /* YAJL.framework */,
 				0B8E0BE018A3270E00863181 /* FacebookSDK.framework */,
 				0B8E0BA818A2099100863181 /* Foundation.framework */,
 				0B8E0BAA18A2099100863181 /* CoreGraphics.framework */,
@@ -141,6 +151,7 @@
 		0B8E0BAE18A2099100863181 /* UMDSocialScheduler */ = {
 			isa = PBXGroup;
 			children = (
+				0BA0CB8418A86F4C005AAFD5 /* Model */,
 				0B8E0BF418A3704500863181 /* Views */,
 				0B8E0BB718A2099100863181 /* SocialSchedulerAppDelegate.h */,
 				0B8E0BB818A2099100863181 /* SocialSchedulerAppDelegate.m */,
@@ -209,6 +220,17 @@
 				0B8E0BF618A5EB8100863181 /* FacebookFriendsViewController.m */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		0BA0CB8418A86F4C005AAFD5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0BA0CB8518A86F8B005AAFD5 /* CourseCell.h */,
+				0BA0CB8618A86F8B005AAFD5 /* CourseCell.m */,
+				0BA0CB8818A87CD2005AAFD5 /* ContactCell.h */,
+				0BA0CB8918A87CD2005AAFD5 /* ContactCell.m */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -310,6 +332,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BA0CB8A18A87CD2005AAFD5 /* ContactCell.m in Sources */,
 				0B8E0BBF18A2099100863181 /* SocialSchedulerFirstViewController.m in Sources */,
 				0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */,
 				0B8E0BF718A5EB8100863181 /* FacebookFriendsViewController.m in Sources */,
@@ -317,6 +340,7 @@
 				0B8E0BF018A3569400863181 /* Utils.m in Sources */,
 				0B8E0BB518A2099100863181 /* main.m in Sources */,
 				0B8E0BF318A3701500863181 /* LoginViewController.m in Sources */,
+				0BA0CB8718A86F8B005AAFD5 /* CourseCell.m in Sources */,
 				0B8E0BEF18A3569400863181 /* StoryboardInfo.m in Sources */,
 				0B8E0BED18A3569400863181 /* ControllerInfo.m in Sources */,
 				0B8E0BB918A2099100863181 /* SocialSchedulerAppDelegate.m in Sources */,
@@ -444,6 +468,7 @@
 		0B8E0BDB18A2099100863181 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = armv7;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -455,6 +480,7 @@
 				INFOPLIST_FILE = "UMDSocialScheduler/UMDSocialScheduler-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "arm64 armv7";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -462,6 +488,7 @@
 		0B8E0BDC18A2099100863181 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = armv7;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -473,6 +500,7 @@
 				INFOPLIST_FILE = "UMDSocialScheduler/UMDSocialScheduler-Info.plist";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALID_ARCHS = "arm64 armv7";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
