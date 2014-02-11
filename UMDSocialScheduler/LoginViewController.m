@@ -77,9 +77,7 @@
 -(void)loadDesignElements{
     // NSString* fontName = @"Avenir-Book";
     NSString* boldFontName = @"Avenir-Black";
-    // UIColor* darkColor = [UIColor colorWithRed:7.0/255 green:61.0/255 blue:48.0/255 alpha:1.0f];
     _loginButton.layer.cornerRadius = 3.0f;
-    //_loginButton.backgroundColor = [self.view backgroundColor];
     _loginButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
     [_loginButton setTitleColor:[self.view backgroundColor] forState:UIControlStateNormal];
     

@@ -10,7 +10,4 @@
 #import <FacebookSDK/FacebookSDK.h>
 @interface LoginViewController : UIViewController<FBLoginViewDelegate,UIWebViewDelegate,UITextFieldDelegate,UIAlertViewDelegate>
 
-@property (strong,nonatomic) NSString *htmlString;
-
-
 @end

@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface SocialSchedulerFirstViewController : UIViewController<UIWebViewDelegate>
+#import <FacebookSDK/FacebookSDK.h>
+@interface SocialSchedulerFirstViewController : UIViewController<UIWebViewDelegate,UIScrollViewDelegate,FBLoginViewDelegate>
 
 @property (strong,nonatomic) NSMutableDictionary *courses;
 @property (strong,nonatomic) NSString *htmlString;

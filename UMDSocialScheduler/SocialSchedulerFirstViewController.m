@@ -12,11 +12,14 @@
 @interface SocialSchedulerFirstViewController ()
 - (IBAction)takeSnapshot:(UIButton *)sender;
 - (IBAction)shareBarButton:(UIBarButtonItem *)sender;
+@property (weak, nonatomic) IBOutlet UIScrollView *scheduleScrollView;
 @property (weak, nonatomic) IBOutlet UIWebView *visibleWebView;
+@property (strong,nonatomic) UIImageView *scheduleImageView;
 @end
 
 @implementation SocialSchedulerFirstViewController{
     NSString *zoomScript;
+    UIImage *scheduleImage;
     int count;
 }
 
@@ -25,6 +28,7 @@
     [super viewDidLoad];
     count = 0;
     zoomScript = @"document.body.style.zoom = 1.5;";
+    
     _scheduleFound = NO;
     
 }
@@ -32,8 +36,8 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     _visibleWebView.delegate = self;
-    
-    if(_scheduleFound == YES){
+    _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
+    if(_scheduleFound == YES || [_htmlString length]>0){
         NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
         [header appendString:@"<head><style type='text/css'>html, body {	height: 100%;	padding: 0;	margin: 0;} "];
         [header appendString:@"#table {display: table; 	height: 100%;	width: 100%;} "];
@@ -47,9 +51,14 @@
         [[NSUserDefaults standardUserDefaults] setObject:_courses forKey:@"Courses"];
         //NSLog(@"HTML: %@",_htmlString);
 
+
     }else{
         [self performSegueWithIdentifier:@"ShowLogin" sender:self];
     }
+}
+
+- (UIView*)viewForZoomingInScrollView:(UIScrollView *)aScrollView {
+    return _scheduleImageView;
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView{
@@ -67,6 +76,7 @@
     
 }
 
+/*
 -(UIImage *)cropImage:(UIImage *)scheduleImage{
     UIImage *croppedImage = [[UIImage alloc] init];
     NSArray *RGBarray =    [self getRGBAsFromImage:scheduleImage atX:0 andY:0 count:[scheduleImage size].height * [scheduleImage size].width];
@@ -85,14 +95,13 @@
     croppedImage = [UIImage imageWithCGImage:imageRef];
     CGImageRelease(imageRef);
     
-    /*
     if([RGBarray objectAtIndex:yIndex*originalWidth+x] == [UIColor whiteColor]){
         
     }
-     */
+ 
     return croppedImage;
 }
-
+*/
 -(UIImage *)getSchedule{
     UIGraphicsBeginImageContextWithOptions([_visibleWebView bounds].size,NO,2.0f);
     [[_visibleWebView layer] renderInContext:UIGraphicsGetCurrentContext()];
@@ -102,6 +111,7 @@
     return capturedScreen;
 }
 
+/*
 - (NSArray*)getRGBAsFromImage:(UIImage*)image atX:(int)xx andY:(int)yy count:(int)count
     {
         NSMutableArray *result = [NSMutableArray arrayWithCapacity:count];
@@ -141,6 +151,7 @@
     
         return result;
 }
+*/
 
 - (IBAction)takeSnapshot:(UIButton *)sender {
     UIImage *snapshot = [self getSchedule];
@@ -149,7 +160,7 @@
 
 - (IBAction)shareBarButton:(UIBarButtonItem *)sender {
     UIImage *snapshot = [self getSchedule];
-    NSString *text = @"My schedule this semester. Shared via Social Scheduler for iOS";
+    NSString *text = @"Shared via UMD Social Scheduler for iOS";
     NSArray* datatoshare = @[snapshot, text];  // ...or other kind of data.
     UIActivityViewController* activityViewController =
     [[UIActivityViewController alloc] initWithActivityItems:datatoshare applicationActivities:nil];
