@@ -37,6 +37,7 @@
 -(void)viewDidAppear:(BOOL)animated{
     _visibleWebView.delegate = self;
     _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
+    _courses = [[NSMutableDictionary alloc] initWithDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"Courses"]];
     if(_scheduleFound == YES || [_htmlString length]>0){
         NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
         [header appendString:@"<head><style type='text/css'>html, body {	height: 100%;	padding: 0;	margin: 0;} "];

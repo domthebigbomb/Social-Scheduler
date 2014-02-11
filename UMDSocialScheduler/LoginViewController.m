@@ -25,6 +25,7 @@
 @property (strong, nonatomic)UITapGestureRecognizer *tap;
 @property (strong, nonatomic) UIAlertView *alertMsg;
 @property CGPoint originalCenter;
+@property (weak, nonatomic) IBOutlet UIView *loginFieldsView;
 
 @end
 
@@ -35,6 +36,7 @@
     NSString *htmlString;
     NSString *testURL;
     NSString *courseString;
+    NSString *renderScheduleURL;
     NSMutableDictionary *courses;
     int count;
 }
@@ -54,7 +56,14 @@
     FBLoginView *loginView = [[FBLoginView alloc] initWithReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
     loginView.delegate = self;
     loginView.frame = CGRectOffset(loginView.frame, 52, 480);
-    [self.view addSubview:loginView];
+    // 52, 25
+    // 52,480
+    
+    renderScheduleURL = @"http://www.umdsocialscheduler.com/render_schedule?";
+    
+    //NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem: _loginFieldsView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute: NSLayoutAttributeBottom multiplier:1.0 constant:30];
+    //[loginView addConstraint:constraint];
+    [self.visualView addSubview:loginView];
     
     count = 0;
     
@@ -119,6 +128,14 @@
             htmlString = [htmlString substringFromIndex:3];
             NSLog(@"Trimmed first half");
             htmlString = [htmlString substringToIndex:[htmlString rangeOfString:@"</center>"].location];
+            
+            renderScheduleURL = [NSString stringWithFormat:@"%@term=201401&html=%@",renderScheduleURL, htmlString];
+            NSURL *renderURL = [NSURL URLWithString:renderScheduleURL];
+            NSURLRequest *renderRequest = [NSURLRequest requestWithURL:renderURL];
+            [NSURLConnection sendAsynchronousRequest:renderRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                id JSON = [data yajl_JSON];
+                NSLog(@"%@",[JSON yajl_JSONStringWithOptions:YAJLGenOptionsBeautify indentString:@"  "]);
+            }];
             
             // Extract courses
             NSString *searchString = @"<input type=\"hidden\" name=\"schedstr\" value=\"";

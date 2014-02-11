@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
 
-@interface SocialSchedulerSecondViewController : UIViewController<FBLoginViewDelegate,UITableViewDataSource>{
+@interface SocialSchedulerSecondViewController : UIViewController<FBLoginViewDelegate,UITableViewDataSource,UITableViewDelegate>{
 }
 @property BOOL coursesFound;
 

@@ -18,7 +18,7 @@
 @end
 
 @implementation FacebookFriendsViewController{
-    NSString *socialSchedulerURL;
+    NSString *socialSchedulerURLString;
     NSString *getListOfFriendsURLString;
     NSString *fbLoginURLString;
     NSMutableData *contactData;
@@ -52,7 +52,7 @@
     contactSchedules = [[NSMutableDictionary alloc] init];
     
 
-    socialSchedulerURL = @"http://www.umdsocialscheduler.com/";
+    socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     getListOfFriendsURLString = @"friends_with_app";
     fbLoginURLString = @"access?access_token=";
 
@@ -61,8 +61,8 @@
     [_scheduleScrollView addSubview:_scheduleImageView];
     [_scheduleScrollView setDelegate: self];
     
-	NSString *getContactString = [NSString stringWithFormat:@"%@%@",socialSchedulerURL,getListOfFriendsURLString];
-    NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURL,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
+	NSString *getContactString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,getListOfFriendsURLString];
+    NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
     NSURL *getContactURL = [NSURL URLWithString:getContactString];
     NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
     NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
@@ -100,6 +100,9 @@
             NSLog(@"Contact Response: %@", response);
             NSLog(@"Contact Error: %@", connectionError);
             dispatch_async(dispatch_get_main_queue(), ^{
+                [_activityIndicator stopAnimating];
+                [_closeScheduleButton setHidden:NO];
+                [_greyedBackgroundView setHidden:YES];
                 [[self contactTableView] setHidden:NO];
                 [[self contactTableView] reloadData];
             });
@@ -128,13 +131,13 @@
     NSMutableArray *mutualClasses = [[NSMutableArray alloc] init];
     for(NSDictionary *class in contactSchedule){
         NSString *courseName = [class objectForKey:@"course_code"];
-        NSString *section = [class objectForKey:@"section"];
-        if([[userSchedule allKeys] containsObject:courseName] && [[userSchedule objectForKey:courseName] isEqualToString:section]){
+        if([[userSchedule allKeys] containsObject:courseName]){
             [mutualClasses addObject:courseName];
         }
     }
     [cell.numCoursesLabel setText:@"No Mutual Classes"];
     for(int i = 0; i< [mutualClasses count]; i++){
+        //NSString *section = [class objectForKey:@"section"];
         if(i==0){
             [cell.numCoursesLabel setText: [mutualClasses firstObject]];
         }else{
@@ -144,7 +147,6 @@
     cell.fbid = fbid;
     [cell.contactPic setImage: [contactPics objectAtIndex:rowNumber]];
     [cell.nameLabel setText: name];
-    cell.contactProfPic.profileID = cell.fbid;
     [cell.showScheduleButton setEnabled: YES];
     [cell.showScheduleButton setHidden: NO];
     if([share isEqualToString:@"0"]){
@@ -174,7 +176,7 @@
     UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule_image?term=201401&fbid=%@", contact.fbid]]]];
     contactScheduleImage = contactPic;
     [_tapGesture setEnabled: YES];
-    
+    [_scheduleScrollView setZoomScale:1.0];
     [_scheduleImageView setImage:contactScheduleImage];
     [_greyedBackgroundView setHidden:NO];
 }

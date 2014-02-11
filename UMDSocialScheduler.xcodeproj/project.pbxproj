@@ -34,6 +34,7 @@
 		0BDC092418A9F5D500BC82CE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091E18A9F5D500BC82CE /* README.md */; };
 		0BDC092518A9F5D500BC82CE /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091F18A9F5D500BC82CE /* release_notes.md */; };
 		0BDC092718A9F68500BC82CE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BDC092618A9F68500BC82CE /* libz.dylib */; };
+		0BDC092A18AAAB0700BC82CE /* ClassContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BDC092918AAAB0700BC82CE /* ClassContactCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,8 @@
 		0BDC092118A9F5D500BC82CE /* TestFlight+ManualSessions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TestFlight+ManualSessions.h"; sourceTree = "<group>"; };
 		0BDC092218A9F5D500BC82CE /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		0BDC092618A9F68500BC82CE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		0BDC092818AAAB0700BC82CE /* ClassContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassContactCell.h; sourceTree = "<group>"; };
+		0BDC092918AAAB0700BC82CE /* ClassContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassContactCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +223,8 @@
 				0BA0CB8918A87CD2005AAFD5 /* ContactCell.m */,
 				0B3C9F7018A9631800506FDC /* ContactScheduleCell.h */,
 				0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */,
+				0BDC092818AAAB0700BC82CE /* ClassContactCell.h */,
+				0BDC092918AAAB0700BC82CE /* ClassContactCell.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -353,6 +358,7 @@
 				0B8E0BB518A2099100863181 /* main.m in Sources */,
 				0B3C9F7218A9631800506FDC /* ContactScheduleCell.m in Sources */,
 				0B8E0BF318A3701500863181 /* LoginViewController.m in Sources */,
+				0BDC092A18AAAB0700BC82CE /* ClassContactCell.m in Sources */,
 				0BA0CB8718A86F8B005AAFD5 /* CourseCell.m in Sources */,
 				0B8E0BB918A2099100863181 /* SocialSchedulerAppDelegate.m in Sources */,
 			);
