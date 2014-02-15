@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
-@interface FacebookFriendsViewController : UIViewController<FBLoginViewDelegate,UITableViewDataSource,UIScrollViewDelegate, UITableViewDelegate>
+@interface FacebookFriendsViewController : UIViewController<FBLoginViewDelegate,UITableViewDataSource,UIScrollViewDelegate, UITableViewDelegate, UIAlertViewDelegate>
 @property (weak, nonatomic) IBOutlet UIView *greyedBackgroundView;
 @property (weak, nonatomic) IBOutlet UIImageView *scheduleImageView;
 @property (weak, nonatomic) IBOutlet UITableView *contactTableView;

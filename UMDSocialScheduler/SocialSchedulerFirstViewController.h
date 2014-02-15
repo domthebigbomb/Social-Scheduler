@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
-@interface SocialSchedulerFirstViewController : UIViewController<UIWebViewDelegate,UIScrollViewDelegate,FBLoginViewDelegate>
+@interface SocialSchedulerFirstViewController : UIViewController<UIWebViewDelegate,UIScrollViewDelegate,FBLoginViewDelegate,NSURLConnectionDelegate>
 
 @property (strong,nonatomic) NSMutableDictionary *courses;
 @property (strong,nonatomic) NSString *htmlString;
-@property BOOL scheduleFound;
+@property BOOL newSchedule;
 
 -(IBAction)showSchedule:(UIStoryboardSegue *)segue;
 @end

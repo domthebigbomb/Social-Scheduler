@@ -9,6 +9,8 @@
 #import "SocialSchedulerFirstViewController.h"
 #import "LoginViewController.h"
 #import <CoreGraphics/CoreGraphics.h>
+#import "Reachability.h"
+#import <YAJL/YAJL.h>
 @interface SocialSchedulerFirstViewController ()
 - (IBAction)takeSnapshot:(UIButton *)sender;
 - (IBAction)shareBarButton:(UIBarButtonItem *)sender;
@@ -20,6 +22,10 @@
 @implementation SocialSchedulerFirstViewController{
     NSString *zoomScript;
     UIImage *scheduleImage;
+    NSString *socialSchedulerURLString;
+    NSString *uploadScheduleURLString;
+    NSString *fbLoginURLString;
+    NSString *scheduleHtml;
     int count;
 }
 
@@ -28,17 +34,21 @@
     [super viewDidLoad];
     count = 0;
     zoomScript = @"document.body.style.zoom = 1.5;";
-    
-    _scheduleFound = NO;
-    
+    fbLoginURLString = @"access?access_token=";
+    socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
+    uploadScheduleURLString = @"render_schedule";
+    _newSchedule = NO;
 }
 
 
 -(void)viewDidAppear:(BOOL)animated{
     _visibleWebView.delegate = self;
+    _newSchedule = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshSchedule"];
     _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
     _courses = [[NSMutableDictionary alloc] initWithDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"Courses"]];
-    if(_scheduleFound == YES || [_htmlString length]>0){
+    scheduleHtml = [NSString stringWithString: _htmlString];
+    if(_newSchedule == YES || [_htmlString length]>0){
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshSchedule"];
         NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
         [header appendString:@"<head><style type='text/css'>html, body {	height: 100%;	padding: 0;	margin: 0;} "];
         [header appendString:@"#table {display: table; 	height: 100%;	width: 100%;} "];
@@ -47,16 +57,61 @@
         NSString *footer = @"</div></div></body></html>";
         _htmlString = [NSString stringWithFormat:@"%@ %@ %@ %@",header,body,_htmlString,footer];
         [_visibleWebView loadHTMLString:_htmlString baseURL:nil];
-        //courses = [_courses mutableCopy];
-        [[NSUserDefaults standardUserDefaults] setObject:_htmlString forKey:@"Schedule"];
-        [[NSUserDefaults standardUserDefaults] setObject:_courses forKey:@"Courses"];
-        //NSLog(@"HTML: %@",_htmlString);
+        // Render Schedule in backend
+        if(_newSchedule == YES){
+            NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
+            NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
+            NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
+       
+        
+            [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                NSString *baseURLString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,uploadScheduleURLString];
+                NSMutableURLRequest *renderRequest = [NSMutableURLRequest requestWithURL:[[NSURL URLWithString:baseURLString] standardizedURL]];
+        
+                scheduleHtml = [scheduleHtml stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
+            
+                scheduleHtml = [NSString stringWithFormat:@"term=201401&html=%@",scheduleHtml];
+                NSData *postData = [scheduleHtml dataUsingEncoding:NSASCIIStringEncoding];
 
-
+                [renderRequest setHTTPMethod:@"POST"];
+                [renderRequest setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+                [renderRequest setHTTPBody:postData];
+            
+                NSURLConnection *connection = [[NSURLConnection alloc]  initWithRequest:renderRequest delegate:self];
+            
+                scheduleHtml = [scheduleHtml stringByRemovingPercentEncoding];
+                if(connection)
+                {
+                    NSLog(@"Connection Successful");
+                    [connection start];
+                }
+                else
+                {
+                    NSLog(@"Connection could not be made");
+                }
+            }];
+        }
+        //NSLog(@"%@",_htmlString);
     }else{
         [self performSegueWithIdentifier:@"ShowLogin" sender:self];
     }
 }
+
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data{
+    //id JSON = [data yajl_JSON];
+    NSString *description = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Data JSON: %@", description);
+}
+
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{
+    
+    NSLog(@"Error: %@" , error);
+}
+
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection{
+    NSLog(@"Connection Finished");
+}
+
 
 - (UIView*)viewForZoomingInScrollView:(UIScrollView *)aScrollView {
     return _scheduleImageView;

@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
-@interface LoginViewController : UIViewController<FBLoginViewDelegate,UIWebViewDelegate,UITextFieldDelegate,UIAlertViewDelegate>
+@interface LoginViewController : UIViewController<FBLoginViewDelegate,UIWebViewDelegate,UITextFieldDelegate,UIAlertViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
 
 @end

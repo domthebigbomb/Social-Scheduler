@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0B3C9F7218A9631800506FDC /* ContactScheduleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */; };
+		0B4386B818AAFBF200D50DFC /* SocialSchedulerIpad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B4386B718AAFBF200D50DFC /* SocialSchedulerIpad.storyboard */; };
+		0B77469118AD4008006E0550 /* fb_default.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0B77469018AD4008006E0550 /* fb_default.jpg */; };
 		0B8E0BA918A2099100863181 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BA818A2099100863181 /* Foundation.framework */; };
 		0B8E0BAB18A2099100863181 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BAA18A2099100863181 /* CoreGraphics.framework */; };
 		0B8E0BAD18A2099100863181 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BAC18A2099100863181 /* UIKit.framework */; };
@@ -30,11 +32,28 @@
 		0BA0CB8718A86F8B005AAFD5 /* CourseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0CB8618A86F8B005AAFD5 /* CourseCell.m */; };
 		0BA0CB8A18A87CD2005AAFD5 /* ContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0CB8918A87CD2005AAFD5 /* ContactCell.m */; };
 		0BA0CB8C18A88409005AAFD5 /* YAJL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BA0CB8B18A88409005AAFD5 /* YAJL.framework */; };
+		0BA8C13118AB1BB4000F3734 /* AppIcon29x29.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12118AB1BB4000F3734 /* AppIcon29x29.png */; };
+		0BA8C13218AB1BB4000F3734 /* AppIcon29x29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12218AB1BB4000F3734 /* AppIcon29x29@2x.png */; };
+		0BA8C13318AB1BB4000F3734 /* AppIcon40x40.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12318AB1BB4000F3734 /* AppIcon40x40.png */; };
+		0BA8C13418AB1BB4000F3734 /* AppIcon40x40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12418AB1BB4000F3734 /* AppIcon40x40@2x.png */; };
+		0BA8C13518AB1BB4000F3734 /* AppIcon50x50.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12518AB1BB4000F3734 /* AppIcon50x50.png */; };
+		0BA8C13618AB1BB4000F3734 /* AppIcon50x50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12618AB1BB4000F3734 /* AppIcon50x50@2x.png */; };
+		0BA8C13718AB1BB4000F3734 /* AppIcon57x57.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12718AB1BB4000F3734 /* AppIcon57x57.png */; };
+		0BA8C13818AB1BB4000F3734 /* AppIcon57x57@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12818AB1BB4000F3734 /* AppIcon57x57@2x.png */; };
+		0BA8C13918AB1BB4000F3734 /* AppIcon60x60.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12918AB1BB4000F3734 /* AppIcon60x60.png */; };
+		0BA8C13A18AB1BB4000F3734 /* AppIcon60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12A18AB1BB4000F3734 /* AppIcon60x60@2x.png */; };
+		0BA8C13B18AB1BB4000F3734 /* AppIcon72x72.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12B18AB1BB4000F3734 /* AppIcon72x72.png */; };
+		0BA8C13C18AB1BB4000F3734 /* AppIcon72x72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12C18AB1BB4000F3734 /* AppIcon72x72@2x.png */; };
+		0BA8C13D18AB1BB4000F3734 /* AppIcon76x76.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12D18AB1BB4000F3734 /* AppIcon76x76.png */; };
+		0BA8C13E18AB1BB4000F3734 /* AppIcon76x76@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12E18AB1BB4000F3734 /* AppIcon76x76@2x.png */; };
+		0BA8C13F18AB1BB4000F3734 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12F18AB1BB4000F3734 /* iTunesArtwork.png */; };
+		0BA8C14018AB1BB4000F3734 /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */; };
 		0BDC092318A9F5D500BC82CE /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BDC091D18A9F5D500BC82CE /* libTestFlight.a */; };
 		0BDC092418A9F5D500BC82CE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091E18A9F5D500BC82CE /* README.md */; };
 		0BDC092518A9F5D500BC82CE /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091F18A9F5D500BC82CE /* release_notes.md */; };
 		0BDC092718A9F68500BC82CE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BDC092618A9F68500BC82CE /* libz.dylib */; };
 		0BDC092A18AAAB0700BC82CE /* ClassContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BDC092918AAAB0700BC82CE /* ClassContactCell.m */; };
+		0BFF8B1218AE899600817BFD /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BFF8B1118AE899600817BFD /* Reachability.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +69,8 @@
 /* Begin PBXFileReference section */
 		0B3C9F7018A9631800506FDC /* ContactScheduleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactScheduleCell.h; sourceTree = "<group>"; };
 		0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactScheduleCell.m; sourceTree = "<group>"; };
+		0B4386B718AAFBF200D50DFC /* SocialSchedulerIpad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SocialSchedulerIpad.storyboard; sourceTree = "<group>"; };
+		0B77469018AD4008006E0550 /* fb_default.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fb_default.jpg; sourceTree = "<group>"; };
 		0B8E0BA518A2099100863181 /* UMDSocialScheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UMDSocialScheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B8E0BA818A2099100863181 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0B8E0BAA18A2099100863181 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -82,6 +103,22 @@
 		0BA0CB8818A87CD2005AAFD5 /* ContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactCell.h; sourceTree = "<group>"; };
 		0BA0CB8918A87CD2005AAFD5 /* ContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactCell.m; sourceTree = "<group>"; };
 		0BA0CB8B18A88409005AAFD5 /* YAJL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = YAJL.framework; sourceTree = "<group>"; };
+		0BA8C12118AB1BB4000F3734 /* AppIcon29x29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon29x29.png; sourceTree = "<group>"; };
+		0BA8C12218AB1BB4000F3734 /* AppIcon29x29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon29x29@2x.png"; sourceTree = "<group>"; };
+		0BA8C12318AB1BB4000F3734 /* AppIcon40x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon40x40.png; sourceTree = "<group>"; };
+		0BA8C12418AB1BB4000F3734 /* AppIcon40x40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon40x40@2x.png"; sourceTree = "<group>"; };
+		0BA8C12518AB1BB4000F3734 /* AppIcon50x50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon50x50.png; sourceTree = "<group>"; };
+		0BA8C12618AB1BB4000F3734 /* AppIcon50x50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon50x50@2x.png"; sourceTree = "<group>"; };
+		0BA8C12718AB1BB4000F3734 /* AppIcon57x57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon57x57.png; sourceTree = "<group>"; };
+		0BA8C12818AB1BB4000F3734 /* AppIcon57x57@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon57x57@2x.png"; sourceTree = "<group>"; };
+		0BA8C12918AB1BB4000F3734 /* AppIcon60x60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon60x60.png; sourceTree = "<group>"; };
+		0BA8C12A18AB1BB4000F3734 /* AppIcon60x60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon60x60@2x.png"; sourceTree = "<group>"; };
+		0BA8C12B18AB1BB4000F3734 /* AppIcon72x72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon72x72.png; sourceTree = "<group>"; };
+		0BA8C12C18AB1BB4000F3734 /* AppIcon72x72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon72x72@2x.png"; sourceTree = "<group>"; };
+		0BA8C12D18AB1BB4000F3734 /* AppIcon76x76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon76x76.png; sourceTree = "<group>"; };
+		0BA8C12E18AB1BB4000F3734 /* AppIcon76x76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon76x76@2x.png"; sourceTree = "<group>"; };
+		0BA8C12F18AB1BB4000F3734 /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
+		0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = "<group>"; };
 		0BDC091D18A9F5D500BC82CE /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		0BDC091E18A9F5D500BC82CE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		0BDC091F18A9F5D500BC82CE /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
@@ -91,6 +128,8 @@
 		0BDC092618A9F68500BC82CE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		0BDC092818AAAB0700BC82CE /* ClassContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassContactCell.h; sourceTree = "<group>"; };
 		0BDC092918AAAB0700BC82CE /* ClassContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassContactCell.m; sourceTree = "<group>"; };
+		0BFF8B1018AE899600817BFD /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		0BFF8B1118AE899600817BFD /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,9 +160,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0B4386B618AAFB8700D50DFC /* iPad */ = {
+			isa = PBXGroup;
+			children = (
+				0B4386B718AAFBF200D50DFC /* SocialSchedulerIpad.storyboard */,
+			);
+			name = iPad;
+			sourceTree = "<group>";
+		};
 		0B8E0B9C18A2099100863181 = {
 			isa = PBXGroup;
 			children = (
+				0B77469018AD4008006E0550 /* fb_default.jpg */,
+				0BFF8B0F18AE899600817BFD /* Reachability */,
 				0BDC091818A9F59100BC82CE /* Testflight SDK */,
 				0B8E0BE218A3272500863181 /* FBUserSettingsViewResources.bundle */,
 				0B8E0BAE18A2099100863181 /* UMDSocialScheduler */,
@@ -159,6 +208,8 @@
 		0B8E0BAE18A2099100863181 /* UMDSocialScheduler */ = {
 			isa = PBXGroup;
 			children = (
+				0BA8C0FE18AB1A4B000F3734 /* Icons */,
+				0B4386B618AAFB8700D50DFC /* iPad */,
 				0BA0CB8418A86F4C005AAFD5 /* Model */,
 				0B8E0BF418A3704500863181 /* Views */,
 				0B8E0BB718A2099100863181 /* SocialSchedulerAppDelegate.h */,
@@ -229,6 +280,37 @@
 			name = Model;
 			sourceTree = "<group>";
 		};
+		0BA8C0FE18AB1A4B000F3734 /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				0BA8C12018AB1BB4000F3734 /* App Icon [Squared] */,
+			);
+			name = Icons;
+			sourceTree = "<group>";
+		};
+		0BA8C12018AB1BB4000F3734 /* App Icon [Squared] */ = {
+			isa = PBXGroup;
+			children = (
+				0BA8C12118AB1BB4000F3734 /* AppIcon29x29.png */,
+				0BA8C12218AB1BB4000F3734 /* AppIcon29x29@2x.png */,
+				0BA8C12318AB1BB4000F3734 /* AppIcon40x40.png */,
+				0BA8C12418AB1BB4000F3734 /* AppIcon40x40@2x.png */,
+				0BA8C12518AB1BB4000F3734 /* AppIcon50x50.png */,
+				0BA8C12618AB1BB4000F3734 /* AppIcon50x50@2x.png */,
+				0BA8C12718AB1BB4000F3734 /* AppIcon57x57.png */,
+				0BA8C12818AB1BB4000F3734 /* AppIcon57x57@2x.png */,
+				0BA8C12918AB1BB4000F3734 /* AppIcon60x60.png */,
+				0BA8C12A18AB1BB4000F3734 /* AppIcon60x60@2x.png */,
+				0BA8C12B18AB1BB4000F3734 /* AppIcon72x72.png */,
+				0BA8C12C18AB1BB4000F3734 /* AppIcon72x72@2x.png */,
+				0BA8C12D18AB1BB4000F3734 /* AppIcon76x76.png */,
+				0BA8C12E18AB1BB4000F3734 /* AppIcon76x76@2x.png */,
+				0BA8C12F18AB1BB4000F3734 /* iTunesArtwork.png */,
+				0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */,
+			);
+			path = "App Icon [Squared]";
+			sourceTree = "<group>";
+		};
 		0BDC091818A9F59100BC82CE /* Testflight SDK */ = {
 			isa = PBXGroup;
 			children = (
@@ -248,6 +330,15 @@
 				0BDC092218A9F5D500BC82CE /* TestFlight.h */,
 			);
 			path = TestFlightSDK2.2.1;
+			sourceTree = "<group>";
+		};
+		0BFF8B0F18AE899600817BFD /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				0BFF8B1018AE899600817BFD /* Reachability.h */,
+				0BFF8B1118AE899600817BFD /* Reachability.m */,
+			);
+			path = Reachability;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -327,12 +418,30 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BA8C13418AB1BB4000F3734 /* AppIcon40x40@2x.png in Resources */,
 				0BDC092518A9F5D500BC82CE /* release_notes.md in Resources */,
+				0BA8C13D18AB1BB4000F3734 /* AppIcon76x76.png in Resources */,
+				0BA8C13518AB1BB4000F3734 /* AppIcon50x50.png in Resources */,
+				0BA8C13A18AB1BB4000F3734 /* AppIcon60x60@2x.png in Resources */,
+				0BA8C13318AB1BB4000F3734 /* AppIcon40x40.png in Resources */,
+				0BA8C13718AB1BB4000F3734 /* AppIcon57x57.png in Resources */,
+				0BA8C14018AB1BB4000F3734 /* iTunesArtwork@2x.png in Resources */,
+				0BA8C13B18AB1BB4000F3734 /* AppIcon72x72.png in Resources */,
 				0B8E0BE318A3272500863181 /* FBUserSettingsViewResources.bundle in Resources */,
+				0BA8C13C18AB1BB4000F3734 /* AppIcon72x72@2x.png in Resources */,
 				0B8E0BC418A2099100863181 /* Images.xcassets in Resources */,
+				0BA8C13118AB1BB4000F3734 /* AppIcon29x29.png in Resources */,
+				0BA8C13918AB1BB4000F3734 /* AppIcon60x60.png in Resources */,
 				0BDC092418A9F5D500BC82CE /* README.md in Resources */,
+				0B77469118AD4008006E0550 /* fb_default.jpg in Resources */,
 				0B8E0BB318A2099100863181 /* InfoPlist.strings in Resources */,
+				0BA8C13E18AB1BB4000F3734 /* AppIcon76x76@2x.png in Resources */,
+				0BA8C13F18AB1BB4000F3734 /* iTunesArtwork.png in Resources */,
+				0BA8C13818AB1BB4000F3734 /* AppIcon57x57@2x.png in Resources */,
+				0B4386B818AAFBF200D50DFC /* SocialSchedulerIpad.storyboard in Resources */,
 				0B8E0BBC18A2099100863181 /* Main.storyboard in Resources */,
+				0BA8C13218AB1BB4000F3734 /* AppIcon29x29@2x.png in Resources */,
+				0BA8C13618AB1BB4000F3734 /* AppIcon50x50@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,6 +463,7 @@
 				0BA0CB8A18A87CD2005AAFD5 /* ContactCell.m in Sources */,
 				0B8E0BBF18A2099100863181 /* SocialSchedulerFirstViewController.m in Sources */,
 				0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */,
+				0BFF8B1218AE899600817BFD /* Reachability.m in Sources */,
 				0B8E0BF718A5EB8100863181 /* FacebookFriendsViewController.m in Sources */,
 				0B8E0BB518A2099100863181 /* main.m in Sources */,
 				0B3C9F7218A9631800506FDC /* ContactScheduleCell.m in Sources */,
@@ -495,12 +605,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
 				INFOPLIST_FILE = "UMDSocialScheduler/UMDSocialScheduler-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler/TestFlightSDK2.2.1,
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7";
 				WRAPPER_EXTENSION = app;
 			};
@@ -519,12 +631,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
 				INFOPLIST_FILE = "UMDSocialScheduler/UMDSocialScheduler-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler/TestFlightSDK2.2.1,
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "arm64 armv7";
 				WRAPPER_EXTENSION = app;
 			};

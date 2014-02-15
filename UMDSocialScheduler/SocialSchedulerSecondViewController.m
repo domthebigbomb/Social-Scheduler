@@ -10,12 +10,14 @@
 #import "SocialSchedulerSecondViewController.h"
 #import <YAJL/YAJL.h>
 #import "CourseCell.h"
+#import "Reachability.h"
 #import "ClassContactCell.h"
 @interface SocialSchedulerSecondViewController ()
 @property (strong,nonatomic) NSMutableDictionary *courses;
 @property (weak, nonatomic) IBOutlet UITableView *courseTableView;
 @property (strong,nonatomic) NSArray *courseKeys;
 @property (strong, nonatomic) NSMutableArray *contacts;
+@property (strong, nonatomic) UIAlertView *alertMsg;
 
 @end
 
@@ -25,36 +27,44 @@
     NSString *fbLoginURLString;
     NSMutableArray *insertIndexPaths;
     NSMutableDictionary *contactPics;
+    Reachability *internetReachability;
+    NetworkStatus network;
     int selectedIndex;
     BOOL showContact;
 }
 
 - (void)viewDidLoad
 {
+    [super viewDidLoad];
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     classesWithContactURLString = @"friends?";
     fbLoginURLString = @"access?access_token=";
-    NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
-    NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
-    NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
+    internetReachability = [Reachability reachabilityForInternetConnection];
+
     insertIndexPaths = [[NSMutableArray alloc] init];
     contactPics = [[NSMutableDictionary alloc] init];
-    NSURLResponse *response;
-    NSData *data;
-    NSError *error;
-    data = [NSURLConnection sendSynchronousRequest:fbLoginRequest returningResponse:&response error:&error];
-    
-
-    [super viewDidLoad];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-    _courses = [[NSMutableDictionary alloc] initWithDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"Courses"]];
-    _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
-    NSLog(@"Courses: %@",[_courses description]);
-    [self courseTableView].dataSource = self;
-    [self courseTableView].delegate = self;
-    [[self courseTableView] reloadData];
+    network = [internetReachability currentReachabilityStatus];
+    NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
+    if(network == NotReachable){
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
+        [_alertMsg show];
+    }else{
+        NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
+        NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
+        NSURLResponse *response;
+        NSData *data;
+        NSError *error;
+        data = [NSURLConnection sendSynchronousRequest:fbLoginRequest returningResponse:&response error:&error];
+        _courses = [[NSMutableDictionary alloc] initWithDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"Courses"]];
+        _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
+        NSLog(@"Courses: %@",[_courses description]);
+        [self courseTableView].dataSource = self;
+        [self courseTableView].delegate = self;
+        [[self courseTableView] reloadData];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -64,44 +74,49 @@
 
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    int row = indexPath.row;
-    selectedIndex = row;
-    if(!showContact){
-    NSString *course = [_courseKeys objectAtIndex:row];
-    NSString *requestString = [NSString stringWithFormat:@"%@%@term=201401&course=%@",socialSchedulerURLString,classesWithContactURLString,course];
-    NSURL *requestURL = [NSURL URLWithString:requestString];
-    NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        id JSON = [data yajl_JSON];
-        _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
-        
-        int i = 0;
-        for(NSDictionary *contact in _contacts){
-            [insertIndexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
-            i++;
-        }
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_courseTableView beginUpdates];
-            showContact = YES;
-            [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
-            [_courseTableView endUpdates];
-            
-        });
-    }];
+    network = [internetReachability currentReachabilityStatus];
+    if(network == NotReachable){
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
+        [_alertMsg show];
     }else{
-        showContact = NO;
-        selectedIndex = 0;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_courseTableView beginUpdates];
+        int row = indexPath.row;
+        selectedIndex = row;
+        if(!showContact){
+            NSString *course = [_courseKeys objectAtIndex:row];
+            NSString *requestString = [NSString stringWithFormat:@"%@%@term=201401&course=%@",socialSchedulerURLString,classesWithContactURLString,course];
+            NSURL *requestURL = [NSURL URLWithString:requestString];
+            NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+            [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                id JSON = [data yajl_JSON];
+                _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
+                
+                int i = 0;
+                for(NSDictionary *contact in _contacts){
+                    [insertIndexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
+                    i++;
+                }
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [_courseTableView beginUpdates];
+                    showContact = YES;
+                    [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                    [_courseTableView endUpdates];
+                    
+                });
+            }];
+        }else{
             showContact = NO;
-            [_courseTableView deleteRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationAutomatic];
-            [insertIndexPaths removeAllObjects];
-            [_contacts removeAllObjects];
-            [_courseTableView endUpdates];
-        });
+            selectedIndex = 0;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_courseTableView beginUpdates];
+                showContact = NO;
+                [_courseTableView deleteRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationAutomatic];
+                [insertIndexPaths removeAllObjects];
+                [_contacts removeAllObjects];
+                [_courseTableView endUpdates];
+            });
+        }
     }
-    
 }
 
 /*
@@ -130,13 +145,20 @@
         NSString *section = [contact objectForKey:@"section"];
         NSString *fbid = [contact objectForKey:@"fbid"];
         NSString *nameWithSection = [NSString stringWithFormat:@"%@ (%@)",name, section];
+        
+        [cell.contactPictureView setImage:[UIImage imageNamed:@"fb_default.jpg"]];
         [cell.nameLabel setText:nameWithSection];
         if([[contactPics allKeys] containsObject:fbid]){
             [cell.contactPictureView setImage:[contactPics objectForKey:fbid]];
         }else{
-            UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=100&width=100",fbid]]]];
-            [cell.contactPictureView setImage:contactPic];
-            [contactPics setObject:contactPic forKey:fbid];
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=100&width=100",fbid]]]];
+                [contactPics setObject:contactPic forKey:fbid];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [cell.contactPictureView setImage:contactPic];
+                    [cell setNeedsLayout];
+                });
+            });
         }
         return cell;
     }else{

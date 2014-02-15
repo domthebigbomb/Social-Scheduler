@@ -8,6 +8,7 @@
 
 #import "LoginViewController.h"
 #import "SocialSchedulerFirstViewController.h"
+#import "Reachability.h"
 #import <YAJL/YAJL.h>
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *usernameField;
@@ -26,6 +27,8 @@
 @property (strong, nonatomic) UIAlertView *alertMsg;
 @property CGPoint originalCenter;
 @property (weak, nonatomic) IBOutlet UIView *loginFieldsView;
+@property (strong, nonatomic) IBOutlet UIPickerView *semesterPickerView;
+@property (weak, nonatomic) IBOutlet UITextField *semesterField;
 
 @end
 
@@ -37,6 +40,7 @@
     NSString *testURL;
     NSString *courseString;
     NSString *renderScheduleURL;
+    NSArray *semesters;
     NSMutableDictionary *courses;
     int count;
 }
@@ -53,16 +57,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    _semesterPickerView = [[UIPickerView alloc] init];
     FBLoginView *loginView = [[FBLoginView alloc] initWithReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
     loginView.delegate = self;
-    loginView.frame = CGRectOffset(loginView.frame, 52, 480);
+
+    CGRect frame = loginView.frame;
+    frame.size.width  = _loginContainer.frame.size.width;
+    [loginView setFrame:frame];
+    int loginX =((self.view.frame.size.width)/2)-loginView.frame.size.width/2 -2;
+    int loginY = _loginFieldsView.frame.origin.y + _loginFieldsView.frame.size.height;
+    loginView.frame = CGRectOffset(loginView.frame, loginX, loginY);
     // 52, 25
     // 52,480
     
     renderScheduleURL = @"http://www.umdsocialscheduler.com/render_schedule?";
-    
-    //NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem: _loginFieldsView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute: NSLayoutAttributeBottom multiplier:1.0 constant:30];
-    //[loginView addConstraint:constraint];
+
     [self.visualView addSubview:loginView];
     
     count = 0;
@@ -71,6 +80,9 @@
     testURL = @"http://testudo.umd.edu/ssched/index.html";
     htmlScript = @"document.body.innerHTML";
     
+    semesters = @[@"Spring 2014", @"Winter 2013",@"Fall 2013", @"Summer 2013", @"Spring 2013",@"Winter 2012"];
+    [_semesterPickerView setDelegate:self];
+    [_semesterPickerView setDataSource: self];
     courses = [[NSMutableDictionary alloc] init];
     
     _webPage = [[UIWebView alloc] init];
@@ -78,16 +90,34 @@
     _tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
     _tap.enabled = NO;
     [self.view addGestureRecognizer:_tap];
+    [_semesterField setInputView:_semesterPickerView];
+
     self.originalCenter = self.view.center;
-    
     [self loadDesignElements];
-    }
+}
+
+-(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
+    return 1;
+}
+
+-(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
+    return [semesters count];
+}
+
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    return [semesters objectAtIndex:row];
+}
+
+-(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
+    _tap.enabled = YES;
+    [_semesterField setText:[semesters objectAtIndex:row]];
+}
 
 -(void)loadDesignElements{
     // NSString* fontName = @"Avenir-Book";
-    NSString* boldFontName = @"Avenir-Black";
+    //NSString* boldFontName = @"Avenir-Black";
     _loginButton.layer.cornerRadius = 3.0f;
-    _loginButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
+    //_loginButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
     [_loginButton setTitleColor:[self.view backgroundColor] forState:UIControlStateNormal];
     
     _circleMask.layer.cornerRadius = _circleMask.frame.size.width/2;
@@ -95,6 +125,16 @@
     _borderMask.layer.cornerRadius = _borderMask.frame.size.width/2;
     [_borderMask addSubview:_circleMask];
     _loginContainer.layer.cornerRadius = 4.0f;
+    
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+        CGRect frame = _usernameField.frame;
+        frame.size.height = 100;
+        [_usernameField setFrame: frame];
+        [_passwordField setFrame: frame];
+    }
+    
+    //_visualView.center = CGPointMake(self.originalCenter.x, self.originalCenter.y - 120);
+    //_visualView.center = self.originalCenter;
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView{
@@ -209,6 +249,7 @@
     _visualView.center = self.originalCenter;
     [_usernameField resignFirstResponder];
     [_passwordField resignFirstResponder];
+    [_semesterField resignFirstResponder];
     _tap.enabled = NO;
 }
 
@@ -224,7 +265,14 @@
         NSString *webPageCode = htmlString;
         scheduleController.htmlString = webPageCode;
         scheduleController.courses = courses;
-        scheduleController.scheduleFound = YES;
+        //scheduleController.newSchedule = YES;
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Courses"];
+        [[NSUserDefaults standardUserDefaults] setBool: YES forKey:@"refreshSchedule"];
+        [[NSUserDefaults standardUserDefaults] setBool: YES forKey:@"refreshClasses"];
+        [[NSUserDefaults standardUserDefaults] setBool: YES forKey:@"refreshFriends"];
+        [[NSUserDefaults standardUserDefaults] setObject:webPageCode forKey:@"Schedule"];
+        [[NSUserDefaults standardUserDefaults] setObject:courses forKey:@"Courses"];
     }
 }
 
@@ -236,22 +284,29 @@
 }
 
 - (IBAction)login:(UIButton *)sender {
+    Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus network = [internetReachability currentReachabilityStatus];
     if([[_usernameField text]isEqualToString:@""] || [[_passwordField text] isEqualToString:@""]){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"Please complete enter both University ID (Not a number) and Password" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
     }else{
-        NSString *username = _usernameField.text;
-        NSString *password = _passwordField.text;
-        username = [self cleanUpSpecialCharactersOfString:username];
-        password = [self cleanUpSpecialCharactersOfString:password];
-        loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",username,password];
-        NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
-        [self performSelector:@selector(hideKeyboard)];
-        _webPage.delegate = self;
-        [_usernameField setEnabled:NO];
-        [_passwordField setEnabled:NO];
-        [_activityIndicator startAnimating];
-        [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:scheduleURL]]];
+        if(network == NotReachable){
+            _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
+            [_alertMsg show];
+        }else{
+            NSString *username = _usernameField.text;
+            NSString *password = _passwordField.text;
+            username = [self cleanUpSpecialCharactersOfString:username];
+            password = [self cleanUpSpecialCharactersOfString:password];
+            loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",username,password];
+            NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
+            [self performSelector:@selector(hideKeyboard)];
+            _webPage.delegate = self;
+            [_usernameField setEnabled:NO];
+            [_passwordField setEnabled:NO];
+            [_activityIndicator startAnimating];
+            [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:scheduleURL]]];
+        }
     }
 }
 @end
