@@ -24,8 +24,10 @@
     UIImage *scheduleImage;
     NSString *socialSchedulerURLString;
     NSString *uploadScheduleURLString;
+    NSString *updateCoursesURLString;
     NSString *fbLoginURLString;
     NSString *scheduleHtml;
+    NSString *coursesString;
     int count;
 }
 
@@ -37,6 +39,7 @@
     fbLoginURLString = @"access?access_token=";
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     uploadScheduleURLString = @"render_schedule";
+    updateCoursesURLString = @"add_schedule";
     _newSchedule = NO;
 }
 
@@ -45,8 +48,9 @@
     _visibleWebView.delegate = self;
     _newSchedule = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshSchedule"];
     _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
-    _courses = [[NSMutableDictionary alloc] initWithDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"Courses"]];
-    scheduleHtml = [NSString stringWithString: _htmlString];
+    coursesString = [NSString stringWithString:[[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"]];
+    if(_htmlString != nil)
+        scheduleHtml = [NSString stringWithString: _htmlString];
     if(_newSchedule == YES || [_htmlString length]>0){
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshSchedule"];
         NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
@@ -63,11 +67,17 @@
             NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
             NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
        
-        
+            
             [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                NSString *baseURLString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,uploadScheduleURLString];
-                NSMutableURLRequest *renderRequest = [NSMutableURLRequest requestWithURL:[[NSURL URLWithString:baseURLString] standardizedURL]];
-        
+                
+                
+                // Add post call to send schedule data CMSC330||stuff
+
+                NSString *renderURLString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,uploadScheduleURLString];
+                NSString *addCoursesURLString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,updateCoursesURLString];
+                NSMutableURLRequest *renderRequest = [NSMutableURLRequest requestWithURL:[[NSURL URLWithString:renderURLString] standardizedURL]];
+                NSMutableURLRequest *addScheduleRequest = [NSMutableURLRequest requestWithURL:[[NSURL URLWithString:addCoursesURLString] standardizedURL]];
+                
                 scheduleHtml = [scheduleHtml stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
             
                 scheduleHtml = [NSString stringWithFormat:@"term=201401&html=%@",scheduleHtml];
@@ -77,13 +87,32 @@
                 [renderRequest setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
                 [renderRequest setHTTPBody:postData];
             
-                NSURLConnection *connection = [[NSURLConnection alloc]  initWithRequest:renderRequest delegate:self];
-            
+                NSURLConnection *renderConnection = [[NSURLConnection alloc]  initWithRequest:renderRequest delegate:self];
+                
                 scheduleHtml = [scheduleHtml stringByRemovingPercentEncoding];
-                if(connection)
+                if(renderConnection)
                 {
                     NSLog(@"Connection Successful");
-                    [connection start];
+                    [renderConnection start];
+                }
+                else
+                {
+                    NSLog(@"Connection could not be made");
+                }
+                
+                coursesString = [coursesString stringByReplacingOccurrencesOfString:@"|" withString:@","];
+                coursesString = [coursesString stringByReplacingOccurrencesOfString:@"/" withString:@"|"];
+                coursesString = [coursesString substringToIndex:[coursesString length]-1];
+                coursesString = [NSString stringWithFormat:@"term=201401&schedule=%@",coursesString];
+                postData = [coursesString dataUsingEncoding:NSASCIIStringEncoding];
+                [addScheduleRequest setHTTPMethod:@"POST"];
+                [addScheduleRequest setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+                [addScheduleRequest setHTTPBody:postData];
+                NSURLConnection *addScheduleConnection = [[NSURLConnection alloc]  initWithRequest:addScheduleRequest delegate:self];
+                if(addScheduleConnection)
+                {
+                    NSLog(@"Connection Successful");
+                    [addScheduleConnection start];
                 }
                 else
                 {

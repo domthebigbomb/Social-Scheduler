@@ -25,6 +25,7 @@
     NSString *socialSchedulerURLString;
     NSString *classesWithContactURLString;
     NSString *fbLoginURLString;
+    NSString *courseString;
     NSMutableArray *insertIndexPaths;
     NSMutableDictionary *contactPics;
     Reachability *internetReachability;
@@ -58,7 +59,21 @@
         NSData *data;
         NSError *error;
         data = [NSURLConnection sendSynchronousRequest:fbLoginRequest returningResponse:&response error:&error];
-        _courses = [[NSMutableDictionary alloc] initWithDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:@"Courses"]];
+        courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+        
+        // Parse Course String to get classes
+        _courses = [[NSMutableDictionary alloc] init];
+        NSUInteger index;
+        while(![courseString isEqualToString:@""]){
+            index =[courseString rangeOfString:@"|"].location;
+            NSString *class = [courseString substringToIndex:index];
+            courseString = [courseString substringFromIndex:index + 1];
+            index =[courseString rangeOfString:@"/"].location;
+            NSString *section = [courseString substringToIndex: index];
+            courseString = [courseString substringFromIndex:index + 1];
+            [_courses setObject:section forKey:class];
+        }
+        
         _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
         NSLog(@"Courses: %@",[_courses description]);
         [self courseTableView].dataSource = self;
@@ -75,6 +90,10 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     network = [internetReachability currentReachabilityStatus];
+
+    //Address the bug in ios7 where separators would disappear
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];

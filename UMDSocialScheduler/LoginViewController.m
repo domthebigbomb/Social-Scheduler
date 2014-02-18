@@ -29,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UIView *loginFieldsView;
 @property (strong, nonatomic) IBOutlet UIPickerView *semesterPickerView;
 @property (weak, nonatomic) IBOutlet UITextField *semesterField;
+@property (weak, nonatomic) IBOutlet FBLoginView *fbLoginView;
 
 @end
 
@@ -41,7 +42,7 @@
     NSString *courseString;
     NSString *renderScheduleURL;
     NSArray *semesters;
-    NSMutableDictionary *courses;
+    NSArray *semesterInfo;
     int count;
 }
 
@@ -58,9 +59,10 @@
 {
     [super viewDidLoad];
     _semesterPickerView = [[UIPickerView alloc] init];
+    /*
     FBLoginView *loginView = [[FBLoginView alloc] initWithReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
     loginView.delegate = self;
-
+    
     CGRect frame = loginView.frame;
     frame.size.width  = _loginContainer.frame.size.width;
     [loginView setFrame:frame];
@@ -69,21 +71,21 @@
     loginView.frame = CGRectOffset(loginView.frame, loginX, loginY);
     // 52, 25
     // 52,480
+    */
+    [_fbLoginView setReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
+    [_fbLoginView setDelegate:self];
     
     renderScheduleURL = @"http://www.umdsocialscheduler.com/render_schedule?";
 
-    [self.visualView addSubview:loginView];
+    //[self.visualView addSubview:loginView];
     
     count = 0;
-    
-    scheduleURL = @"https://mobilemy.umd.edu/portal/server.pt;MYUMSESSION=31CqSykpJ1DWxzwpvwRFK6J2XT4ccpltBcNSX9cybklfbKmfjxvS!1501198949?cached=false&redirect=https%3A%2F%2Fmobilemy.umd.edu%2Fportal%2Fserver.pt%2Fgateway%2FPTARGS_0_340574_368_211_0_43%2Fhttps%3B%2Fwww.sis.umd.edu%2Ftestudo%2FstudentSched%3Fterm%3D201401&space=Login";
     testURL = @"http://testudo.umd.edu/ssched/index.html";
     htmlScript = @"document.body.innerHTML";
     
-    semesters = @[@"Spring 2014", @"Winter 2013",@"Fall 2013", @"Summer 2013", @"Spring 2013",@"Winter 2012"];
+    semesters = @[@"Spring 2014", @"Winter 2014",@"Fall 2013", @"Summer 2013", @"Spring 2013",@"Winter 2013"];
     [_semesterPickerView setDelegate:self];
     [_semesterPickerView setDataSource: self];
-    courses = [[NSMutableDictionary alloc] init];
     
     _webPage = [[UIWebView alloc] init];
     
@@ -96,21 +98,8 @@
     [self loadDesignElements];
 }
 
--(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
-    return 1;
-}
-
--(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
-    return [semesters count];
-}
-
--(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
-    return [semesters objectAtIndex:row];
-}
-
--(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
-    _tap.enabled = YES;
-    [_semesterField setText:[semesters objectAtIndex:row]];
+-(void)viewDidAppear:(BOOL)animated{
+    scheduleURL = @"https://mobilemy.umd.edu/portal/server.pt;MYUMSESSION=31CqSykpJ1DWxzwpvwRFK6J2XT4ccpltBcNSX9cybklfbKmfjxvS!1501198949?cached=false&redirect=https%3A%2F%2Fmobilemy.umd.edu%2Fportal%2Fserver.pt%2Fgateway%2FPTARGS_0_340574_368_211_0_43%2Fhttps%3B%2Fwww.sis.umd.edu%2Ftestudo%2FstudentSched%3Fterm%3D201401&space=Login";
 }
 
 -(void)loadDesignElements{
@@ -141,6 +130,7 @@
     count ++;
     [_webPage stringByEvaluatingJavaScriptFromString:loginScript];
     htmlString = [_webPage stringByEvaluatingJavaScriptFromString:htmlScript];
+    NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     if(count == 2){
         if([htmlString rangeOfString:@"alertErrorTitle"].location != NSNotFound){
             NSLog(@"Login Failed");
@@ -158,6 +148,7 @@
             [_activityIndicator stopAnimating];
             [_usernameField setEnabled:YES];
             [_passwordField setEnabled:YES];
+            [_semesterField setEnabled:YES];
         }else{
             NSLog(@"Login Success");
             courseString = [NSString stringWithString:htmlString];
@@ -169,36 +160,26 @@
             NSLog(@"Trimmed first half");
             htmlString = [htmlString substringToIndex:[htmlString rangeOfString:@"</center>"].location];
             
-            renderScheduleURL = [NSString stringWithFormat:@"%@term=201401&html=%@",renderScheduleURL, htmlString];
+            /*
+            renderScheduleURL = [NSString stringWithFormat:@"%@term=%@&html=%@", renderScheduleURL, termCode, htmlString];
             NSURL *renderURL = [NSURL URLWithString:renderScheduleURL];
             NSURLRequest *renderRequest = [NSURLRequest requestWithURL:renderURL];
             [NSURLConnection sendAsynchronousRequest:renderRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                 id JSON = [data yajl_JSON];
                 NSLog(@"%@",[JSON yajl_JSONStringWithOptions:YAJLGenOptionsBeautify indentString:@"  "]);
             }];
-            
+            */
             // Extract courses
             NSString *searchString = @"<input type=\"hidden\" name=\"schedstr\" value=\"";
             searchString = @"href=\"javascript:bookstorelist(\'";
             courseString = [courseString substringFromIndex:[courseString rangeOfString:searchString].location + [searchString length]];
             courseString = [courseString substringToIndex:[courseString rangeOfString:@"\'"].location];
-            NSUInteger index;
-            while(![courseString isEqualToString:@""]){
-                index =[courseString rangeOfString:@"|"].location;
-                NSString *class = [courseString substringToIndex:index];
-                courseString = [courseString substringFromIndex:index + 1];
-                index =[courseString rangeOfString:@"/"].location;
-                NSString *section = [courseString substringToIndex: index];
-                courseString = [courseString substringFromIndex:index + 1];
-                [courses setObject:section forKey:class];
-            }
+            
             //String brodder = "jonathan";
             [_activityIndicator stopAnimating];
             _webPage.delegate = nil;
             //NSLog(@"\n%@",courseString);
             [self performSegueWithIdentifier:@"ShowSchedule" sender:self];
-            
-            
         }
     }
 }
@@ -207,6 +188,42 @@
     NSLog(@"%@",[error localizedDescription]);
 }
 
+// Picker functinos
+-(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
+    return 1;
+}
+
+-(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
+    return [semesters count];
+}
+
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    return [semesters objectAtIndex:row];
+}
+
+-(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
+    _tap.enabled = YES;
+    [_semesterField setText:[semesters objectAtIndex:row]];
+    NSString *semesterString = [semesters objectAtIndex:row];
+    NSString *season = [semesterString substringToIndex:[semesterString rangeOfString:@" "].location];
+    NSInteger year = [[semesterString substringFromIndex:[semesterString rangeOfString:@" "].location+1] integerValue];
+    if([season isEqualToString:@"Winter"]){
+        year--;
+        season = @"12";
+    }else if([season isEqualToString:@"Spring"]){
+        season = @"01";
+    }else if([season isEqualToString:@"Summer"]){
+        season = @"05";
+    }else if([season isEqualToString:@"Fall"]){
+        season = @"08";
+    }else{
+        season = @"01";
+        //default case
+    }
+    semesterInfo = [[NSArray alloc] initWithObjects:season, [NSString stringWithFormat:@"%d",year], nil];
+    NSString *termCode = [NSString stringWithFormat:@"%d%@",year,season];
+    [[NSUserDefaults standardUserDefaults] setObject:termCode forKey:@"SemesterInfo"];
+}
 
 // Facebook login related functions
 -(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
@@ -261,10 +278,8 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([[segue identifier] isEqualToString:@"ShowSchedule"]){
-        SocialSchedulerFirstViewController *scheduleController = (SocialSchedulerFirstViewController *)segue.destinationViewController;
         NSString *webPageCode = htmlString;
-        scheduleController.htmlString = webPageCode;
-        scheduleController.courses = courses;
+        //scheduleController.htmlString = webPageCode;
         //scheduleController.newSchedule = YES;
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Courses"];
@@ -272,16 +287,37 @@
         [[NSUserDefaults standardUserDefaults] setBool: YES forKey:@"refreshClasses"];
         [[NSUserDefaults standardUserDefaults] setBool: YES forKey:@"refreshFriends"];
         [[NSUserDefaults standardUserDefaults] setObject:webPageCode forKey:@"Schedule"];
-        [[NSUserDefaults standardUserDefaults] setObject:courses forKey:@"Courses"];
+        [[NSUserDefaults standardUserDefaults] setObject:courseString forKey:@"Courses"];
     }
 }
 
 -(NSString *)cleanUpSpecialCharactersOfString:(NSString *)stringToClean{
     stringToClean = [stringToClean stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
     stringToClean = [stringToClean stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"];
-    
     return stringToClean;
 }
+
+/*
+- (NSString *) URLEncodedString_ch {
+    NSMutableString * output = [NSMutableString string];
+    const unsigned char * source = (const unsigned char *)[self UTF8String];
+    int sourceLen = strlen((const char *)source);
+    for (int i = 0; i < sourceLen; ++i) {
+        const unsigned char thisChar = source[i];
+        if (thisChar == ' '){
+            [output appendString:@"+"];
+        } else if (thisChar == '.' || thisChar == '-' || thisChar == '_' || thisChar == '~' ||
+                   (thisChar >= 'a' && thisChar <= 'z') ||
+                   (thisChar >= 'A' && thisChar <= 'Z') ||
+                   (thisChar >= '0' && thisChar <= '9')) {
+            [output appendFormat:@"%c", thisChar];
+        } else {
+            [output appendFormat:@"%%%02X", thisChar];
+        }
+    }
+    return output;
+}
+ */
 
 - (IBAction)login:(UIButton *)sender {
     Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
@@ -296,14 +332,20 @@
         }else{
             NSString *username = _usernameField.text;
             NSString *password = _passwordField.text;
+            
             username = [self cleanUpSpecialCharactersOfString:username];
             password = [self cleanUpSpecialCharactersOfString:password];
             loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",username,password];
             NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
             [self performSelector:@selector(hideKeyboard)];
+            
+            NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+            scheduleURL = [scheduleURL stringByReplacingOccurrencesOfString:@"201401" withString: termCode];
+            
             _webPage.delegate = self;
             [_usernameField setEnabled:NO];
             [_passwordField setEnabled:NO];
+            [_semesterField setEnabled:NO];
             [_activityIndicator startAnimating];
             [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:scheduleURL]]];
         }
