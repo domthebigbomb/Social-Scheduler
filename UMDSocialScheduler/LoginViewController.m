@@ -59,31 +59,17 @@
 {
     [super viewDidLoad];
     _semesterPickerView = [[UIPickerView alloc] init];
-    /*
-    FBLoginView *loginView = [[FBLoginView alloc] initWithReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
-    loginView.delegate = self;
     
-    CGRect frame = loginView.frame;
-    frame.size.width  = _loginContainer.frame.size.width;
-    [loginView setFrame:frame];
-    int loginX =((self.view.frame.size.width)/2)-loginView.frame.size.width/2 -2;
-    int loginY = _loginFieldsView.frame.origin.y + _loginFieldsView.frame.size.height;
-    loginView.frame = CGRectOffset(loginView.frame, loginX, loginY);
-    // 52, 25
-    // 52,480
-    */
     [_fbLoginView setReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
     [_fbLoginView setDelegate:self];
     
     renderScheduleURL = @"http://www.umdsocialscheduler.com/render_schedule?";
-
-    //[self.visualView addSubview:loginView];
     
     count = 0;
     testURL = @"http://testudo.umd.edu/ssched/index.html";
     htmlScript = @"document.body.innerHTML";
     
-    semesters = @[@"Spring 2014", @"Winter 2014",@"Fall 2013", @"Summer 2013", @"Spring 2013",@"Winter 2013"];
+    semesters = @[@"Spring 2014", @"Winter 2014",@"Fall 2013", @"Summer 2013", @"Spring 2013",@"Winter 2013",@"Fall 2012"];
     [_semesterPickerView setDelegate:self];
     [_semesterPickerView setDataSource: self];
     
@@ -130,7 +116,6 @@
     count ++;
     [_webPage stringByEvaluatingJavaScriptFromString:loginScript];
     htmlString = [_webPage stringByEvaluatingJavaScriptFromString:htmlScript];
-    NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     if(count == 2){
         if([htmlString rangeOfString:@"alertErrorTitle"].location != NSNotFound){
             NSLog(@"Login Failed");
@@ -160,15 +145,6 @@
             NSLog(@"Trimmed first half");
             htmlString = [htmlString substringToIndex:[htmlString rangeOfString:@"</center>"].location];
             
-            /*
-            renderScheduleURL = [NSString stringWithFormat:@"%@term=%@&html=%@", renderScheduleURL, termCode, htmlString];
-            NSURL *renderURL = [NSURL URLWithString:renderScheduleURL];
-            NSURLRequest *renderRequest = [NSURLRequest requestWithURL:renderURL];
-            [NSURLConnection sendAsynchronousRequest:renderRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                id JSON = [data yajl_JSON];
-                NSLog(@"%@",[JSON yajl_JSONStringWithOptions:YAJLGenOptionsBeautify indentString:@"  "]);
-            }];
-            */
             // Extract courses
             NSString *searchString = @"<input type=\"hidden\" name=\"schedstr\" value=\"";
             searchString = @"href=\"javascript:bookstorelist(\'";
@@ -203,6 +179,7 @@
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
     _tap.enabled = YES;
+    //[_semesterField setUserInteractionEnabled:NO];
     [_semesterField setText:[semesters objectAtIndex:row]];
     NSString *semesterString = [semesters objectAtIndex:row];
     NSString *season = [semesterString substringToIndex:[semesterString rangeOfString:@" "].location];
@@ -218,6 +195,7 @@
         season = @"08";
     }else{
         season = @"01";
+        year = 2014;
         //default case
     }
     semesterInfo = [[NSArray alloc] initWithObjects:season, [NSString stringWithFormat:@"%d",year], nil];
@@ -249,7 +227,7 @@
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    _visualView.center = CGPointMake(self.originalCenter.x, self.originalCenter.y - 120);
+    _visualView.center = CGPointMake(_originalCenter.x, _originalCenter.y - 120);
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -263,7 +241,7 @@
 
 -(void)hideKeyboard
 {
-    _visualView.center = self.originalCenter;
+    _visualView.center = _originalCenter;
     [_usernameField resignFirstResponder];
     [_passwordField resignFirstResponder];
     [_semesterField resignFirstResponder];
@@ -325,6 +303,9 @@
     if([[_usernameField text]isEqualToString:@""] || [[_passwordField text] isEqualToString:@""]){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"Please complete enter both University ID (Not a number) and Password" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
+    }else if([[_semesterField text]isEqualToString:@""]){
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"Please select a semester to view" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
+        [_alertMsg show];
     }else{
         if(network == NotReachable){
             _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
@@ -340,6 +321,7 @@
             [self performSelector:@selector(hideKeyboard)];
             
             NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+            NSLog(@"TermCode: %@",termCode);
             scheduleURL = [scheduleURL stringByReplacingOccurrencesOfString:@"201401" withString: termCode];
             
             _webPage.delegate = self;

@@ -28,6 +28,7 @@
     NSString *fbLoginURLString;
     NSString *scheduleHtml;
     NSString *coursesString;
+    NSString *termCode;
     int count;
 }
 
@@ -48,7 +49,8 @@
     _visibleWebView.delegate = self;
     _newSchedule = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshSchedule"];
     _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
-    coursesString = [NSString stringWithString:[[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"]];
+    coursesString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     if(_htmlString != nil)
         scheduleHtml = [NSString stringWithString: _htmlString];
     if(_newSchedule == YES || [_htmlString length]>0){
@@ -80,7 +82,7 @@
                 
                 scheduleHtml = [scheduleHtml stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
             
-                scheduleHtml = [NSString stringWithFormat:@"term=201401&html=%@",scheduleHtml];
+                scheduleHtml = [NSString stringWithFormat:@"term=%@&html=%@",termCode,scheduleHtml];
                 NSData *postData = [scheduleHtml dataUsingEncoding:NSASCIIStringEncoding];
 
                 [renderRequest setHTTPMethod:@"POST"];
@@ -103,7 +105,7 @@
                 coursesString = [coursesString stringByReplacingOccurrencesOfString:@"|" withString:@","];
                 coursesString = [coursesString stringByReplacingOccurrencesOfString:@"/" withString:@"|"];
                 coursesString = [coursesString substringToIndex:[coursesString length]-1];
-                coursesString = [NSString stringWithFormat:@"term=201401&schedule=%@",coursesString];
+                coursesString = [NSString stringWithFormat:@"term=%@&schedule=%@",termCode,coursesString];
                 postData = [coursesString dataUsingEncoding:NSASCIIStringEncoding];
                 [addScheduleRequest setHTTPMethod:@"POST"];
                 [addScheduleRequest setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
@@ -188,7 +190,7 @@
 }
 */
 -(UIImage *)getSchedule{
-    UIGraphicsBeginImageContextWithOptions([_visibleWebView bounds].size,NO,2.0f);
+    UIGraphicsBeginImageContextWithOptions([_visibleWebView bounds].size,NO,0);
     [[_visibleWebView layer] renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *capturedScreen = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

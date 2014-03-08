@@ -18,6 +18,7 @@
 @property (strong,nonatomic) NSArray *courseKeys;
 @property (strong, nonatomic) NSMutableArray *contacts;
 @property (strong, nonatomic) UIAlertView *alertMsg;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 @end
 
@@ -26,6 +27,7 @@
     NSString *classesWithContactURLString;
     NSString *fbLoginURLString;
     NSString *courseString;
+    NSString *termCode;
     NSMutableArray *insertIndexPaths;
     NSMutableDictionary *contactPics;
     Reachability *internetReachability;
@@ -49,10 +51,12 @@
 -(void)viewDidAppear:(BOOL)animated{
     network = [internetReachability currentReachabilityStatus];
     NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
+    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
     }else{
+        [_activityIndicator startAnimating];
         NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
         NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
         NSURLResponse *response;
@@ -76,6 +80,7 @@
         
         _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
         NSLog(@"Courses: %@",[_courses description]);
+        [_activityIndicator stopAnimating];
         [self courseTableView].dataSource = self;
         [self courseTableView].delegate = self;
         [[self courseTableView] reloadData];
@@ -102,7 +107,7 @@
         selectedIndex = row;
         if(!showContact){
             NSString *course = [_courseKeys objectAtIndex:row];
-            NSString *requestString = [NSString stringWithFormat:@"%@%@term=201401&course=%@",socialSchedulerURLString,classesWithContactURLString,course];
+            NSString *requestString = [NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,classesWithContactURLString,termCode,course];
             NSURL *requestURL = [NSURL URLWithString:requestString];
             NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
             [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {

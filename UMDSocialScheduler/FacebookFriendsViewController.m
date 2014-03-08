@@ -39,6 +39,7 @@
     NSMutableArray *contactWithMutualClasses;
     UIImage *contactScheduleImage;
     NSString *scheduleFbid;
+    NSString *termCode;
     Reachability *internetReachability;
     NetworkStatus network;
     BOOL showSchedule;
@@ -66,7 +67,7 @@
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     getListOfFriendsURLString = @"friends_with_app";
     fbLoginURLString = @"access?access_token=";
-    getFriendsInCourseURLString = @"friends?term=201401&";
+    getFriendsInCourseURLString = @"friends?";
     
     [self refreshFriends];
     
@@ -77,6 +78,7 @@
 -(void)viewDidAppear:(BOOL)animated{
     BOOL refreshFriends = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"];
     NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     userSchedule = [[NSMutableDictionary alloc] init];
     NSUInteger index;
     while(![courseString isEqualToString:@""]){
@@ -133,7 +135,7 @@
                     
                     NSArray *courses = [userSchedule allKeys];
                     for(NSString *course in courses){
-                        NSURLRequest *getCourseFriendsRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@course=%@",socialSchedulerURLString,getFriendsInCourseURLString,course]]];
+                        NSURLRequest *getCourseFriendsRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,getFriendsInCourseURLString,termCode,course]]];
                         [NSURLConnection sendAsynchronousRequest:getCourseFriendsRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                             id courseFriendsJSON = [data yajl_JSON];
                             NSArray *friends = [courseFriendsJSON objectForKey:@"data"];
@@ -147,7 +149,7 @@
                             //NSLog(@"Contact With Mutual Classes: %@",[contactWithMutualClasses description]);
                             
                             for(NSString *fbid in contactWithMutualClasses){
-                                NSURLRequest *scheduleRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule?term=201401&fbid=%@",fbid]]];
+                                NSURLRequest *scheduleRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule?term=%@&fbid=%@",termCode,fbid]]];
                                 NSURLResponse *response;
                                 NSError *error;
                                 NSData *data = [NSURLConnection sendSynchronousRequest:scheduleRequest returningResponse:&response error:&error];
@@ -263,7 +265,7 @@
     NSIndexPath *indexPath = [self.contactTableView indexPathForRowAtPoint:buttonPosition];
     scheduleIndex = [indexPath row];
     ContactCell *contact = (ContactCell *) [[self contactTableView] cellForRowAtIndexPath:indexPath];
-    UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule_image?term=201401&fbid=%@", contact.fbid]]]];
+    UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule_image?term=%@&fbid=%@",termCode, contact.fbid]]]];
     contactScheduleImage = contactPic;
     [_tapGesture setEnabled: YES];
     [_scheduleScrollView setZoomScale:1.0];
