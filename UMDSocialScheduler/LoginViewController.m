@@ -42,7 +42,10 @@
     NSString *courseString;
     NSString *renderScheduleURL;
     NSArray *semesters;
+    NSArray *years;
     NSArray *semesterInfo;
+    NSInteger semesterIndex;
+    NSInteger yearIndex;
     int count;
 }
 
@@ -69,7 +72,10 @@
     testURL = @"http://testudo.umd.edu/ssched/index.html";
     htmlScript = @"document.body.innerHTML";
     
-    semesters = @[@"Spring 2014", @"Winter 2014",@"Fall 2013", @"Summer 2013", @"Spring 2013",@"Winter 2013",@"Fall 2012"];
+    semesters = @[@"Spring", @"Summer",@"Fall", @"Winter"];
+    years = @[@"2014",@"2013",@"2012"];
+    semesterIndex = 0;
+    yearIndex = 0;
     [_semesterPickerView setDelegate:self];
     [_semesterPickerView setDataSource: self];
     
@@ -116,7 +122,7 @@
     count ++;
     [_webPage stringByEvaluatingJavaScriptFromString:loginScript];
     htmlString = [_webPage stringByEvaluatingJavaScriptFromString:htmlScript];
-    if(count == 2){
+    if(count %2 == 0){
         if([htmlString rangeOfString:@"alertErrorTitle"].location != NSNotFound){
             NSLog(@"Login Failed");
             count = 0;
@@ -129,6 +135,13 @@
             [_passwordField setEnabled:YES];
         }else if ([htmlString rangeOfString:@"An Error occurred while running this application"].location != NSNotFound){
             _alertMsg = [[UIAlertView alloc] initWithTitle:@"Server Error" message:@"There seems to be a problem loading schedules. Please contact the Office of the Registrar if problem persists" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+            [_alertMsg show];
+            [_activityIndicator stopAnimating];
+            [_usernameField setEnabled:YES];
+            [_passwordField setEnabled:YES];
+            [_semesterField setEnabled:YES];
+        }else if([htmlString rangeOfString:@"You are not currently registered"].location != NSNotFound){
+            _alertMsg = [[UIAlertView alloc] initWithTitle:@"Schedule Error" message:@"You have not registered for any classes in the selected semester" delegate:nil cancelButtonTitle:@"Got it" otherButtonTitles: nil];
             [_alertMsg show];
             [_activityIndicator stopAnimating];
             [_usernameField setEnabled:YES];
@@ -161,29 +174,51 @@
 }
 
 -(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
+    _alertMsg = [[UIAlertView alloc] initWithTitle:@"Server Error" message:@"Failed to load mobilemy.umd.edu" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [_alertMsg show];
+    [_activityIndicator stopAnimating];
+    [_usernameField setEnabled:YES];
+    [_passwordField setEnabled:YES];
+    [_semesterField setEnabled:YES];
     NSLog(@"%@",[error localizedDescription]);
 }
 
 // Picker functinos
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView{
-    return 1;
+    return 2;
 }
 
 -(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
-    return [semesters count];
+    if (component == 0){
+        return [semesters count];
+    }else{
+        return [years count];
+    }
 }
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
-    return [semesters objectAtIndex:row];
+    if (component == 0)
+        return [semesters objectAtIndex:row];
+    else{
+        return [years objectAtIndex:row];
+    }
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
     _tap.enabled = YES;
-    //[_semesterField setUserInteractionEnabled:NO];
-    [_semesterField setText:[semesters objectAtIndex:row]];
-    NSString *semesterString = [semesters objectAtIndex:row];
-    NSString *season = [semesterString substringToIndex:[semesterString rangeOfString:@" "].location];
-    NSInteger year = [[semesterString substringFromIndex:[semesterString rangeOfString:@" "].location+1] integerValue];
+    
+    if (component == 0) {
+        semesterIndex = row;
+    } else {
+        yearIndex = row;
+    }
+    NSString *semesterString = [semesters objectAtIndex:semesterIndex];
+    NSString *yearString = [years objectAtIndex:yearIndex];
+    NSString *termString = [NSString stringWithFormat:@"%@ %@",semesterString,yearString];
+    [_semesterField setText:termString];
+    
+    NSString *season = [NSString stringWithString: semesterString ];
+    NSInteger year = [yearString integerValue];
     if([season isEqualToString:@"Winter"]){
         year--;
         season = @"12";
@@ -201,6 +236,7 @@
     semesterInfo = [[NSArray alloc] initWithObjects:season, [NSString stringWithFormat:@"%d",year], nil];
     NSString *termCode = [NSString stringWithFormat:@"%d%@",year,season];
     [[NSUserDefaults standardUserDefaults] setObject:termCode forKey:@"SemesterInfo"];
+    
 }
 
 // Facebook login related functions

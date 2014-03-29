@@ -50,41 +50,46 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     network = [internetReachability currentReachabilityStatus];
-    NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
+    
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
     }else{
-        [_activityIndicator startAnimating];
-        NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
-        NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
-        NSURLResponse *response;
-        NSData *data;
-        NSError *error;
-        data = [NSURLConnection sendSynchronousRequest:fbLoginRequest returningResponse:&response error:&error];
-        courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
-        
-        // Parse Course String to get classes
-        _courses = [[NSMutableDictionary alloc] init];
-        NSUInteger index;
-        while(![courseString isEqualToString:@""]){
-            index =[courseString rangeOfString:@"|"].location;
-            NSString *class = [courseString substringToIndex:index];
-            courseString = [courseString substringFromIndex:index + 1];
-            index =[courseString rangeOfString:@"/"].location;
-            NSString *section = [courseString substringToIndex: index];
-            courseString = [courseString substringFromIndex:index + 1];
-            [_courses setObject:section forKey:class];
-        }
-        
-        _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
-        NSLog(@"Courses: %@",[_courses description]);
-        [_activityIndicator stopAnimating];
-        [self courseTableView].dataSource = self;
-        [self courseTableView].delegate = self;
-        [[self courseTableView] reloadData];
+        [self refreshClasses];
     }
+}
+
+-(void)refreshClasses{
+    NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
+    [_activityIndicator startAnimating];
+    NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
+    NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
+    NSURLResponse *response;
+    NSData *data;
+    NSError *error;
+    data = [NSURLConnection sendSynchronousRequest:fbLoginRequest returningResponse:&response error:&error];
+    courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+    
+    // Parse Course String to get classes
+    _courses = [[NSMutableDictionary alloc] init];
+    NSUInteger index;
+    while(![courseString isEqualToString:@""]){
+        index =[courseString rangeOfString:@"|"].location;
+        NSString *class = [courseString substringToIndex:index];
+        courseString = [courseString substringFromIndex:index + 1];
+        index =[courseString rangeOfString:@"/"].location;
+        NSString *section = [courseString substringToIndex: index];
+        courseString = [courseString substringFromIndex:index + 1];
+        [_courses setObject:section forKey:class];
+    }
+    
+    _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
+    NSLog(@"Courses: %@",[_courses description]);
+    [_activityIndicator stopAnimating];
+    [self courseTableView].dataSource = self;
+    [self courseTableView].delegate = self;
+    [[self courseTableView] reloadData];
 }
 
 - (void)didReceiveMemoryWarning

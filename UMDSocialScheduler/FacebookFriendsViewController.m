@@ -184,12 +184,19 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [contacts count];
+        return [contacts count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellIdentifier = @"ContactCell";
     
+    /*
+    if ([contacts count] == 0){
+        cellIdentifier = @"NoFriends";
+        UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        return cell;
+    }
+    */
     ContactCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 
     int rowNumber = indexPath.row;
