@@ -47,14 +47,35 @@
                                     </navigationItem>
                                 </items>
                             </navigationBar>
+                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cPS-SQ-vVA">
+                                <rect key="frame" x="0.0" y="472" width="320" height="47"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aKE-KT-647">
+                                        <rect key="frame" x="55" y="6" width="210" height="33"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                        <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="20"/>
+                                        <state key="normal" title="Share To Facebook">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="postSchedule:" destination="CZ4-MO-1fc" eventType="touchUpInside" id="9Kc-b5-ejm"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstAttribute="centerY" secondItem="SSg-K9-KwH" secondAttribute="centerY" constant="-32" id="dfx-8I-tBD"/>
+                            <constraint firstItem="Kee-hv-CzZ" firstAttribute="top" secondItem="cPS-SQ-vVA" secondAttribute="bottom" id="1Ra-I9-Fmq"/>
+                            <constraint firstAttribute="centerY" secondItem="SSg-K9-KwH" secondAttribute="centerY" constant="-32" id="xbv-6n-PIB"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Schedule" image="Schedule" id="u1e-5L-l1D"/>
                     <connections>
+                        <outlet property="shareToFbButton" destination="aKE-KT-647" id="xTo-Jy-zXx"/>
                         <outlet property="visibleWebView" destination="SSg-K9-KwH" id="wSF-uQ-WhQ"/>
                         <segue destination="w17-wV-20u" kind="modal" identifier="ShowLogin" id="zIL-6G-K8M"/>
                     </connections>
@@ -553,6 +574,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="CEr-Gv-F6C"/>
+        <segue reference="zIL-6G-K8M"/>
     </inferredMetricsTieBreakers>
 </document>

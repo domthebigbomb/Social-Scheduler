@@ -8,10 +8,10 @@
 //
 
 #import "SocialSchedulerSecondViewController.h"
-#import <YAJL/YAJL.h>
 #import "CourseCell.h"
 #import "Reachability.h"
 #import "ClassContactCell.h"
+
 @interface SocialSchedulerSecondViewController ()
 @property (strong,nonatomic) NSMutableDictionary *courses;
 @property (weak, nonatomic) IBOutlet UITableView *courseTableView;
@@ -116,7 +116,8 @@
             NSURL *requestURL = [NSURL URLWithString:requestString];
             NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
             [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                id JSON = [data yajl_JSON];
+                NSError *error;
+                NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                 _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
                 
                 int i = 0;

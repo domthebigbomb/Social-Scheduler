@@ -12,6 +12,6 @@
 
 @property (strong,nonatomic) NSString *htmlString;
 @property BOOL newSchedule;
-
+-(void)renderSchedule;
 -(IBAction)showSchedule:(UIStoryboardSegue *)segue;
 @end

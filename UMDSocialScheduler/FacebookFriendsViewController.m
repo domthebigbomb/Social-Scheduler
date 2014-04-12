@@ -7,10 +7,10 @@
 //
 
 #import "FacebookFriendsViewController.h"
-#import <YAJL/YAJL.h>
 #import "Reachability.h"
 #import "ContactCell.h"
 #import "ContactScheduleCell.h"
+
 @interface FacebookFriendsViewController ()
 - (IBAction)showSchedule:(UIButton *)sender;
 - (IBAction)hideSchedule:(UIButton *)sender;
@@ -43,7 +43,7 @@
     Reachability *internetReachability;
     NetworkStatus network;
     BOOL showSchedule;
-    int scheduleIndex;
+    NSInteger scheduleIndex;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -111,13 +111,15 @@
             NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
             
             [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                id JSON = [data yajl_JSON];
+                NSError *error;
+            NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                 NSLog(@"Login Response: %@", response);
                 NSLog(@"Login Error: %@", connectionError);
-                NSLog(@"Login JSON: %@",[JSON yajl_JSONStringWithOptions:YAJLGenOptionsBeautify indentString:@"  "]);
+                NSLog(@"Login JSON: %@",[JSON description]);
+        
                 NSDictionary *loginData = [[NSDictionary alloc] initWithDictionary:[JSON valueForKey:@"data"]];
                 BOOL shareEnabled = [[loginData valueForKey:@"share"] boolValue];
-                NSLog(@"Sharing Enabled: %hhd",shareEnabled);
+                NSLog(@"Sharing Enabled: %d",shareEnabled);
                 
                 if(!shareEnabled){
                     [_sharingEnabledLabel setText:@"No"];
@@ -127,7 +129,8 @@
                 NSURLRequest *request = [NSURLRequest requestWithURL:getContactURL];
                 [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                     [contactData appendData:data];
-                    id JSON = [data yajl_JSON];
+                    NSError *error;
+                    NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                     contacts = [[NSMutableArray alloc] initWithArray:[JSON valueForKey:@"data"]];
                     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
                     [contacts sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
@@ -137,7 +140,8 @@
                     for(NSString *course in courses){
                         NSURLRequest *getCourseFriendsRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,getFriendsInCourseURLString,termCode,course]]];
                         [NSURLConnection sendAsynchronousRequest:getCourseFriendsRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                            id courseFriendsJSON = [data yajl_JSON];
+                            NSError *error;
+                            NSMutableDictionary *courseFriendsJSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                             NSArray *friends = [courseFriendsJSON objectForKey:@"data"];
                             for(NSDictionary *friend in friends){
                                 NSString *fbid = [friend objectForKey:@"fbid"];
@@ -153,7 +157,7 @@
                                 NSURLResponse *response;
                                 NSError *error;
                                 NSData *data = [NSURLConnection sendSynchronousRequest:scheduleRequest returningResponse:&response error:&error];
-                                id JSON = [data yajl_JSON];
+                                NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                                 NSArray *contactCourses = [[NSArray alloc] initWithArray:[JSON valueForKey:@"data"]];
                                 [contactSchedules setObject:contactCourses forKey:fbid];
                             }
@@ -199,7 +203,7 @@
     */
     ContactCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 
-    int rowNumber = indexPath.row;
+    NSInteger rowNumber = indexPath.row;
     NSDictionary *contactInfo = [contacts objectAtIndex:rowNumber];
     NSString *name = [NSString stringWithFormat:@"%@",[contactInfo objectForKey:@"name"]];
     NSString *fbid = [NSString stringWithFormat:@"%@",[contactInfo objectForKey:@"fbid"]];

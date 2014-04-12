@@ -31,7 +31,6 @@
 		0B8E0BF718A5EB8100863181 /* FacebookFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BF618A5EB8100863181 /* FacebookFriendsViewController.m */; };
 		0BA0CB8718A86F8B005AAFD5 /* CourseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0CB8618A86F8B005AAFD5 /* CourseCell.m */; };
 		0BA0CB8A18A87CD2005AAFD5 /* ContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BA0CB8918A87CD2005AAFD5 /* ContactCell.m */; };
-		0BA0CB8C18A88409005AAFD5 /* YAJL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BA0CB8B18A88409005AAFD5 /* YAJL.framework */; };
 		0BA8C13118AB1BB4000F3734 /* AppIcon29x29.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12118AB1BB4000F3734 /* AppIcon29x29.png */; };
 		0BA8C13218AB1BB4000F3734 /* AppIcon29x29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12218AB1BB4000F3734 /* AppIcon29x29@2x.png */; };
 		0BA8C13318AB1BB4000F3734 /* AppIcon40x40.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12318AB1BB4000F3734 /* AppIcon40x40.png */; };
@@ -102,7 +101,6 @@
 		0BA0CB8618A86F8B005AAFD5 /* CourseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CourseCell.m; sourceTree = "<group>"; };
 		0BA0CB8818A87CD2005AAFD5 /* ContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactCell.h; sourceTree = "<group>"; };
 		0BA0CB8918A87CD2005AAFD5 /* ContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactCell.m; sourceTree = "<group>"; };
-		0BA0CB8B18A88409005AAFD5 /* YAJL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = YAJL.framework; sourceTree = "<group>"; };
 		0BA8C12118AB1BB4000F3734 /* AppIcon29x29.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon29x29.png; sourceTree = "<group>"; };
 		0BA8C12218AB1BB4000F3734 /* AppIcon29x29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon29x29@2x.png"; sourceTree = "<group>"; };
 		0BA8C12318AB1BB4000F3734 /* AppIcon40x40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AppIcon40x40.png; sourceTree = "<group>"; };
@@ -142,7 +140,6 @@
 				0B8E0BE118A3270E00863181 /* FacebookSDK.framework in Frameworks */,
 				0B8E0BAD18A2099100863181 /* UIKit.framework in Frameworks */,
 				0BDC092318A9F5D500BC82CE /* libTestFlight.a in Frameworks */,
-				0BA0CB8C18A88409005AAFD5 /* YAJL.framework in Frameworks */,
 				0B8E0BA918A2099100863181 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,7 +192,6 @@
 			isa = PBXGroup;
 			children = (
 				0BDC092618A9F68500BC82CE /* libz.dylib */,
-				0BA0CB8B18A88409005AAFD5 /* YAJL.framework */,
 				0B8E0BE018A3270E00863181 /* FacebookSDK.framework */,
 				0B8E0BA818A2099100863181 /* Foundation.framework */,
 				0B8E0BAA18A2099100863181 /* CoreGraphics.framework */,
@@ -386,7 +382,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = SocialScheduler;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = DTech;
 				TargetAttributes = {
 					0B8E0BA418A2099100863181 = {
@@ -527,7 +523,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -566,7 +561,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -598,7 +592,6 @@
 		0B8E0BDB18A2099100863181 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = armv7;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -615,11 +608,13 @@
 					"$(inherited)",
 					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler/TestFlightSDK2.2.1,
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 armv7";
+				VALID_ARCHS = "arm64 armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -627,7 +622,6 @@
 		0B8E0BDC18A2099100863181 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = armv7;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -647,8 +641,9 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALID_ARCHS = "arm64 armv7";
+				VALID_ARCHS = "arm64 armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -656,7 +651,6 @@
 		0B8E0BDE18A2099100863181 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/UMDSocialScheduler.app/UMDSocialScheduler";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -679,7 +673,6 @@
 		0B8E0BDF18A2099100863181 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/UMDSocialScheduler.app/UMDSocialScheduler";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
