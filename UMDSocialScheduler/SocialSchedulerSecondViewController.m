@@ -32,8 +32,9 @@
     NSMutableDictionary *contactPics;
     Reachability *internetReachability;
     NetworkStatus network;
-    int selectedIndex;
+    NSInteger selectedIndex;
     BOOL showContact;
+    BOOL isUpdating;
 }
 
 - (void)viewDidLoad
@@ -46,17 +47,19 @@
 
     insertIndexPaths = [[NSMutableArray alloc] init];
     contactPics = [[NSMutableDictionary alloc] init];
+    [self refreshClasses];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
     network = [internetReachability currentReachabilityStatus];
-    
+    isUpdating = NO;
+
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
-    }else{
-        [self refreshClasses];
+    }else if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshClasses"]){
+        //[self refreshClasses];
     }
 }
 
@@ -65,31 +68,32 @@
     [_activityIndicator startAnimating];
     NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
     NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
-    NSURLResponse *response;
-    NSData *data;
-    NSError *error;
-    data = [NSURLConnection sendSynchronousRequest:fbLoginRequest returningResponse:&response error:&error];
-    courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+    [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+        
+        // Parse Course String to get classes
+        _courses = [[NSMutableDictionary alloc] init];
+        NSUInteger index;
+        while(![courseString isEqualToString:@""]){
+            index =[courseString rangeOfString:@"|"].location;
+            NSString *class = [courseString substringToIndex:index];
+            courseString = [courseString substringFromIndex:index + 1];
+            index =[courseString rangeOfString:@"/"].location;
+            NSString *section = [courseString substringToIndex: index];
+            courseString = [courseString substringFromIndex:index + 1];
+            [_courses setObject:section forKey:class];
+        }
+        
+        _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
+        NSLog(@"Courses: %@",[_courses description]);
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshClasses"];
+        [_activityIndicator stopAnimating];
+        [self courseTableView].dataSource = self;
+        [self courseTableView].delegate = self;
+        [[self courseTableView] reloadData];
+    }];
+    //data = [NSURLConnection sendSynchronousRequest:fbLoginRequest returningResponse:&response error:&error];
     
-    // Parse Course String to get classes
-    _courses = [[NSMutableDictionary alloc] init];
-    NSUInteger index;
-    while(![courseString isEqualToString:@""]){
-        index =[courseString rangeOfString:@"|"].location;
-        NSString *class = [courseString substringToIndex:index];
-        courseString = [courseString substringFromIndex:index + 1];
-        index =[courseString rangeOfString:@"/"].location;
-        NSString *section = [courseString substringToIndex: index];
-        courseString = [courseString substringFromIndex:index + 1];
-        [_courses setObject:section forKey:class];
-    }
-    
-    _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
-    NSLog(@"Courses: %@",[_courses description]);
-    [_activityIndicator stopAnimating];
-    [self courseTableView].dataSource = self;
-    [self courseTableView].delegate = self;
-    [[self courseTableView] reloadData];
 }
 
 - (void)didReceiveMemoryWarning
@@ -99,52 +103,57 @@
 
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    network = [internetReachability currentReachabilityStatus];
-
     //Address the bug in ios7 where separators would disappear
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
+    if(!isUpdating){
+    network = [internetReachability currentReachabilityStatus];
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
+    }else if([[FBSession activeSession] accessTokenData] == nil){
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"You are not signed into facebook. In order to view friends in your classes, please sign into facebook at the login screen." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [_alertMsg show];
     }else{
-        int row = indexPath.row;
-        selectedIndex = row;
-        if(!showContact){
-            NSString *course = [_courseKeys objectAtIndex:row];
-            NSString *requestString = [NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,classesWithContactURLString,termCode,course];
-            NSURL *requestURL = [NSURL URLWithString:requestString];
-            NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-            [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                NSError *error;
-                NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
-                _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
+            NSInteger row = indexPath.row;
+            selectedIndex = row;
+            if(!showContact){
+                isUpdating = YES;
+                NSString *course = [_courseKeys objectAtIndex:row];
+                NSString *requestString = [NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,classesWithContactURLString,termCode,course];
+                NSURL *requestURL = [NSURL URLWithString:requestString];
+                NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
+                [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                    NSError *error;
+                    NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
+                    _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
                 
-                int i = 0;
-                for(NSDictionary *contact in _contacts){
-                    [insertIndexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
-                    i++;
-                }
-                
+                    for(int i = 0; i< [_contacts count]; i++){
+                        [insertIndexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [_courseTableView beginUpdates];
+                        showContact = YES;
+                        [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationAutomatic];
+                        [_courseTableView endUpdates];
+                        isUpdating = NO;
+                    });
+                }];
+            }else{
+                isUpdating = YES;
+                showContact = NO;
+                selectedIndex = 0;
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [_courseTableView beginUpdates];
-                    showContact = YES;
-                    [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+                    showContact = NO;
+                    [_contacts removeAllObjects];
+
+                    [_courseTableView deleteRowsAtIndexPaths:insertIndexPaths withRowAnimation:     UITableViewRowAnimationAutomatic];
+                    [insertIndexPaths removeAllObjects];
                     [_courseTableView endUpdates];
-                    
+                        isUpdating = NO;
                 });
-            }];
-        }else{
-            showContact = NO;
-            selectedIndex = 0;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_courseTableView beginUpdates];
-                showContact = NO;
-                [_courseTableView deleteRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationAutomatic];
-                [insertIndexPaths removeAllObjects];
-                [_contacts removeAllObjects];
-                [_courseTableView endUpdates];
-            });
+            }
         }
     }
 }
@@ -166,8 +175,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    int rowNumber = indexPath.row;
-    int numContacts = [_contacts count];
+    NSInteger rowNumber = indexPath.row;
+    NSInteger numContacts = [_contacts count];
     if((rowNumber >= selectedIndex+1 && rowNumber < selectedIndex + numContacts +1)  && showContact){
         ClassContactCell* cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
         NSDictionary *contact = [_contacts objectAtIndex:numContacts - (rowNumber - selectedIndex)];
@@ -200,7 +209,6 @@
         [cell.courseNumberLabel setText: course];
         [cell.sectionNumberLabel setText: section];
         return cell;
-
     }
 }
 

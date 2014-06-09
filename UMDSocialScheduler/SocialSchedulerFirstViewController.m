@@ -83,15 +83,8 @@
        
             
             [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                NSString *addCoursesURLString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,updateCoursesURLString];
-                NSMutableURLRequest *addScheduleRequest = [NSMutableURLRequest requestWithURL:[[NSURL URLWithString:addCoursesURLString] standardizedURL]];
-                // Add post call to send schedule data CMSC330||stuff
-                /*
                 NSString *renderURLString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,uploadScheduleURLString];
-                
                 NSMutableURLRequest *renderRequest = [NSMutableURLRequest requestWithURL:[[NSURL URLWithString:renderURLString] standardizedURL]];
-                
-                
                 scheduleHtml = [scheduleHtml stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding];
             
                 scheduleHtml = [NSString stringWithFormat:@"term=%@&html=%@",termCode,scheduleHtml];
@@ -104,33 +97,41 @@
                 NSURLConnection *renderConnection = [[NSURLConnection alloc]  initWithRequest:renderRequest delegate:self];
                 
                 scheduleHtml = [scheduleHtml stringByRemovingPercentEncoding];
+                
                 if(renderConnection)
                 {
+                    NSLog(@"Schedule request...");
                     NSLog(@"Connection Successful");
                     [renderConnection start];
                 }
                 else
                 {
+                    NSLog(@"Schedule request...");
                     NSLog(@"Connection could not be made");
                 }
-                */
                 
+                // Add post call to send schedule data CMSC330||stuff
+                NSString *addCoursesURLString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,updateCoursesURLString];
+                NSMutableURLRequest *addScheduleRequest = [NSMutableURLRequest requestWithURL:[[NSURL URLWithString:addCoursesURLString] standardizedURL]];
                 coursesString = [coursesString stringByReplacingOccurrencesOfString:@"|" withString:@","];
                 coursesString = [coursesString stringByReplacingOccurrencesOfString:@"/" withString:@"|"];
                 coursesString = [coursesString substringToIndex:[coursesString length]-1];
                 coursesString = [NSString stringWithFormat:@"term=%@&schedule=%@",termCode,coursesString];
-                NSData *postData = [coursesString dataUsingEncoding:NSASCIIStringEncoding];
+                postData = [coursesString dataUsingEncoding:NSASCIIStringEncoding];
                 [addScheduleRequest setHTTPMethod:@"POST"];
                 [addScheduleRequest setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
                 [addScheduleRequest setHTTPBody:postData];
                 NSURLConnection *addScheduleConnection = [[NSURLConnection alloc]  initWithRequest:addScheduleRequest delegate:self];
+                
                 if(addScheduleConnection)
                 {
+                    NSLog(@"Courses request...");
                     NSLog(@"Connection Successful");
                     [addScheduleConnection start];
                 }
                 else
                 {
+                    NSLog(@"Courses request...");
                     NSLog(@"Connection could not be made");
                 }
             }];
@@ -186,7 +187,7 @@
 }
 
 
-- (UIView*)viewForZoomingInScrollView:(UIScrollView *)aScrollView {
+-(UIView*)viewForZoomingInScrollView:(UIScrollView *)aScrollView {
     return _scheduleImageView;
 }
 
@@ -202,6 +203,10 @@
 }
 
 -(IBAction)showSchedule:(UIStoryboardSegue *)segue{
+    
+}
+
+-(IBAction)cancelLogin:(UIStoryboardSegue *)segue{
     
 }
 
@@ -299,6 +304,7 @@
     UIActivityViewController* activityViewController =
     [[UIActivityViewController alloc] initWithActivityItems:datatoshare applicationActivities:nil];
     [self presentViewController:activityViewController animated:YES completion:^{}];
+    
 }
 
 

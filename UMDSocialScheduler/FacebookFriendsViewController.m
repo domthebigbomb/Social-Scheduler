@@ -15,6 +15,7 @@
 - (IBAction)showSchedule:(UIButton *)sender;
 - (IBAction)hideSchedule:(UIButton *)sender;
 - (IBAction)toggleSharing:(UISwitch *)sender;
+- (IBAction)retryFriends:(UIButton *)sender;
 
 @property (strong,nonatomic) UITapGestureRecognizer *tapGesture;
 @property (strong, nonatomic) UIAlertView *alertMsg;
@@ -42,6 +43,7 @@
     NSString *termCode;
     Reachability *internetReachability;
     NetworkStatus network;
+    FBLoginView *loginView;
     BOOL showSchedule;
     NSInteger scheduleIndex;
 }
@@ -69,14 +71,21 @@
     fbLoginURLString = @"access?access_token=";
     getFriendsInCourseURLString = @"friends?";
     
-    [self refreshFriends];
+    CGRect loginFrame = CGRectFromString([NSString stringWithFormat: @"{{50,%f},{200,46}}",_refreshButton.frame.origin.y + 150]);
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+        loginFrame = CGRectFromString(@"{{225, 547},{321,66}}");
+    }
+    loginView = [[FBLoginView alloc] initWithFrame:loginFrame];
+    [loginView setReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
+    [loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
+    [loginView setPublishPermissions:@[@"publish_actions" ]];
+    [loginView setHidden: YES];
+    [_closeScheduleButton setHidden:YES];
+    [_greyedBackgroundView addSubview:loginView];
     
-    [_scheduleScrollView addSubview:_scheduleImageView];
-    [_scheduleScrollView setDelegate: self];
-}
-
--(void)viewDidAppear:(BOOL)animated{
-    BOOL refreshFriends = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"];
+    [_refreshButton setHidden:YES];
+    _refreshButton.layer.cornerRadius = 3.0f;
+    
     NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     userSchedule = [[NSMutableDictionary alloc] init];
@@ -90,15 +99,54 @@
         courseString = [courseString substringFromIndex:index + 1];
         [userSchedule setObject:section forKey:class];
     }
-
-    if(refreshFriends){
+    /*
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"]){
         [self refreshFriends];
-        
     }
+    */
+    [self refreshFriends];
+    
+    [_scheduleScrollView addSubview:_scheduleImageView];
+    [_scheduleScrollView setDelegate: self];
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    /*
+    NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+    userSchedule = [[NSMutableDictionary alloc] init];
+    NSUInteger index;
+    while(![courseString isEqualToString:@""]){
+        index =[courseString rangeOfString:@"|"].location;
+        NSString *class = [courseString substringToIndex:index];
+        courseString = [courseString substringFromIndex:index + 1];
+        index =[courseString rangeOfString:@"/"].location;
+        NSString *section = [courseString substringToIndex: index];
+        courseString = [courseString substringFromIndex:index + 1];
+        [userSchedule setObject:section forKey:class];
+    }
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"]){
+        [self refreshFriends];
+    }
+     */
 }
 
 -(void)refreshFriends{
+    [_activityIndicator startAnimating];
+    [_greyedBackgroundView setHidden: NO];
+    [_refreshButton setHidden:YES];
+    [_closeScheduleButton setHidden:YES];
     network = [internetReachability currentReachabilityStatus];
+    [loginView setHidden:YES];
+    
+    if([[FBSession activeSession] accessTokenData] == nil){
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"Please login to facebook to access this feature" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [_alertMsg show];
+        [_activityIndicator stopAnimating];
+        [_refreshButton setHidden:NO];
+        [loginView setHidden:NO];
+    }
+    
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
@@ -112,11 +160,11 @@
             
             [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                 NSError *error;
-            NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
+                NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                 NSLog(@"Login Response: %@", response);
                 NSLog(@"Login Error: %@", connectionError);
                 NSLog(@"Login JSON: %@",[JSON description]);
-        
+                
                 NSDictionary *loginData = [[NSDictionary alloc] initWithDictionary:[JSON valueForKey:@"data"]];
                 BOOL shareEnabled = [[loginData valueForKey:@"share"] boolValue];
                 NSLog(@"Sharing Enabled: %d",shareEnabled);
@@ -166,6 +214,8 @@
                             NSLog(@"Contact Response: %@", response);
                             NSLog(@"Contact Error: %@", connectionError);
                             
+                            // DEBUGGING PURPOSES
+                            //[contacts removeAllObjects];
                             
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 [_activityIndicator stopAnimating];
@@ -180,27 +230,34 @@
                 }];
             }];
             [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshFriends"];
-        }else{
+        }
+        
+        /*
+         else{
             _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"Please login to facebook to access this feature" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
             [_alertMsg show];
         }
+         */
     }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-        return [contacts count];
+    if ([contacts count] == 0){
+            return 1;
+    }
+    return [contacts count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellIdentifier = @"ContactCell";
     
-    /*
+    
     if ([contacts count] == 0){
         cellIdentifier = @"NoFriends";
         UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
         return cell;
     }
-    */
+    
     ContactCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 
     NSInteger rowNumber = indexPath.row;
@@ -211,25 +268,29 @@
     NSArray *contactPicFbids = [contactPics allKeys];
     
     [cell.contactPic setImage:[UIImage imageNamed:@"fb_default.jpg"]];
-    if(![contactPicFbids containsObject:fbid]){
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=100&width=100",fbid]]]];
-            [contactPics setObject:contactPic forKey:fbid];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                ContactCell *updatedContact = (ContactCell *)[_contactTableView cellForRowAtIndexPath:indexPath];
-                if(updatedContact){
-                    [cell.contactPic setImage: [contactPics objectForKey:fbid]];
-                    [updatedContact setNeedsLayout];
-                }
+    network = [internetReachability currentReachabilityStatus];
+    if(network != NotReachable){
+        if(![contactPicFbids containsObject:fbid]){
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=100&width=100",fbid]]]];
+                [contactPics setObject:contactPic forKey:fbid];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    ContactCell *updatedContact = (ContactCell *)[_contactTableView cellForRowAtIndexPath:indexPath];
+                    if(updatedContact){
+                        [cell.contactPic setImage: [contactPics objectForKey:fbid]];
+                        [updatedContact setNeedsLayout];
+                    }
+                });
             });
-
-        });
-        
-
+        }else{
+            [cell.contactPic setImage:[contactPics objectForKey:fbid]];
+        }
     }else{
-        [cell.contactPic setImage:[contactPics objectForKey:fbid]];
+        /*
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"Please make sure you are connected to the internet" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [_alertMsg show];
+         */
     }
-    
     
     NSArray *contactSchedule = [[NSArray alloc] initWithArray:[contactSchedules objectForKey:fbid]];
     NSMutableArray *mutualClasses = [[NSMutableArray alloc] init];
@@ -257,8 +318,6 @@
         [cell.showScheduleButton setHidden:YES];
     }
     return cell;
-
-    
 }
 
 
@@ -272,6 +331,7 @@
 }
 
 - (IBAction)showSchedule:(UIButton *)sender {
+    [_closeScheduleButton setHidden:NO];
     CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self.contactTableView];
     NSIndexPath *indexPath = [self.contactTableView indexPathForRowAtPoint:buttonPosition];
     scheduleIndex = [indexPath row];
@@ -304,6 +364,15 @@
         NSString *description = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSLog(@"Sharing Data: %@", description);
     }];
+}
+
+- (IBAction)retryFriends:(UIButton *)sender {
+    if([[FBSession activeSession] accessTokenData] != nil){
+        [self refreshFriends];
+    }else{
+       _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"Please login to facebook to access this feature" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [_alertMsg show];
+    }
 }
 
 @end

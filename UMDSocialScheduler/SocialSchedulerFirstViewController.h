@@ -14,4 +14,5 @@
 @property BOOL newSchedule;
 -(void)renderSchedule;
 -(IBAction)showSchedule:(UIStoryboardSegue *)segue;
+-(IBAction)cancelLogin:(UIStoryboardSegue *)segue;
 @end

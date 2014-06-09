@@ -1,4 +1,4 @@
-//
+ //
 //  LoginViewController.m
 //  UMDSocialScheduler
 //
@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *usernameField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet FBProfilePictureView *profilePictureView;
 @property (weak, nonatomic) IBOutlet UIImageView *circleMask;
@@ -22,9 +23,11 @@
 @property (weak, nonatomic) IBOutlet UIView *visualView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 - (IBAction)login:(UIButton *)sender;
+- (IBAction)cancel:(UIButton *)sender;
 @property (strong, nonatomic) UIWebView *webPage;
 @property (strong, nonatomic)UITapGestureRecognizer *tap;
 @property (strong, nonatomic) UIAlertView *alertMsg;
+@property (strong, nonatomic) UIActionSheet *actionMsg;
 @property CGPoint originalCenter;
 @property (weak, nonatomic) IBOutlet UIView *loginFieldsView;
 @property (strong, nonatomic) IBOutlet UIPickerView *semesterPickerView;
@@ -65,15 +68,13 @@
     _semesterPickerView = [[UIPickerView alloc] init];
     
     NSURL *semesterURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/d9c7z5py?apikey=e228433aba70a1ea083189f321776248"];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-    });
+    
     Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus network = [internetReachability currentReachabilityStatus];
     
     semesters = [[NSMutableArray alloc] init];
     if(network == NotReachable){
-        semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014"];
+        semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
     }else{
         NSData *data = [NSData dataWithContentsOfURL:semesterURL];
         NSError *error;
@@ -83,6 +84,8 @@
         semesters = [semesterText componentsSeparatedByString:@"\n"];
     }
     [_fbLoginView setReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
+    [_fbLoginView setDefaultAudience:FBSessionDefaultAudienceFriends];
+    [_fbLoginView setPublishPermissions:@[@"publish_actions" ]];
     [_fbLoginView setDelegate:self];
     
     renderScheduleURL = @"http://www.umdsocialscheduler.com/render_schedule?";
@@ -118,15 +121,24 @@
 -(void)loadDesignElements{
     // NSString* fontName = @"Avenir-Book";
     //NSString* boldFontName = @"Avenir-Black";
-    _loginButton.layer.cornerRadius = 3.0f;
+    //_loginButton.layer.cornerRadius = 3.0f;
     //_loginButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
     [_loginButton setTitleColor:[self.view backgroundColor] forState:UIControlStateNormal];
+    [_backButton setTitleColor:[self.view backgroundColor] forState:UIControlStateNormal];
+    
     
     _circleMask.layer.cornerRadius = _circleMask.frame.size.width/2;
     [_circleMask addSubview:_profilePictureView];
     _borderMask.layer.cornerRadius = _borderMask.frame.size.width/2;
     [_borderMask addSubview:_circleMask];
     _loginContainer.layer.cornerRadius = 4.0f;
+    
+    if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil){
+        [_backButton setHidden:NO];
+        [_backButton setEnabled:YES];
+        [_loginButton setHidden:YES];
+        [_loginButton setEnabled:NO];
+    }
     
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
         CGRect frame = _usernameField.frame;
@@ -144,7 +156,7 @@
     [_webPage stringByEvaluatingJavaScriptFromString:loginScript];
     htmlString = [_webPage stringByEvaluatingJavaScriptFromString:htmlScript];
     if(count != 0){
-        if([htmlString rangeOfString:@"alertErrorTitle"].location != NSNotFound){
+        if([htmlString rangeOfString:@"Invalid Login"].location != NSNotFound){
             NSLog(@"Login Failed");
             count = 0;
             htmlString = @"";
@@ -259,8 +271,8 @@
         year = 2014;
         //default case
     }
-    semesterInfo = [[NSArray alloc] initWithObjects:season, [NSString stringWithFormat:@"%d",year], nil];
-    NSString *termCode = [NSString stringWithFormat:@"%d%@",year,season];
+    semesterInfo = [[NSArray alloc] initWithObjects:season, [NSString stringWithFormat:@"%ld",(long)year], nil];
+    NSString *termCode = [NSString stringWithFormat:@"%ld%@",(long)year,season];
     [[NSUserDefaults standardUserDefaults] setObject:termCode forKey:@"SemesterInfo"];
     
 }
@@ -280,6 +292,31 @@
     [_statusLabel setText:@""];
 }
 
+// UIAlertView
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(buttonIndex == 1){
+        NSString *username = _usernameField.text;
+        NSString *password = _passwordField.text;
+        NSString *newScheduleURL = @"";
+        username = [self cleanUpSpecialCharactersOfString:username];
+        password = [self cleanUpSpecialCharactersOfString:password];
+        loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",username,password];
+        loginScript = [NSString stringWithFormat:@"document.getElementsByName('ldapid')[0].value='%@'; document.getElementsByName('ldappass')[0].value='%@'; document.getElementsByName('login')[0].click();",username,password];
+        NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
+        [self performSelector:@selector(hideKeyboard)];
+        
+        NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+        NSLog(@"TermCode: %@",termCode);
+        newScheduleURL = [NSString stringWithFormat:@"%@%@",scheduleURL,termCode];
+        
+        _webPage.delegate = self;
+        [_usernameField setEnabled:NO];
+        [_passwordField setEnabled:NO];
+        [_semesterField setEnabled:NO];
+        [_activityIndicator startAnimating];
+        [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:newScheduleURL]]];
+    }
+}
 
 // Keyboard Related Methods
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
@@ -297,6 +334,26 @@
         [_passwordField becomeFirstResponder];
     }else{
         [self performSelector:@selector(login:) withObject:self];
+    }
+    return YES;
+}
+
+-(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
+    if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil &&
+       ([_usernameField.text length] != 0 || [_passwordField.text length] != 0)){
+        // Enabling Login button
+        [_loginButton setHidden:NO];
+        [_loginButton setEnabled:YES];
+        [_backButton setEnabled:NO];
+        [_backButton setHidden:YES];
+    }
+    if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil &&
+       ([_usernameField.text length] == 0 && [_passwordField.text length] == 0)){
+        // Enabling Back button
+        [_loginButton setHidden:YES];
+        [_loginButton setEnabled:NO];
+        [_backButton setEnabled:YES];
+        [_backButton setHidden:NO];
     }
     return YES;
 }
@@ -319,8 +376,6 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([[segue identifier] isEqualToString:@"ShowSchedule"]){
         NSString *webPageCode = htmlString;
-        //scheduleController.htmlString = webPageCode;
-        //scheduleController.newSchedule = YES;
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Courses"];
         [[NSUserDefaults standardUserDefaults] setBool: YES forKey:@"refreshSchedule"];
@@ -328,6 +383,10 @@
         [[NSUserDefaults standardUserDefaults] setBool: YES forKey:@"refreshFriends"];
         [[NSUserDefaults standardUserDefaults] setObject:webPageCode forKey:@"Schedule"];
         [[NSUserDefaults standardUserDefaults] setObject:courseString forKey:@"Courses"];
+    }else if ([[segue identifier] isEqualToString:@"CancelLogin"]){
+        [[NSUserDefaults standardUserDefaults] setBool: NO forKey:@"refreshSchedule"];
+        [[NSUserDefaults standardUserDefaults] setBool: NO forKey:@"refreshClasses"];
+        [[NSUserDefaults standardUserDefaults] setBool: NO forKey:@"refreshFriends"];
     }
 }
 
@@ -337,29 +396,7 @@
     return stringToClean;
 }
 
-/*
-- (NSString *) URLEncodedString_ch {
-    NSMutableString * output = [NSMutableString string];
-    const unsigned char * source = (const unsigned char *)[self UTF8String];
-    int sourceLen = strlen((const char *)source);
-    for (int i = 0; i < sourceLen; ++i) {
-        const unsigned char thisChar = source[i];
-        if (thisChar == ' '){
-            [output appendString:@"+"];
-        } else if (thisChar == '.' || thisChar == '-' || thisChar == '_' || thisChar == '~' ||
-                   (thisChar >= 'a' && thisChar <= 'z') ||
-                   (thisChar >= 'A' && thisChar <= 'Z') ||
-                   (thisChar >= '0' && thisChar <= '9')) {
-            [output appendFormat:@"%c", thisChar];
-        } else {
-            [output appendFormat:@"%%%02X", thisChar];
-        }
-    }
-    return output;
-}
- */
-
-- (IBAction)login:(UIButton *)sender {
+-(IBAction)login:(UIButton *)sender {
     Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus network = [internetReachability currentReachabilityStatus];
     if([[_usernameField text]isEqualToString:@""] || [[_passwordField text] isEqualToString:@""]){
@@ -373,27 +410,41 @@
             _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
             [_alertMsg show];
         }else{
-            NSString *username = _usernameField.text;
-            NSString *password = _passwordField.text;
-            NSString *newScheduleURL = @"";
-            username = [self cleanUpSpecialCharactersOfString:username];
-            password = [self cleanUpSpecialCharactersOfString:password];
-            loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",username,password];
-            loginScript = [NSString stringWithFormat:@"document.getElementsByName('ldapid')[0].value='%@'; document.getElementsByName('ldappass')[0].value='%@'; document.getElementsByName('login')[0].click();",username,password];
-            NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
-            [self performSelector:@selector(hideKeyboard)];
-            
-            NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
-            NSLog(@"TermCode: %@",termCode);
-            newScheduleURL = [NSString stringWithFormat:@"%@%@",scheduleURL,termCode];
-            
-            _webPage.delegate = self;
-            [_usernameField setEnabled:NO];
-            [_passwordField setEnabled:NO];
-            [_semesterField setEnabled:NO];
-            [_activityIndicator startAnimating];
-            [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:newScheduleURL]]];
+            if([[FBSession activeSession] accessTokenData] == nil){
+                /*
+                _actionMsg = [[UIActionSheet alloc] initWithTitle:@"Warning" delegate:self cancelButtonTitle:@"I'll login to Facebook" destructiveButtonTitle:@"destruct" otherButtonTitles: nil];
+                [_actionMsg showInView:self.view];
+                */
+                _alertMsg = [[UIAlertView alloc] initWithTitle:@"Warning" message:
+                             @"You are not logged into Facebook. You will not be able to: \n -View friends in your classes \n -View your friends' schedules \nwithout being logged in!" delegate:self cancelButtonTitle:@"I'll login" otherButtonTitles:@"Not right not", nil];
+                [_alertMsg show];
+            }else{
+                NSString *username = _usernameField.text;
+                NSString *password = _passwordField.text;
+                NSString *newScheduleURL = @"";
+                username = [self cleanUpSpecialCharactersOfString:username];
+                password = [self cleanUpSpecialCharactersOfString:password];
+                loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",username,password];
+                loginScript = [NSString stringWithFormat:@"document.getElementsByName('ldapid')[0].value='%@'; document.getElementsByName('ldappass')[0].value='%@'; document.getElementsByName('login')[0].click();",username,password];
+                NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
+                [self performSelector:@selector(hideKeyboard)];
+                
+                NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+                NSLog(@"TermCode: %@",termCode);
+                newScheduleURL = [NSString stringWithFormat:@"%@%@",scheduleURL,termCode];
+                
+                _webPage.delegate = self;
+                [_usernameField setEnabled:NO];
+                [_passwordField setEnabled:NO];
+                [_semesterField setEnabled:NO];
+                [_activityIndicator startAnimating];
+                [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:newScheduleURL]]];
+            }
         }
     }
+}
+
+- (IBAction)cancel:(UIButton *)sender {
+    [self performSegueWithIdentifier:@"CancelLogin" sender:self];
 }
 @end
