@@ -13,4 +13,6 @@
 }
 @property BOOL coursesFound;
 
+-(IBAction)dismissDetails:(UIStoryboardSegue *)segue;
+
 @end

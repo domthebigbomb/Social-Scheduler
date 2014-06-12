@@ -297,6 +297,8 @@
     }
 }
 
+
+
 - (IBAction)shareBarButton:(UIBarButtonItem *)sender {
     UIImage *snapshot = [self getSchedule];
     NSString *text = @"Shared with UMD Social Scheduler for iOS. Download at www.umdsocialscheduler.com. ";

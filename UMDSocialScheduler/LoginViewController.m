@@ -40,8 +40,10 @@
     NSString *scheduleURL;
     NSString *loginScript;
     NSString *htmlScript;
+    NSString *courseScript;
     NSString *htmlString;
     NSString *testURL;
+    NSString *courseDetails;
     NSString *courseString;
     NSString *renderScheduleURL;
     NSArray *semesters;
@@ -93,7 +95,7 @@
     count = 0;
     testURL = @"http://testudo.umd.edu/ssched/index.html";
     htmlScript = @"document.body.innerHTML";
-    
+    courseScript = @"document.getElementsByName('schedstr')[0].value";
     //semesters = @[@"Spring", @"Summer",@"Fall", @"Winter"];
     //years = @[@"2014",@"2013",@"2012"];
     semesterIndex = 0;
@@ -140,6 +142,13 @@
         [_loginButton setEnabled:NO];
     }
     
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"save_login"] && [[NSUserDefaults standardUserDefaults] stringForKey:@"username"] != nil){
+        NSLog(@"Found Credentials");
+        [_usernameField setText:[[NSUserDefaults standardUserDefaults] stringForKey:@"username"]];
+        [_passwordField setText:[[NSUserDefaults standardUserDefaults] stringForKey:@"password"]];
+    }
+
+    
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
         CGRect frame = _usernameField.frame;
         frame.size.height = 100;
@@ -184,6 +193,7 @@
             NSLog(@"Login Success");
             courseString = [NSString stringWithString:htmlString];
             // Prepare the html page
+            courseDetails = [NSString stringWithString:[_webPage stringByEvaluatingJavaScriptFromString:courseScript]];
             htmlString = [_webPage stringByEvaluatingJavaScriptFromString:htmlScript];
             NSLog(@"HTML Retrieved");
             htmlString = [htmlString substringFromIndex:[htmlString rangeOfString:@"--><center>"].location];
@@ -197,6 +207,7 @@
             courseString = [courseString substringFromIndex:[courseString rangeOfString:searchString].location + [searchString length]];
             courseString = [courseString substringToIndex:[courseString rangeOfString:@"\'"].location];
             
+            // Parse course details
             //String brodder = "jonathan";
             [_activityIndicator stopAnimating];
             _webPage.delegate = nil;
@@ -383,6 +394,7 @@
         [[NSUserDefaults standardUserDefaults] setBool: YES forKey:@"refreshFriends"];
         [[NSUserDefaults standardUserDefaults] setObject:webPageCode forKey:@"Schedule"];
         [[NSUserDefaults standardUserDefaults] setObject:courseString forKey:@"Courses"];
+        [[NSUserDefaults standardUserDefaults] setObject:courseDetails forKey:@"CourseDetails"];
     }else if ([[segue identifier] isEqualToString:@"CancelLogin"]){
         [[NSUserDefaults standardUserDefaults] setBool: NO forKey:@"refreshSchedule"];
         [[NSUserDefaults standardUserDefaults] setBool: NO forKey:@"refreshClasses"];
@@ -432,6 +444,11 @@
                 NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
                 NSLog(@"TermCode: %@",termCode);
                 newScheduleURL = [NSString stringWithFormat:@"%@%@",scheduleURL,termCode];
+                
+                if([[NSUserDefaults standardUserDefaults] boolForKey:@"save_login"]){
+                    [[NSUserDefaults standardUserDefaults] setObject:[_usernameField text] forKey:@"username"];
+                    [[NSUserDefaults standardUserDefaults] setObject:[_passwordField text] forKey:@"password"];
+                }
                 
                 _webPage.delegate = self;
                 [_usernameField setEnabled:NO];
