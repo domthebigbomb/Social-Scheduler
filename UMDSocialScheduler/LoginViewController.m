@@ -291,6 +291,7 @@
 // Facebook login related functions
 -(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
     _profilePictureView.profileID = [user id];
+    [_profilePictureView setHidden: NO];
     [_statusLabel setText:[NSString stringWithFormat:@"%@",[user name]]];
 }
 
@@ -299,6 +300,7 @@
 }
 
 -(void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView{
+    [_profilePictureView setHidden:YES];
     _profilePictureView.profileID = nil;
     [_statusLabel setText:@""];
 }

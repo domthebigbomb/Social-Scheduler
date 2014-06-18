@@ -21,6 +21,7 @@
 @property (strong, nonatomic) NSMutableString *secDays;
 @property (strong, nonatomic) NSString *primaryTimes;
 @property (strong, nonatomic) NSString *secondaryTimes;
+@property (strong, nonatomic) NSArray *bldgCodes;
 @property BOOL hasDiscussion;
 
 @property (weak, nonatomic) IBOutlet UILabel *discussionLabel;
@@ -32,4 +33,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *secondaryDays;
 @property (weak, nonatomic) IBOutlet UILabel *primaryTimesBegin;
 @property (weak, nonatomic) IBOutlet UILabel *secondaryTimesBegin;
+
+-(IBAction)showOpenStreetLicense:(UIBarButtonItem *)button;
+
 @end

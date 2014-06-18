@@ -30,12 +30,13 @@
     NSString *courseString;
     NSString *courseDetails;
     NSString *termCode;
+    NSArray *bldgCodes;
     NSMutableArray *insertIndexPaths;
     NSMutableDictionary *contactPics;
     Reachability *internetReachability;
     NetworkStatus network;
     NSInteger selectedIndex;
-    NSInteger courseNumber;
+    NSInteger courseIndex;
     BOOL loggedIntoFB;
     BOOL showContact;
     BOOL isUpdating;
@@ -49,9 +50,13 @@
     fbLoginURLString = @"access?access_token=";
     internetReachability = [Reachability reachabilityForInternetConnection];
     loggedIntoFB = NO;
+    NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
+    NSData *data = [NSData dataWithContentsOfURL:bldgURL];
+    NSError *error;
+    bldgCodes = [[NSArray alloc] initWithArray:[[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"]];
     insertIndexPaths = [[NSMutableArray alloc] init];
     contactPics = [[NSMutableDictionary alloc] init];
-    [self refreshClasses];
+    //[self refreshClasses];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -63,7 +68,9 @@
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
     }else if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshClasses"]){
-        //[self refreshClasses];
+        [self refreshClasses];
+    }else if([_courseKeys count] == 0){
+        [self refreshClasses];
     }
 }
 
@@ -136,7 +143,12 @@
 }
 
 -(void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath{
-    courseNumber = indexPath.row;
+    courseIndex = indexPath.row;
+    NSLog(@"Selected Index: %ld", (long)selectedIndex);
+    NSLog(@"Number of contacts: %lu", (unsigned long)[_contacts count]);
+    if(courseIndex > selectedIndex){
+        courseIndex -= [_contacts count];
+    }
     [self performSegueWithIdentifier:@"ShowCourseDetails" sender:self];
 }
 
@@ -196,17 +208,6 @@
     }
 }
 
-/*
--(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [_courseTableView beginUpdates];
-    showContact = NO;
-    [_courseTableView deleteRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationAutomatic];
-    [insertIndexPaths removeAllObjects];
-    [_contacts removeAllObjects];
-    [_courseTableView endUpdates];
-    [_courseTableView reloadData];
-}
-*/
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [_courses count] + [_contacts count];
 }
@@ -254,7 +255,7 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:@"ShowCourseDetails"]){
         CourseDetailViewController *viewController = [segue destinationViewController];
-        NSString *course = [_courseKeys objectAtIndex:courseNumber];
+        NSString *course = [_courseKeys objectAtIndex:courseIndex];
         NSDictionary *properties = [_courses objectForKey:course];
         viewController.course = course;
         viewController.section = [properties objectForKey:@"section"];
@@ -273,6 +274,7 @@
         viewController.primDays = [properties objectForKey:@"PrimaryDays"];
         NSString *primTime = [properties objectForKey:@"PrimaryTimes"];
         viewController.primaryTimes = primTime;
+        viewController.bldgCodes = bldgCodes;
     }
 }
 

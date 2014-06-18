@@ -15,13 +15,12 @@
 - (IBAction)showSchedule:(UIButton *)sender;
 - (IBAction)hideSchedule:(UIButton *)sender;
 - (IBAction)toggleSharing:(UISwitch *)sender;
-- (IBAction)retryFriends:(UIButton *)sender;
 
 @property (strong,nonatomic) UITapGestureRecognizer *tapGesture;
 @property (strong, nonatomic) UIAlertView *alertMsg;
 @property (weak, nonatomic) IBOutlet UILabel *sharingEnabledLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *sharingSwitch;
-
+@property (weak,nonatomic) IBOutlet UIToolbar *sharingToolbar;
 
 @end
 
@@ -65,6 +64,11 @@
     contactSchedules = [[NSMutableDictionary alloc] init];
     contactWithMutualClasses = [[NSMutableArray alloc] init];
 
+    _sharingToolbar.layer.masksToBounds = NO;
+    _sharingToolbar.layer.shadowOffset = CGSizeMake(0, 2);
+    _sharingToolbar.layer.shadowRadius = 5;
+    _sharingToolbar.layer.shadowOpacity = 0.5;
+    
     internetReachability = [Reachability reachabilityForInternetConnection];
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     getListOfFriendsURLString = @"friends_with_app";
@@ -75,60 +79,36 @@
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
         loginFrame = CGRectFromString(@"{{225, 547},{321,66}}");
     }
+    
     loginView = [[FBLoginView alloc] initWithFrame:loginFrame];
     [loginView setReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
     [loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
     [loginView setPublishPermissions:@[@"publish_actions" ]];
     [loginView setHidden: YES];
+    [loginView setDelegate:self];
     [_closeScheduleButton setHidden:YES];
     [_greyedBackgroundView addSubview:loginView];
     
     [_refreshButton setHidden:YES];
     _refreshButton.layer.cornerRadius = 3.0f;
     
-    NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
-    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
-    userSchedule = [[NSMutableDictionary alloc] init];
-    NSUInteger index;
-    while(![courseString isEqualToString:@""]){
-        index =[courseString rangeOfString:@"|"].location;
-        NSString *class = [courseString substringToIndex:index];
-        courseString = [courseString substringFromIndex:index + 1];
-        index =[courseString rangeOfString:@"/"].location;
-        NSString *section = [courseString substringToIndex: index];
-        courseString = [courseString substringFromIndex:index + 1];
-        [userSchedule setObject:section forKey:class];
-    }
+    
     /*
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"]){
         [self refreshFriends];
     }
     */
-    [self refreshFriends];
-    
+    //[self refreshFriends];
     [_scheduleScrollView addSubview:_scheduleImageView];
     [_scheduleScrollView setDelegate: self];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-    /*
-    NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
-    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
-    userSchedule = [[NSMutableDictionary alloc] init];
-    NSUInteger index;
-    while(![courseString isEqualToString:@""]){
-        index =[courseString rangeOfString:@"|"].location;
-        NSString *class = [courseString substringToIndex:index];
-        courseString = [courseString substringFromIndex:index + 1];
-        index =[courseString rangeOfString:@"/"].location;
-        NSString *section = [courseString substringToIndex: index];
-        courseString = [courseString substringFromIndex:index + 1];
-        [userSchedule setObject:section forKey:class];
-    }
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"]){
         [self refreshFriends];
+    }else if([contacts count] == 0){
+        [self refreshFriends];
     }
-     */
 }
 
 -(void)refreshFriends{
@@ -136,6 +116,21 @@
     [_greyedBackgroundView setHidden: NO];
     [_refreshButton setHidden:YES];
     [_closeScheduleButton setHidden:YES];
+    
+    NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+    userSchedule = [[NSMutableDictionary alloc] init];
+    NSUInteger index;
+    while(![courseString isEqualToString:@""]){
+        index =[courseString rangeOfString:@"|"].location;
+        NSString *class = [courseString substringToIndex:index];
+        courseString = [courseString substringFromIndex:index + 1];
+        index =[courseString rangeOfString:@"/"].location;
+        NSString *section = [courseString substringToIndex: index];
+        courseString = [courseString substringFromIndex:index + 1];
+        [userSchedule setObject:section forKey:class];
+    }
+    
     network = [internetReachability currentReachabilityStatus];
     [loginView setHidden:YES];
     
@@ -185,7 +180,9 @@
                     NSLog(@"Sorted Contacts: %@",[contacts description]);
                     
                     NSArray *courses = [userSchedule allKeys];
-                    for(NSString *course in courses){
+                    //for(NSString *course in courses){
+                    for(int i = 0; i < [courses count]; i++){
+                        NSString *course = [courses objectAtIndex:i];
                         NSURLRequest *getCourseFriendsRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,getFriendsInCourseURLString,termCode,course]]];
                         [NSURLConnection sendAsynchronousRequest:getCourseFriendsRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                             NSError *error;
@@ -216,14 +213,15 @@
                             
                             // DEBUGGING PURPOSES
                             //[contacts removeAllObjects];
-                            
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                [_activityIndicator stopAnimating];
-                                [_closeScheduleButton setHidden:NO];
-                                [_greyedBackgroundView setHidden:YES];
-                                [[self contactTableView] setHidden:NO];
-                                [[self contactTableView] reloadData];
-                            });
+                            if(i == [courses count]-1){
+                                dispatch_async(dispatch_get_main_queue(), ^{
+                                    [_activityIndicator stopAnimating];
+                                    [_closeScheduleButton setHidden:NO];
+                                    [_greyedBackgroundView setHidden:YES];
+                                    [[self contactTableView] setHidden:NO];
+                                    [[self contactTableView] reloadData];
+                                });
+                            }
                             
                         }];
                     }
@@ -330,6 +328,14 @@
     [super didReceiveMemoryWarning];
 }
 
+-(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
+    //[self refreshFriends];
+}
+
+- (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
+    NSLog(@"Logged into Facebook");
+}
+
 - (IBAction)showSchedule:(UIButton *)sender {
     [_closeScheduleButton setHidden:NO];
     CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self.contactTableView];
@@ -364,15 +370,6 @@
         NSString *description = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSLog(@"Sharing Data: %@", description);
     }];
-}
-
-- (IBAction)retryFriends:(UIButton *)sender {
-    if([[FBSession activeSession] accessTokenData] != nil){
-        [self refreshFriends];
-    }else{
-       _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"Please login to facebook to access this feature" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-        [_alertMsg show];
-    }
 }
 
 @end

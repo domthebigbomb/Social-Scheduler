@@ -16,8 +16,17 @@
     if (self) {
         [_whiteBackgroundView layer].cornerRadius = 3.0f;
         [_shadowView layer].cornerRadius = 3.0f;
+        
     }
     return self;
+}
+
+-(void)awakeFromNib{
+    /*
+    _cardView.layer.shadowOffset = CGSizeMake(3, 3);
+    _cardView.layer.shadowRadius = 4;
+    _cardView.layer.shadowOpacity = 0.5;
+     */
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

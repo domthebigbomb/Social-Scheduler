@@ -16,6 +16,6 @@
 @property (weak, nonatomic) IBOutlet UIView *shadowView;
 @property (weak, nonatomic) IBOutlet UIButton *showScheduleButton;
 @property (strong, nonatomic) NSString *fbid;
-
+@property (weak, nonatomic) IBOutlet UIView *cardView;
 
 @end

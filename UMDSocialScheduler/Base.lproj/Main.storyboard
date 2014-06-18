@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="14A238x" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="8YX-ce-x5E">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6154.21" systemVersion="14A261i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="8YX-ce-x5E">
     <dependencies>
-        <deployment defaultVersion="1792" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6153.13"/>
     </dependencies>
     <scenes>
         <!--Social Scheduler First View Controller - First-->
@@ -104,7 +103,7 @@
                                         <rect key="frame" x="100" y="136" width="120" height="120"/>
                                         <color key="backgroundColor" red="0.7091836735" green="0.36987869200000001" blue="0.39298533590000001" alpha="1" colorSpace="calibratedRGB"/>
                                     </imageView>
-                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NWq-GI-m9j" customClass="FBProfilePictureView">
+                                    <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NWq-GI-m9j" customClass="FBProfilePictureView">
                                         <rect key="frame" x="100" y="136" width="120" height="120"/>
                                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
@@ -231,7 +230,7 @@
                                 <inset key="separatorInset" minX="360" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <color key="sectionIndexTrackingBackgroundColor" red="0.88962850770000002" green="0.24572826117094862" blue="0.13834424344717974" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ContactCell" rowHeight="78" id="Z4M-74-Awk" customClass="ContactCell">
+                                    <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="ContactCell" rowHeight="78" id="Z4M-74-Awk" customClass="ContactCell">
                                         <rect key="frame" x="0.0" y="22" width="320" height="78"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Z4M-74-Awk" id="eP9-0a-dmj">
@@ -276,6 +275,7 @@
                                         <color key="backgroundColor" red="0.84295280612244894" green="0.84295280612244894" blue="0.84295280612244894" alpha="1" colorSpace="calibratedRGB"/>
                                         <inset key="separatorInset" minX="360" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
+                                            <outlet property="cardView" destination="g24-l8-4Yj" id="gJH-1X-lbp"/>
                                             <outlet property="contactPic" destination="dP6-sS-Lld" id="E1s-xI-uMV"/>
                                             <outlet property="nameLabel" destination="JeP-kR-yu3" id="ta5-gc-RAd"/>
                                             <outlet property="numCoursesLabel" destination="vRW-ix-bb2" id="YjJ-cm-mrc"/>
@@ -284,7 +284,7 @@
                                             <outlet property="whiteBackgroundView" destination="g24-l8-4Yj" id="IA2-6d-OOe"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="NoFriends" id="J3v-iO-loT">
+                                    <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NoFriends" id="J3v-iO-loT">
                                         <rect key="frame" x="0.0" y="100" width="320" height="78"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="J3v-iO-loT" id="ucT-AA-HXo">
@@ -310,24 +310,10 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" red="0.83075573979999995" green="0.83075573979999995" blue="0.83075573979999995" alpha="1" colorSpace="calibratedRGB"/>
+                                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vY3-dG-bPl">
-                                <rect key="frame" x="0.0" y="20" width="320" height="44"/>
-                                <color key="barTintColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
-                                <textAttributes key="titleTextAttributes">
-                                    <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
-                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </textAttributes>
-                                <items>
-                                    <navigationItem title="Friends" id="jxR-gW-vdq"/>
-                                </items>
-                            </navigationBar>
-                            <view alpha="0.59999999999999998" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oDk-Iv-OL0">
-                                <rect key="frame" x="0.0" y="66" width="320" height="43"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hVc-YI-Iqr">
                                 <rect key="frame" x="0.0" y="64" width="320" height="44"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -346,6 +332,17 @@
                                 </items>
                                 <color key="tintColor" red="0.86627072699999996" green="0.1430524406" blue="0.060937509340000001" alpha="1" colorSpace="calibratedRGB"/>
                             </toolbar>
+                            <navigationBar contentMode="scaleToFill" fixedFrame="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vY3-dG-bPl">
+                                <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                                <color key="barTintColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <textAttributes key="titleTextAttributes">
+                                    <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </textAttributes>
+                                <items>
+                                    <navigationItem title="Friends" id="jxR-gW-vdq"/>
+                                </items>
+                            </navigationBar>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Enable Sharing:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6NL-64-IHZ">
                                 <rect key="frame" x="13" y="75" width="135" height="25"/>
                                 <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="18"/>
@@ -370,18 +367,6 @@
                                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="iaQ-PJ-Mx8">
                                                 <rect key="frame" x="142" y="215" width="37" height="37"/>
                                             </activityIndicatorView>
-                                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dwr-bl-P5D">
-                                                <rect key="frame" x="60" y="139" width="200" height="40"/>
-                                                <color key="backgroundColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
-                                                <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="22"/>
-                                                <state key="normal" title="Retry">
-                                                    <color key="titleColor" red="0.95264668370000005" green="0.95264668370000005" blue="0.95264668370000005" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="retryFriends:" destination="keV-ci-FUd" eventType="touchUpInside" id="etF-ne-yIs"/>
-                                                </connections>
-                                            </button>
                                         </subviews>
                                     </scrollView>
                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3vH-XA-nMX">
@@ -416,11 +401,11 @@
                         <outlet property="closeScheduleButton" destination="3vH-XA-nMX" id="Y8z-ax-kF5"/>
                         <outlet property="contactTableView" destination="2P3-z4-F2j" id="lTH-zB-sc6"/>
                         <outlet property="greyedBackgroundView" destination="AR5-zB-imv" id="OQ0-f4-SJ1"/>
-                        <outlet property="refreshButton" destination="Dwr-bl-P5D" id="15C-MA-fMr"/>
                         <outlet property="scheduleImageView" destination="hfP-CC-iWp" id="1mh-Vg-P3J"/>
                         <outlet property="scheduleScrollView" destination="TQx-AO-YCW" id="11Y-Wr-XPv"/>
                         <outlet property="sharingEnabledLabel" destination="G6Q-z6-piZ" id="DlM-hJ-2dD"/>
                         <outlet property="sharingSwitch" destination="0bN-Tq-W0e" id="xN3-lb-GLp"/>
+                        <outlet property="sharingToolbar" destination="hVc-YI-Iqr" id="HQt-7I-rwy"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vf3-Ls-bCS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -444,7 +429,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <inset key="separatorInset" minX="360" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="CourseCell" rowHeight="46" id="B7Y-MU-5fB" customClass="CourseCell">
+                                    <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="none" accessoryType="detailButton" hidesAccessoryWhenEditing="NO" indentationWidth="0.0" shouldIndentWhileEditing="NO" reuseIdentifier="CourseCell" rowHeight="46" id="B7Y-MU-5fB" customClass="CourseCell">
                                         <rect key="frame" x="0.0" y="22" width="320" height="46"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="B7Y-MU-5fB" id="EM8-Qe-Isu">
@@ -470,7 +455,7 @@
                                             <outlet property="sectionNumberLabel" destination="J4U-IU-3Br" id="07X-s0-52T"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="0.0" reuseIdentifier="ContactCell" id="y46-R0-Ndd" customClass="ClassContactCell">
+                                    <tableViewCell contentMode="scaleToFill" ambiguous="YES" selectionStyle="none" indentationWidth="0.0" reuseIdentifier="ContactCell" id="y46-R0-Ndd" customClass="ClassContactCell">
                                         <rect key="frame" x="0.0" y="68" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="y46-R0-Ndd" id="HMQ-Km-1zz">
@@ -492,6 +477,23 @@
                                             <outlet property="contactPictureView" destination="fHO-rQ-tbD" id="D3h-1a-iAY"/>
                                             <outlet property="nameLabel" destination="xkt-h2-91A" id="dfY-as-zFP"/>
                                         </connections>
+                                    </tableViewCell>
+                                    <tableViewCell appearanceType="aqua" contentMode="scaleToFill" ambiguous="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NoFriends" id="hX6-be-JUy">
+                                        <rect key="frame" x="0.0" y="112" width="320" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hX6-be-JUy" id="Dzk-Yx-6y9">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label appearanceType="aqua" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="😥 No friends in this class 😥 " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="255" translatesAutoresizingMaskIntoConstraints="NO" id="Ic6-OO-p1t">
+                                                    <rect key="frame" x="33" y="-2" width="255" height="47"/>
+                                                    <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="16"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </tableViewCell>
                                 </prototypes>
                                 <sections/>
@@ -556,10 +558,16 @@
                                                 <segue destination="DJB-Bg-Zag" kind="unwind" unwindAction="dismissDetails:" id="KHk-vQ-JcJ"/>
                                             </connections>
                                         </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" title="License" style="plain" id="ys7-W2-CYs">
+                                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                            <connections>
+                                                <action selector="showOpenStreetLicense:" destination="JUW-PI-EEF" id="A0Z-dT-vXq"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
-                            <view appearanceType="aqua" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wKA-EG-qeg" userLabel="MainDetailShadow">
+                            <view hidden="YES" appearanceType="aqua" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wKA-EG-qeg" userLabel="MainDetailShadow">
                                 <rect key="frame" x="22" y="87" width="280" height="200"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                             </view>
@@ -619,19 +627,32 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
-                            <stepper appearanceType="aqua" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" continuous="NO" value="18" maximumValue="1000" translatesAutoresizingMaskIntoConstraints="NO" id="NE2-iw-p6t">
+                            <mapView appearanceType="aqua" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ThK-Oh-okn">
+                                <rect key="frame" x="0.0" y="293" width="320" height="275"/>
+                            </mapView>
+                            <stepper appearanceType="aqua" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" continuous="NO" value="18" maximumValue="1000" translatesAutoresizingMaskIntoConstraints="NO" id="NE2-iw-p6t">
                                 <rect key="frame" x="206" y="519" width="94" height="29"/>
                                 <color key="tintColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                             </stepper>
-                            <mapView appearanceType="aqua" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ThK-Oh-okn">
-                                <rect key="frame" x="0.0" y="293" width="320" height="275"/>
-                            </mapView>
+                            <label appearanceType="aqua" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="© OpenStreetMap contributors" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fG0-of-eIe">
+                                <rect key="frame" x="152" y="548" width="150" height="20"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="pq5-re-hES" firstAttribute="top" secondItem="ThK-Oh-okn" secondAttribute="bottom" id="1Ml-fh-qCh"/>
+                            <constraint firstItem="ThK-Oh-okn" firstAttribute="top" secondItem="wKA-EG-qeg" secondAttribute="bottom" constant="6" id="lfN-FK-Cpw"/>
+                            <constraint firstItem="fG0-of-eIe" firstAttribute="top" secondItem="NE2-iw-p6t" secondAttribute="bottom" id="pJU-FI-LKK"/>
+                            <constraint firstItem="pq5-re-hES" firstAttribute="top" secondItem="fG0-of-eIe" secondAttribute="bottom" id="sdh-yx-Trn"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="courseLabel" destination="Xop-ZX-Dfa" id="LWk-tV-VZ8"/>
                         <outlet property="discussionLabel" destination="SSn-aQ-WUs" id="Hzz-XG-8q6"/>
+                        <outlet property="mainDetailView" destination="xFr-y2-DUa" id="kAp-ZV-ThC"/>
                         <outlet property="mapView" destination="ThK-Oh-okn" id="dMT-Ay-X19"/>
                         <outlet property="primaryBuildingLabel" destination="ZD9-9x-hHg" id="uxP-PS-4Nt"/>
                         <outlet property="primaryDays" destination="g0l-D7-2Ol" id="slZ-rs-CMy"/>
@@ -646,7 +667,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pXb-zn-thX" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="DJB-Bg-Zag" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1405" y="163"/>
+            <point key="canvasLocation" x="989" y="849"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="MYR-HK-Sna">

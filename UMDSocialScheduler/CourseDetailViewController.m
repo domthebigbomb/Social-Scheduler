@@ -10,8 +10,8 @@
 #import <AddressBook/AddressBook.h>
 
 @interface CourseDetailViewController ()
-@property (strong,nonatomic) NSArray *bldgCodes;
 @property (strong,nonatomic) IBOutlet MKMapView *mapView;
+@property (strong, nonatomic) IBOutlet UIView *mainDetailView;
 @property (strong,nonatomic) IBOutlet UIStepper *zoomStepper;
 @end
 
@@ -40,11 +40,16 @@
 {
     [super viewDidLoad];
     zoomLevel = [_zoomStepper value];
+    _mainDetailView.layer.cornerRadius = 5;
+    _mainDetailView.layer.masksToBounds = NO;
+    _mainDetailView.layer.shadowOffset = CGSizeMake(5, 5);
+    _mainDetailView.layer.shadowRadius = 5;
+    _mainDetailView.layer.shadowOpacity = 0.6;
     Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus network = [internetReachability currentReachabilityStatus];
     [_zoomStepper addTarget:self action:@selector(stepperValueChanged) forControlEvents:UIControlEventValueChanged];
-    NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
-    _bldgCodes = [[NSArray alloc] init];
+    //NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
+    //_bldgCodes = [[NSArray alloc] init];
     primaryAddress = [[NSDictionary alloc] init];
     secondaryAddress = [[NSDictionary alloc] init];
     [_mapView setDelegate:self];
@@ -55,10 +60,10 @@
     if(network == NotReachable){
         NSLog(@"No Internet");
     }else{
-        NSData *data = [NSData dataWithContentsOfURL:bldgURL];
-        NSError *error;
-        _bldgCodes = [[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"];
-        NSLog(@"%@",[_bldgCodes description]);
+        //NSData *data = [NSData dataWithContentsOfURL:bldgURL];
+        //NSError *error;
+        //_bldgCodes = [[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"];
+        //NSLog(@"%@",[_bldgCodes description]);
         dispatch_async(dispatch_get_main_queue(), ^{
             NSString *primBldg = @"";
             for(NSDictionary *building in _bldgCodes){
@@ -230,8 +235,9 @@
 -(void)zoomIn{
     MKCoordinateRegion region = [_mapView region];
     MKCoordinateSpan span = region.span;
-    span.longitudeDelta = region.span.longitudeDelta/1.5;
-    span.latitudeDelta = region.span.latitudeDelta/1.5;
+    NSLog(@"Lat:%f\nLon:%f",span.latitudeDelta,span.longitudeDelta);
+    span.longitudeDelta = region.span.longitudeDelta/2.0;
+    span.latitudeDelta = region.span.latitudeDelta/2.0;
     region.span = span;
     [_mapView setRegion:region];
 }
@@ -239,10 +245,15 @@
 -(void)zoomOut{
     MKCoordinateRegion region = [_mapView region];
     MKCoordinateSpan span = region.span;
-    span.longitudeDelta = region.span.longitudeDelta*1.5;
-    span.latitudeDelta = region.span.latitudeDelta*1.5;
+    NSLog(@"Lat:%f\nLon:%f",span.latitudeDelta,span.longitudeDelta);
+    span.longitudeDelta = region.span.longitudeDelta*2.0;
+    span.latitudeDelta = region.span.latitudeDelta*2.0;
     region.span = span;
     [_mapView setRegion:region];
+}
+
+-(IBAction)showOpenStreetLicense:(UIButton *)button{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.openstreetmap.org/copyright"]];
 }
 
 - (void)didReceiveMemoryWarning
