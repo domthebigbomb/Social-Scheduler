@@ -21,7 +21,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *sharingEnabledLabel;
 @property (weak, nonatomic) IBOutlet UISwitch *sharingSwitch;
 @property (weak,nonatomic) IBOutlet UIToolbar *sharingToolbar;
+@property (weak,nonatomic) IBOutlet UIProgressView *progressBar;
 
+@property int numFinished;
 @end
 
 @implementation FacebookFriendsViewController{
@@ -44,6 +46,7 @@
     NetworkStatus network;
     FBLoginView *loginView;
     BOOL showSchedule;
+    BOOL isRefreshing;
     NSInteger scheduleIndex;
 }
 
@@ -64,6 +67,8 @@
     contactSchedules = [[NSMutableDictionary alloc] init];
     contactWithMutualClasses = [[NSMutableArray alloc] init];
 
+    isRefreshing = NO;
+    
     _sharingToolbar.layer.masksToBounds = NO;
     _sharingToolbar.layer.shadowOffset = CGSizeMake(0, 2);
     _sharingToolbar.layer.shadowRadius = 5;
@@ -75,22 +80,19 @@
     fbLoginURLString = @"access?access_token=";
     getFriendsInCourseURLString = @"friends?";
     
-    CGRect loginFrame = CGRectFromString([NSString stringWithFormat: @"{{50,%f},{200,46}}",_refreshButton.frame.origin.y + 150]);
+    CGRect loginFrame = CGRectFromString([NSString stringWithFormat: @"{{50,%f},{200,46}}",_greyedBackgroundView.center.y]);
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
         loginFrame = CGRectFromString(@"{{225, 547},{321,66}}");
     }
     
     loginView = [[FBLoginView alloc] initWithFrame:loginFrame];
-    [loginView setReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
+    [loginView setReadPermissions:@[@"public_profile",@"email",@"user_friends",@"user_likes"]];
     [loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
     [loginView setPublishPermissions:@[@"publish_actions" ]];
     [loginView setHidden: YES];
     [loginView setDelegate:self];
     [_closeScheduleButton setHidden:YES];
     [_greyedBackgroundView addSubview:loginView];
-    
-    [_refreshButton setHidden:YES];
-    _refreshButton.layer.cornerRadius = 3.0f;
     
     
     /*
@@ -104,19 +106,33 @@
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-    if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"]){
-        [self refreshFriends];
-    }else if([contacts count] == 0){
-        [self refreshFriends];
+    //[_activityIndicator stopAnimating];
+    if([[FBSession activeSession] accessTokenData] == nil){
+        [_progressBar setHidden: YES];
+        [_activityIndicator stopAnimating];
+        [_closeScheduleButton setHidden:YES];
+        [_scheduleImageView setImage:nil];
+        [_greyedBackgroundView setHidden:NO];
+        [loginView setHidden:NO];
+    }else{
+        if(!isRefreshing){
+            if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"]){
+                [self refreshFriends];
+            }else if([contacts count] == 0){
+                [self refreshFriends];
+            }
+        }
     }
 }
 
 -(void)refreshFriends{
+    isRefreshing = YES;
+    [_progressBar setProgress:0.0];
     [_activityIndicator startAnimating];
+    [_progressBar setHidden: NO];
     [_greyedBackgroundView setHidden: NO];
-    [_refreshButton setHidden:YES];
     [_closeScheduleButton setHidden:YES];
-    
+    _numFinished = 0;
     NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     userSchedule = [[NSMutableDictionary alloc] init];
@@ -138,7 +154,6 @@
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"Please login to facebook to access this feature" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         [_alertMsg show];
         [_activityIndicator stopAnimating];
-        [_refreshButton setHidden:NO];
         [loginView setHidden:NO];
     }
     
@@ -154,6 +169,7 @@
             NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
             
             [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                //[_progressBar setProgress:0.5 animated:YES];
                 NSError *error;
                 NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                 NSLog(@"Login Response: %@", response);
@@ -172,6 +188,7 @@
                 NSURLRequest *request = [NSURLRequest requestWithURL:getContactURL];
                 [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                     [contactData appendData:data];
+                    [_progressBar setProgress:0.1 animated:YES];
                     NSError *error;
                     NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                     contacts = [[NSMutableArray alloc] initWithArray:[JSON valueForKey:@"data"]];
@@ -182,6 +199,7 @@
                     NSArray *courses = [userSchedule allKeys];
                     //for(NSString *course in courses){
                     for(int i = 0; i < [courses count]; i++){
+                        NSLog(@"Progress: %f",[_progressBar progress]);
                         NSString *course = [courses objectAtIndex:i];
                         NSURLRequest *getCourseFriendsRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,getFriendsInCourseURLString,termCode,course]]];
                         [NSURLConnection sendAsynchronousRequest:getCourseFriendsRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
@@ -211,15 +229,21 @@
                             NSLog(@"Contact Response: %@", response);
                             NSLog(@"Contact Error: %@", connectionError);
                             
+                            [_progressBar setProgress:[_progressBar progress] + (.9/[courses count]) animated:YES];
+
+                            NSLog(@"Progress: %f",[_progressBar progress]);
                             // DEBUGGING PURPOSES
                             //[contacts removeAllObjects];
-                            if(i == [courses count]-1){
+                            _numFinished += 1;
+                            if(_numFinished == [courses count]){
                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                    //[_progressBar setProgress:1.0 animated:YES];
                                     [_activityIndicator stopAnimating];
                                     [_closeScheduleButton setHidden:NO];
                                     [_greyedBackgroundView setHidden:YES];
                                     [[self contactTableView] setHidden:NO];
                                     [[self contactTableView] reloadData];
+                                    isRefreshing = NO;
                                 });
                             }
                             
@@ -229,13 +253,6 @@
             }];
             [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshFriends"];
         }
-        
-        /*
-         else{
-            _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"Please login to facebook to access this feature" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-            [_alertMsg show];
-        }
-         */
     }
 }
 
@@ -329,7 +346,9 @@
 }
 
 -(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
-    //[self refreshFriends];
+    if(!isRefreshing){
+        [self refreshFriends];
+    }
 }
 
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
@@ -338,6 +357,7 @@
 
 - (IBAction)showSchedule:(UIButton *)sender {
     [_closeScheduleButton setHidden:NO];
+    [_greyedBackgroundView setHidden:NO];
     CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self.contactTableView];
     NSIndexPath *indexPath = [self.contactTableView indexPathForRowAtPoint:buttonPosition];
     scheduleIndex = [indexPath row];
@@ -347,7 +367,6 @@
     [_tapGesture setEnabled: YES];
     [_scheduleScrollView setZoomScale:1.0];
     [_scheduleImageView setImage:contactScheduleImage];
-    [_greyedBackgroundView setHidden:NO];
 }
 
 - (IBAction)hideSchedule:(UIButton *)sender {

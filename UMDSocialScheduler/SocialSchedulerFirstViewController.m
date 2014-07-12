@@ -14,7 +14,7 @@
 @interface SocialSchedulerFirstViewController ()
 - (IBAction)takeSnapshot:(UIButton *)sender;
 - (IBAction)postSchedule:(UIButton *)sender;
-
+- (IBAction)logout:(UIButton *)sender;
 - (IBAction)shareBarButton:(UIBarButtonItem *)sender;
 @property (weak, nonatomic) IBOutlet UIButton *shareToFbButton;
 @property (weak, nonatomic) IBOutlet UIScrollView *scheduleScrollView;
@@ -41,7 +41,7 @@
 {
     [super viewDidLoad];
     count = 0;
-    zoomScript = @"document.body.style.zoom = 1.5;";
+    zoomScript = @"document.body.style.zoom = 1.8;";
     fbLoginURLString = @"access?access_token=";
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     uploadScheduleURLString = @"render_schedule";
@@ -54,6 +54,7 @@
     [[UITabBar appearance] setTintColor:tintColor];
     _shareToFbButton.layer.cornerRadius = 3.0f;
     _newSchedule = NO;
+
 }
 
 
@@ -306,7 +307,10 @@
     UIActivityViewController* activityViewController =
     [[UIActivityViewController alloc] initWithActivityItems:datatoshare applicationActivities:nil];
     [self presentViewController:activityViewController animated:YES completion:^{}];
-    
+}
+
+-(IBAction)logout:(UIButton *)sender{
+    [self performSegueWithIdentifier:@"ShowLogin" sender:self];
 }
 
 

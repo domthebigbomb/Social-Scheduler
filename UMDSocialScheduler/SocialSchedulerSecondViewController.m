@@ -184,7 +184,7 @@
                     dispatch_async(dispatch_get_main_queue(), ^{
                         [_courseTableView beginUpdates];
                         showContact = YES;
-                        [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationAutomatic];
+                        [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationFade];
                         [_courseTableView endUpdates];
                         isUpdating = NO;
                     });
@@ -272,6 +272,7 @@
         }
         viewController.primaryBldgString = primBldgString;
         viewController.primDays = [properties objectForKey:@"PrimaryDays"];
+        NSLog(@"Passing in primDays: %@",[properties objectForKey:@"PrimaryDays"]);
         NSString *primTime = [properties objectForKey:@"PrimaryTimes"];
         viewController.primaryTimes = primTime;
         viewController.bldgCodes = bldgCodes;
@@ -279,6 +280,47 @@
 }
 
 -(IBAction)dismissDetails:(UIStoryboardSegue *)segue{
+    
+}
+
+// Experimental feature
+-(IBAction)addToCalendar:(UIBarButtonItem *)sender{
+    EKEventStore *eventStore = [[EKEventStore alloc] init];
+    [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+        if(error){
+            NSLog(@"Error requestion calendar: %@", [error description]);
+        }else if(granted){
+            //NSDateComponents *components = [[NSDateComponents alloc] init];
+            for(NSString *course in _courseKeys){
+                NSDictionary *properties = [_courses objectForKey:course];
+                NSInteger classLength = [[[properties objectForKey:@"PrimaryTimes"] substringFromIndex:4] integerValue] - [[[properties objectForKey:@"PrimaryTimes"] substringToIndex:4] integerValue];
+                EKEvent *event = [EKEvent eventWithEventStore:eventStore];
+                
+                NSString *days = [properties objectForKeyedSubscript:@"PrimaryDays"];
+                NSMutableArray *daysOfTheWeek = [[NSMutableArray alloc] init];
+                
+                EKRecurrenceRule *recurrence = [[EKRecurrenceRule alloc] initRecurrenceWithFrequency:EKRecurrenceFrequencyWeekly
+                                                                                            interval:1
+                                                                                       daysOfTheWeek:daysOfTheWeek
+                                                                                      daysOfTheMonth:nil
+                                                                                     monthsOfTheYear:nil
+                                                                                      weeksOfTheYear:nil
+                                                                                       daysOfTheYear:nil
+                                                                                        setPositions:nil
+                                                                                                 end:nil];
+                [event setTitle:course];
+                //[event setRecurrenceRules:<#(NSArray *)#>];
+                [event setStartDate:[[NSDate alloc] init]];
+                event.endDate = [[NSDate alloc] initWithTimeInterval:600 sinceDate:event.startDate];
+                [event setCalendar:[eventStore defaultCalendarForNewEvents]];
+                
+                NSError *error;
+                [eventStore saveEvent:event span:EKSpanThisEvent error:&error];
+            }
+        }else{
+            NSLog(@"Calendar access not granted");
+        }
+    }];
     
 }
 

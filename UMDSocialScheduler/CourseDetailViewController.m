@@ -10,9 +10,10 @@
 #import <AddressBook/AddressBook.h>
 
 @interface CourseDetailViewController ()
-@property (strong,nonatomic) IBOutlet MKMapView *mapView;
-@property (strong, nonatomic) IBOutlet UIView *mainDetailView;
-@property (strong,nonatomic) IBOutlet UIStepper *zoomStepper;
+@property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (weak, nonatomic) IBOutlet UIView *mainDetailView;
+@property (strong, nonatomic) UIAlertView *alertView;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *dismissButton;
 @end
 
 @implementation CourseDetailViewController{
@@ -25,6 +26,12 @@
     NSDictionary *primaryAddress;
     NSDictionary *secondaryAddress;
     NSUInteger zoomLevel;
+    MKPlacemark *placemark;
+    MKPolyline *existingRoute;
+    CLLocation *oldLocation;
+    BOOL updateRoute;
+    BOOL updateBox;
+    CLLocationManager *locationManager;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -36,22 +43,101 @@
     return self;
 }
 
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
+    CLLocation *locationUpdate = [locations firstObject];
+    if(updateRoute){
+        NSLog(@"Location Update: %@",[locationUpdate description]);
+        NSLog(@"Old Location: %@", [oldLocation description]);
+        if([locationUpdate coordinate].latitude != [oldLocation coordinate].latitude || [locationUpdate coordinate].longitude != [oldLocation coordinate].longitude){
+            NSLog(@"New Location Found");
+            [_mapView removeOverlay:existingRoute];
+            
+            NSString *bingString = [NSString stringWithFormat:@"http://dev.virtualearth.net/REST/v1/Routes/Walking?wayPoint.1=%f,%f&Waypoint.2=%f,%f&routePathOutput=Points&optimize=distance&key=AlBhfcixLlJBZA9wNxVFB5LEmiD3bvYak8mkWGCCaI8waSs6NPUDzdJw1oKy3cA9", locationManager.location.coordinate.latitude , locationManager.location.coordinate.longitude, placemark.coordinate.latitude,placemark.coordinate.longitude];
+            NSLog(@"Bing Request URL: %@", bingString);
+            
+            NSURL *bingURL = [NSURL URLWithString:bingString];
+            NSURLRequest *bingDirections = [[NSURLRequest alloc] initWithURL:bingURL];
+            [NSURLConnection sendAsynchronousRequest:bingDirections queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                NSError *err;
+                NSDictionary *responseFields = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&err];
+                if([[responseFields objectForKey:@"statusCode"] integerValue] ==  200){
+                    NSArray *routePath = [[NSArray alloc] initWithArray:[[[[[[[responseFields objectForKey:@"resourceSets"] firstObject] objectForKey:@"resources"] firstObject] objectForKey:@"routePath"] objectForKey:@"line"] objectForKey:@"coordinates"]];
+                    
+                    CLLocationCoordinate2D directionPoints[[routePath count]];
+                    
+                    int i = 0;
+                    for(NSArray *coordinate in routePath){
+                        CLLocationCoordinate2D point = CLLocationCoordinate2DMake([[coordinate firstObject] doubleValue], [[coordinate lastObject] doubleValue]);
+                        directionPoints[i] = point;
+                        i++;
+                    }
+                    MKPolyline *line = [MKPolyline polylineWithCoordinates:directionPoints count:[routePath count]];
+                    [_mapView addOverlay:line level:MKOverlayLevelAboveLabels];
+                    existingRoute = line;
+                    if(updateBox){
+                        NSLog(@"Updating Bounding Box with mylocation");
+                        NSArray *bbox = [[[[[responseFields objectForKey:@"resourceSets"] firstObject] objectForKey:@"resources"] firstObject] objectForKey:@"bbox"];
+                        NSLog(@"Bounding Box: %@", [bbox description]);
+                        CLLocationDegrees centerLat = ([[bbox objectAtIndex:0] doubleValue] + [[bbox objectAtIndex:2] doubleValue])/2;
+                        CLLocationDegrees centerLon = ([[bbox objectAtIndex:1] doubleValue] + [[bbox objectAtIndex:3] doubleValue])/2;
+                        CLLocationCoordinate2D center = CLLocationCoordinate2DMake(centerLat, centerLon);
+                        MKCoordinateSpan span = MKCoordinateSpanMake([[bbox objectAtIndex:2] doubleValue] - [[bbox objectAtIndex:0] doubleValue] + 0.0015, [[bbox objectAtIndex:3] doubleValue] - [[bbox objectAtIndex:1] doubleValue] + 0.002);
+                        NSLog(@"Span: %f", span.latitudeDelta);
+                        MKCoordinateRegion boundingBox = MKCoordinateRegionMake(center, span);
+                        [_mapView setRegion:boundingBox];
+                        updateBox = NO;
+                    }
+                    oldLocation = locationUpdate;
+                }else if ([[responseFields objectForKey:@"statusCode"] integerValue] == 404){
+                    _alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh" message:[[responseFields objectForKey:@"errorDetails"] firstObject] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+                    NSLog(@"Too far away");
+                    //[_alertView show];
+                    CLLocationDegrees lat = [[primaryAddress objectForKey:@"lat"] doubleValue];
+                    CLLocationDegrees lon = [[primaryAddress objectForKey:@"lon"] doubleValue];
+                    CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
+                    MKCoordinateRegion zoomedRegion = [_mapView regionThatFits: MKCoordinateRegionMakeWithDistance(coordinates, 200, 200)];
+                    [_mapView setRegion:zoomedRegion];
+                }
+            }];
+        }
+        updateRoute = NO;
+        [self performSelector:@selector(refreshRoute) withObject:nil afterDelay:10.0f];
+
+    }
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [locationManager setDelegate:nil];
+    [locationManager stopUpdatingLocation];
+    [_mapView removeOverlays:[_mapView overlays]];
+    [_mapView setDelegate: nil];
+    //[self.mapView setDelegate:nil];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    zoomLevel = [_zoomStepper value];
-    _mainDetailView.layer.cornerRadius = 5;
+    locationManager = [[CLLocationManager alloc] init];
+    locationManager.delegate = self;
+    [locationManager startUpdatingLocation];
+    oldLocation = [[CLLocation alloc] init];
+    existingRoute = [[MKPolyline alloc] init];
+    //_mainDetailView.layer.cornerRadius = 5;
     _mainDetailView.layer.masksToBounds = NO;
     _mainDetailView.layer.shadowOffset = CGSizeMake(5, 5);
     _mainDetailView.layer.shadowRadius = 5;
     _mainDetailView.layer.shadowOpacity = 0.6;
     Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus network = [internetReachability currentReachabilityStatus];
-    [_zoomStepper addTarget:self action:@selector(stepperValueChanged) forControlEvents:UIControlEventValueChanged];
     //NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
     //_bldgCodes = [[NSArray alloc] init];
     primaryAddress = [[NSDictionary alloc] init];
     secondaryAddress = [[NSDictionary alloc] init];
+    _primaryDays = [[NSMutableString alloc] initWithString:_primDays];
+    if(_hasDiscussion){
+        _secondaryDays = [[NSMutableString alloc] initWithString: _secDays];
+    }
+    NSLog(@"Primary Days: %@", _primDays);
     [_mapView setDelegate:self];
     MKTileOverlay *tiles = [[MKTileOverlay alloc] initWithURLTemplate:@"http://tile.openstreetmap.org/{z}/{x}/{y}.png"];
     [tiles setCanReplaceMapContent:YES];
@@ -90,19 +176,47 @@
             CLLocationDegrees lon = [[primaryAddress objectForKey:@"lon"] doubleValue];
             CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
             NSDictionary *locationDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          [address objectForKey:@"city"],kABPersonAddressCityKey,
-                                          [address objectForKey:@"country"],kABPersonAddressCountryKey,
-                                          [address objectForKey:@"country_code"], kABPersonAddressCountryCodeKey,
-                                          [address objectForKey:@"road"], kABPersonAddressStreetKey,
-                                          [address objectForKey:@"state"], kABPersonAddressStateKey,
-                                          [address objectForKey:@"postcode"],kABPersonAddressZIPKey,
+                                          [address objectForKey:@"building"], kABPersonAddressStreetKey,
                                           nil];
-            MKPlacemark *placemark = [[MKPlacemark alloc] initWithCoordinate:coordinates addressDictionary:locationDict];
+            
+            /*
+             [address objectForKey:@"city"],kABPersonAddressCityKey,
+             [address objectForKey:@"country"],kABPersonAddressCountryKey,
+             [address objectForKey:@"country_code"], kABPersonAddressCountryCodeKey,
+             [address objectForKey:@"road"], kABPersonAddressStreetKey,
+             [address objectForKey:@"state"], kABPersonAddressStateKey,
+             [address objectForKey:@"postcode"],kABPersonAddressZIPKey,
+             [address objectForKey:@"building"], kABPersonAddressProperty,
+
+             */
+            placemark = [[MKPlacemark alloc] initWithCoordinate:coordinates addressDictionary:locationDict];
+            // Pin class on the map
             NSLog(@"%@",[placemark description]);
             [_mapView addAnnotation:placemark];
-            MKCoordinateRegion zoomedRegion = [_mapView regionThatFits: MKCoordinateRegionMakeWithDistance(coordinates, 200, 200)];
-            [_mapView setRegion:zoomedRegion];
             
+            
+            // Add the walking directions from current location to class
+            /*
+            MKMapItem *dest = [[MKMapItem alloc] initWithPlacemark:placemark];
+            MKDirectionsRequest *walkingRequest = [[MKDirectionsRequest alloc] init];
+            [walkingRequest setSource:[MKMapItem mapItemForCurrentLocation]];
+            [walkingRequest setDestination: dest];
+            [walkingRequest setTransportType:MKDirectionsTransportTypeAny];
+            [walkingRequest setRequestsAlternateRoutes:NO];
+            MKDirections *walkingDirections = [[MKDirections alloc] initWithRequest:walkingRequest];
+            [walkingDirections calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, NSError *error) {
+                if(!error){
+                    for(MKRoute *route in [response routes]){
+                        //[_mapView addOverlay:[route polyline] level:MKOverlayLevelAboveLabels];
+                    }
+                }
+            }];
+            */
+            
+            if(![CLLocationManager locationServicesEnabled] || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied){
+                MKCoordinateRegion zoomedRegion = [_mapView regionThatFits: MKCoordinateRegionMakeWithDistance(coordinates, 200, 200)];
+                [_mapView setRegion:zoomedRegion];
+            }
             if(_hasDiscussion){
                 NSString *secBldg = @"";
                 for(NSDictionary *building in _bldgCodes){
@@ -133,20 +247,20 @@
     fbLoginURLString = @"access?access_token=";
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     contactSchedules = [[NSMutableDictionary alloc] init];
-    
+
     [_secondaryBuildingLabel setHidden:NO];
-    [_secondaryDays setHidden:NO];
+    [_secondaryDaysLabel setHidden:NO];
     [_secondaryTimesBegin setHidden:NO];
     [_courseLabel setText: _course];
     [_sectionLabel setText:[NSString stringWithFormat:@"Section %@",_section]];
     [_primaryBuildingLabel setText:_primaryBldgString];
-    NSUInteger length = [_primDays length];
+    NSUInteger length = [_primaryDays length];
     for(int i = 1; i< length; i++){
-        [_primDays insertString:@" " atIndex: i+(i-1)];
+        [_primaryDays insertString:@" " atIndex: i+(i-1)];
     }
-    _primDays = (NSMutableString *)[_primDays stringByReplacingOccurrencesOfString:@"T" withString:@"Tu"];
-    _primDays = (NSMutableString *)[_primDays stringByReplacingOccurrencesOfString:@"H" withString:@"Th"];
-    [_primaryDays setText:_primDays];
+    _primaryDays = (NSMutableString *)[_primaryDays stringByReplacingOccurrencesOfString:@"T" withString:@"Tu"];
+    _primaryDays = (NSMutableString *)[_primaryDays stringByReplacingOccurrencesOfString:@"H" withString:@"Th"];
+    [_primaryDaysLabel setText:_primaryDays];
     NSString *primBeginAMPM = @"";
     NSInteger primBeginHour = [[[_primaryTimes substringToIndex:4] substringToIndex:2] integerValue];
     NSString *primBeginMin = [[_primaryTimes substringToIndex:4] substringFromIndex:2];
@@ -175,13 +289,13 @@
     
     if(_hasDiscussion){
         [_secondaryBuildingLabel setText:_secondaryBldgString];
-        length = [_secDays length];
+        length = [_secondaryDays length];
         for(int i = 1; i< length; i++){
-            [_secDays insertString:@" " atIndex: i+(i-1)];
+            [_secondaryDays insertString:@" " atIndex: i+(i-1)];
         }
-        _secDays = (NSMutableString *)[_secDays stringByReplacingOccurrencesOfString:@"T" withString:@"Tu"];
-        _secDays = (NSMutableString *)[_secDays stringByReplacingOccurrencesOfString:@"H" withString:@"Th"];
-        [_secondaryDays setText:_secDays];
+        _secondaryDays = (NSMutableString *)[_secondaryDays stringByReplacingOccurrencesOfString:@"T" withString:@"Tu"];
+        _secondaryDays = (NSMutableString *)[_secondaryDays stringByReplacingOccurrencesOfString:@"H" withString:@"Th"];
+        [_secondaryDaysLabel setText:_secondaryDays];
         NSString *secBeginAMPM = @"";
         NSInteger secBeginHour = [[[_secondaryTimes substringToIndex:4] substringToIndex:2] integerValue];
         NSString *secBeginMin = [[_secondaryTimes substringToIndex:4] substringFromIndex:2];
@@ -210,26 +324,24 @@
     }else{
         [_discussionLabel setText:@"No Discussion"];
         [_secondaryBuildingLabel setHidden:YES];
-        [_secondaryDays setHidden:YES];
+        [_secondaryDaysLabel setHidden:YES];
         [_secondaryTimesBegin setHidden:YES];
     }
+    
+    updateBox = YES;
+    updateRoute = YES;
 }
 
 -(MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay{
     if([overlay isKindOfClass:[MKTileOverlay class]]){
         return [[MKTileOverlayRenderer alloc] initWithTileOverlay:overlay];
+    }else if([overlay isKindOfClass:[MKPolyline class]]){
+        MKPolylineRenderer *polylineRenderer = [[MKPolylineRenderer alloc] initWithOverlay:overlay];
+        [polylineRenderer setStrokeColor:[UIColor redColor]];
+        [polylineRenderer setLineWidth:2.5f];
+        return polylineRenderer;
     }
     return nil;
-}
-
--(void)stepperValueChanged{
-    if([_zoomStepper value] > zoomLevel){
-        [self zoomIn];
-        zoomLevel = [_zoomStepper value];
-    }else if([_zoomStepper value] < zoomLevel){
-        [self zoomOut];
-        zoomLevel = [_zoomStepper value];
-    }
 }
 
 -(void)zoomIn{
@@ -250,6 +362,12 @@
     span.latitudeDelta = region.span.latitudeDelta*2.0;
     region.span = span;
     [_mapView setRegion:region];
+}
+
+
+-(void)refreshRoute{
+    NSLog(@"Update Route");
+    updateRoute = YES;
 }
 
 -(IBAction)showOpenStreetLicense:(UIButton *)button{

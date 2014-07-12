@@ -15,6 +15,5 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *scheduleScrollView;
 @property (weak, nonatomic) IBOutlet UIButton *closeScheduleButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-@property (weak, nonatomic) IBOutlet UIButton *refreshButton;
 
 @end

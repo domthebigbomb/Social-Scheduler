@@ -79,13 +79,17 @@
         semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
     }else{
         NSData *data = [NSData dataWithContentsOfURL:semesterURL];
-        NSError *error;
-        semesterDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-        NSString *semesterText = [[[[[semesterDict objectForKey:@"results"] objectForKey:@"Data"] firstObject] objectForKey:@"property1"] objectForKey:@"text"];
-        semesterText = [semesterText substringFromIndex:[semesterText rangeOfString:@"Continue"].location + 11];
-        semesters = [semesterText componentsSeparatedByString:@"\n"];
+        if(data != nil){
+            NSError *error;
+            semesterDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+            NSString *semesterText = [[[[[semesterDict objectForKey:@"results"] objectForKey:@"Data"] firstObject] objectForKey:@"property1"] objectForKey:@"text"];
+            semesterText = [semesterText substringFromIndex:[semesterText rangeOfString:@"Continue"].location + 11];
+            semesters = [semesterText componentsSeparatedByString:@"\n"];
+        }else{
+            semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
+        }
     }
-    [_fbLoginView setReadPermissions:@[@"basic_info",@"email",@"user_likes"]];
+    [_fbLoginView setReadPermissions:@[@"public_profile",@"user_friends",@"email",@"user_likes"]];
     [_fbLoginView setDefaultAudience:FBSessionDefaultAudienceFriends];
     [_fbLoginView setPublishPermissions:@[@"publish_actions" ]];
     [_fbLoginView setDelegate:self];
@@ -146,6 +150,10 @@
         NSLog(@"Found Credentials");
         [_usernameField setText:[[NSUserDefaults standardUserDefaults] stringForKey:@"username"]];
         [_passwordField setText:[[NSUserDefaults standardUserDefaults] stringForKey:@"password"]];
+        [_backButton setHidden: YES];
+        [_backButton setEnabled:NO];
+        [_loginButton setHidden:NO];
+        [_loginButton setEnabled:YES];
     }
 
     
@@ -211,7 +219,6 @@
             //String brodder = "jonathan";
             [_activityIndicator stopAnimating];
             _webPage.delegate = nil;
-            //NSLog(@"\n%@",courseString);
             [self performSegueWithIdentifier:@"ShowSchedule" sender:self];
         }
     }
@@ -224,6 +231,7 @@
     [_usernameField setEnabled:YES];
     [_passwordField setEnabled:YES];
     [_semesterField setEnabled:YES];
+    [_loginButton setEnabled: YES];
     NSLog(@"%@",[error localizedDescription]);
 }
 
@@ -290,7 +298,7 @@
 
 // Facebook login related functions
 -(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
-    _profilePictureView.profileID = [user id];
+    _profilePictureView.profileID = [user objectID];
     [_profilePictureView setHidden: NO];
     [_statusLabel setText:[NSString stringWithFormat:@"%@",[user name]]];
 }
@@ -356,16 +364,16 @@
        ([_usernameField.text length] != 0 || [_passwordField.text length] != 0)){
         // Enabling Login button
         [_loginButton setHidden:NO];
-        [_loginButton setEnabled:YES];
-        [_backButton setEnabled:NO];
+        //[_loginButton setEnabled:YES];
+        //[_backButton setEnabled:NO];
         [_backButton setHidden:YES];
     }
     if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil &&
        ([_usernameField.text length] == 0 && [_passwordField.text length] == 0)){
         // Enabling Back button
         [_loginButton setHidden:YES];
-        [_loginButton setEnabled:NO];
-        [_backButton setEnabled:YES];
+        //[_loginButton setEnabled:NO];
+        //[_backButton setEnabled:YES];
         [_backButton setHidden:NO];
     }
     return YES;
@@ -440,7 +448,7 @@
                 password = [self cleanUpSpecialCharactersOfString:password];
                 loginScript = [NSString stringWithFormat:@"document.lform.in_tx_username.value='%@';document.lform.in_pw_userpass.value='%@'; doLogin();",username,password];
                 loginScript = [NSString stringWithFormat:@"document.getElementsByName('ldapid')[0].value='%@'; document.getElementsByName('ldappass')[0].value='%@'; document.getElementsByName('login')[0].click();",username,password];
-                NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
+                //NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
                 [self performSelector:@selector(hideKeyboard)];
                 
                 NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
@@ -453,6 +461,7 @@
                 }
                 
                 _webPage.delegate = self;
+                [_loginButton setEnabled: NO];
                 [_usernameField setEnabled:NO];
                 [_passwordField setEnabled:NO];
                 [_semesterField setEnabled:NO];
