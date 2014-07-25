@@ -8,6 +8,7 @@
 
 #import "CourseDetailViewController.h"
 #import <AddressBook/AddressBook.h>
+#import <QuartzCore/QuartzCore.h>
 
 @interface CourseDetailViewController ()
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
@@ -27,11 +28,16 @@
     NSDictionary *secondaryAddress;
     NSUInteger zoomLevel;
     MKPlacemark *placemark;
+    MKPointAnnotation *bldgPoint;
     MKPolyline *existingRoute;
     CLLocation *oldLocation;
     BOOL updateRoute;
     BOOL updateBox;
+    BOOL viewingMain;
+    UIColor *backgroundColor;
     CLLocationManager *locationManager;
+    Reachability *internetReachability;
+    NetworkStatus network;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -52,7 +58,7 @@
             NSLog(@"New Location Found");
             [_mapView removeOverlay:existingRoute];
             
-            NSString *bingString = [NSString stringWithFormat:@"http://dev.virtualearth.net/REST/v1/Routes/Walking?wayPoint.1=%f,%f&Waypoint.2=%f,%f&routePathOutput=Points&optimize=distance&key=AlBhfcixLlJBZA9wNxVFB5LEmiD3bvYak8mkWGCCaI8waSs6NPUDzdJw1oKy3cA9", locationManager.location.coordinate.latitude , locationManager.location.coordinate.longitude, placemark.coordinate.latitude,placemark.coordinate.longitude];
+            NSString *bingString = [NSString stringWithFormat:@"http://dev.virtualearth.net/REST/v1/Routes/Walking?wayPoint.1=%f,%f&Waypoint.2=%f,%f&routePathOutput=Points&optimize=distance&key=AlBhfcixLlJBZA9wNxVFB5LEmiD3bvYak8mkWGCCaI8waSs6NPUDzdJw1oKy3cA9", locationManager.location.coordinate.latitude , locationManager.location.coordinate.longitude, bldgPoint.coordinate.latitude,bldgPoint.coordinate.longitude];
             NSLog(@"Bing Request URL: %@", bingString);
             
             NSURL *bingURL = [NSURL URLWithString:bingString];
@@ -60,7 +66,14 @@
             [NSURLConnection sendAsynchronousRequest:bingDirections queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                 NSError *err;
                 NSDictionary *responseFields = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&err];
+                NSLog(@"Bing Response: %@",[responseFields description]);
                 if([[responseFields objectForKey:@"statusCode"] integerValue] ==  200){
+                    NSNumber *travelTime = [[[[[responseFields objectForKey:@"resourceSets"] firstObject] objectForKey:@"resources"] firstObject] objectForKey:@"travelDuration"];
+                    NSNumber *minutes = [NSNumber numberWithInt:[travelTime intValue] / 60];
+                    NSNumber *seconds = [NSNumber numberWithInt:[travelTime intValue] % 60];
+                    if(viewingMain){
+                        [_etaLabel setText:[NSString stringWithFormat:@"Estimated Time: %@ min %@ sec",minutes, seconds]];
+                    }
                     NSArray *routePath = [[NSArray alloc] initWithArray:[[[[[[[responseFields objectForKey:@"resourceSets"] firstObject] objectForKey:@"resources"] firstObject] objectForKey:@"routePath"] objectForKey:@"line"] objectForKey:@"coordinates"]];
                     
                     CLLocationCoordinate2D directionPoints[[routePath count]];
@@ -84,42 +97,42 @@
                         MKCoordinateSpan span = MKCoordinateSpanMake([[bbox objectAtIndex:2] doubleValue] - [[bbox objectAtIndex:0] doubleValue] + 0.0015, [[bbox objectAtIndex:3] doubleValue] - [[bbox objectAtIndex:1] doubleValue] + 0.002);
                         NSLog(@"Span: %f", span.latitudeDelta);
                         MKCoordinateRegion boundingBox = MKCoordinateRegionMake(center, span);
-                        [_mapView setRegion:boundingBox];
+                        [_mapView setRegion:boundingBox animated:YES];
                         updateBox = NO;
                     }
                     oldLocation = locationUpdate;
                 }else if ([[responseFields objectForKey:@"statusCode"] integerValue] == 404){
                     _alertView = [[UIAlertView alloc] initWithTitle:@"Uh Oh" message:[[responseFields objectForKey:@"errorDetails"] firstObject] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil];
                     NSLog(@"Too far away");
+                    [_etaLabel setText:@"You are too far away to show a route"];
                     //[_alertView show];
                     CLLocationDegrees lat = [[primaryAddress objectForKey:@"lat"] doubleValue];
                     CLLocationDegrees lon = [[primaryAddress objectForKey:@"lon"] doubleValue];
                     CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
                     MKCoordinateRegion zoomedRegion = [_mapView regionThatFits: MKCoordinateRegionMakeWithDistance(coordinates, 200, 200)];
-                    [_mapView setRegion:zoomedRegion];
+                    [_mapView setRegion:zoomedRegion animated:YES];
+                    oldLocation = locationUpdate;
+                    updateBox = YES;
+                    //[self performSelector:@selector(refreshRoute) withObject:nil afterDelay:10.0f];
+                    //[_mapView setRegion:zoomedRegion];
                 }
             }];
         }
         updateRoute = NO;
+
         [self performSelector:@selector(refreshRoute) withObject:nil afterDelay:10.0f];
-
     }
-}
-
--(void)viewWillDisappear:(BOOL)animated{
-    [locationManager setDelegate:nil];
-    [locationManager stopUpdatingLocation];
-    [_mapView removeOverlays:[_mapView overlays]];
-    [_mapView setDelegate: nil];
-    //[self.mapView setDelegate:nil];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"Course Detail Did Load");
+    viewingMain = YES;
+    backgroundColor = self.view.backgroundColor;
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
-    [locationManager startUpdatingLocation];
+    _mapView.delegate = self;
     oldLocation = [[CLLocation alloc] init];
     existingRoute = [[MKPolyline alloc] init];
     //_mainDetailView.layer.cornerRadius = 5;
@@ -127,15 +140,21 @@
     _mainDetailView.layer.shadowOffset = CGSizeMake(5, 5);
     _mainDetailView.layer.shadowRadius = 5;
     _mainDetailView.layer.shadowOpacity = 0.6;
-    Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus network = [internetReachability currentReachabilityStatus];
-    //NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
-    //_bldgCodes = [[NSArray alloc] init];
+
+    _etaLabel.layer.cornerRadius = 3.0f;
+    internetReachability = [Reachability reachabilityForInternetConnection];
+
     primaryAddress = [[NSDictionary alloc] init];
     secondaryAddress = [[NSDictionary alloc] init];
     _primaryDays = [[NSMutableString alloc] initWithString:_primDays];
     if(_hasDiscussion){
         _secondaryDays = [[NSMutableString alloc] initWithString: _secDays];
+    }else{
+        [_secMLabel setHidden:YES];
+        [_secTuLabel setHidden:YES];
+        [_secWLabel setHidden:YES];
+        [_secThLabel setHidden:YES];
+        [_secFLabel setHidden:YES];
     }
     NSLog(@"Primary Days: %@", _primDays);
     [_mapView setDelegate:self];
@@ -143,105 +162,6 @@
     [tiles setCanReplaceMapContent:YES];
     [_mapView addOverlay:tiles level:MKOverlayLevelAboveLabels];
     
-    if(network == NotReachable){
-        NSLog(@"No Internet");
-    }else{
-        //NSData *data = [NSData dataWithContentsOfURL:bldgURL];
-        //NSError *error;
-        //_bldgCodes = [[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"];
-        //NSLog(@"%@",[_bldgCodes description]);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSString *primBldg = @"";
-            for(NSDictionary *building in _bldgCodes){
-                if([[building objectForKey:@"code"] isEqualToString:[_primaryBldgString substringToIndex:3]]){
-                    primBldg = [[building objectForKey:@"name"] objectForKey:@"text"];
-                    if([primBldg rangeOfString:@" ("].location != NSNotFound){
-                        primBldg = [primBldg substringToIndex:[primBldg rangeOfString:@"("].location];
-                    }
-                    primBldg = [primBldg stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-                }
-            }
-            NSURL *primSearchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&format=json&addressdetails=1",primBldg]];
-            NSData *primData = [NSData dataWithContentsOfURL:primSearchURL];
-            NSError *err;
-            NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:primData options:kNilOptions error:&err];
-            for(NSDictionary *address in addresses){
-                if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
-                    primaryAddress = address;
-                }
-            }
-            NSDictionary *address = [primaryAddress objectForKey:@"address"];
-            NSLog(@"%@",[primaryAddress description]);
-            CLLocationDegrees lat = [[primaryAddress objectForKey:@"lat"] doubleValue];
-            CLLocationDegrees lon = [[primaryAddress objectForKey:@"lon"] doubleValue];
-            CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
-            NSDictionary *locationDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          [address objectForKey:@"building"], kABPersonAddressStreetKey,
-                                          nil];
-            
-            /*
-             [address objectForKey:@"city"],kABPersonAddressCityKey,
-             [address objectForKey:@"country"],kABPersonAddressCountryKey,
-             [address objectForKey:@"country_code"], kABPersonAddressCountryCodeKey,
-             [address objectForKey:@"road"], kABPersonAddressStreetKey,
-             [address objectForKey:@"state"], kABPersonAddressStateKey,
-             [address objectForKey:@"postcode"],kABPersonAddressZIPKey,
-             [address objectForKey:@"building"], kABPersonAddressProperty,
-
-             */
-            placemark = [[MKPlacemark alloc] initWithCoordinate:coordinates addressDictionary:locationDict];
-            // Pin class on the map
-            NSLog(@"%@",[placemark description]);
-            [_mapView addAnnotation:placemark];
-            
-            
-            // Add the walking directions from current location to class
-            /*
-            MKMapItem *dest = [[MKMapItem alloc] initWithPlacemark:placemark];
-            MKDirectionsRequest *walkingRequest = [[MKDirectionsRequest alloc] init];
-            [walkingRequest setSource:[MKMapItem mapItemForCurrentLocation]];
-            [walkingRequest setDestination: dest];
-            [walkingRequest setTransportType:MKDirectionsTransportTypeAny];
-            [walkingRequest setRequestsAlternateRoutes:NO];
-            MKDirections *walkingDirections = [[MKDirections alloc] initWithRequest:walkingRequest];
-            [walkingDirections calculateDirectionsWithCompletionHandler:^(MKDirectionsResponse *response, NSError *error) {
-                if(!error){
-                    for(MKRoute *route in [response routes]){
-                        //[_mapView addOverlay:[route polyline] level:MKOverlayLevelAboveLabels];
-                    }
-                }
-            }];
-            */
-            
-            if(![CLLocationManager locationServicesEnabled] || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied){
-                MKCoordinateRegion zoomedRegion = [_mapView regionThatFits: MKCoordinateRegionMakeWithDistance(coordinates, 200, 200)];
-                [_mapView setRegion:zoomedRegion];
-            }
-            if(_hasDiscussion){
-                NSString *secBldg = @"";
-                for(NSDictionary *building in _bldgCodes){
-                    if([[building objectForKey:@"code"] isEqualToString:[_primaryBldgString substringToIndex:3]]){
-                        secBldg = [[building objectForKey:@"name"] objectForKey:@"text"];
-                        if([secBldg rangeOfString:@" ("].location != NSNotFound){
-                            secBldg = [secBldg substringToIndex:[secBldg rangeOfString:@"("].location];
-                        }
-                        secBldg = [secBldg stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-                    }
-                }
-                if(![secBldg isEqualToString:primBldg]){
-                    NSURL *secSearchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&format=json&addressdetails=1",secBldg]];
-                    NSData *secData = [NSData dataWithContentsOfURL:secSearchURL];
-                    NSError *err;
-                    NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:secData options:kNilOptions error:&err];
-                    for(NSDictionary *address in addresses){
-                        if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
-                        secondaryAddress = address;
-                        }
-                    }
-                }
-            }
-        });
-    }
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     classesWithContactURLString = @"friends?";
     fbLoginURLString = @"access?access_token=";
@@ -249,18 +169,43 @@
     contactSchedules = [[NSMutableDictionary alloc] init];
 
     [_secondaryBuildingLabel setHidden:NO];
-    [_secondaryDaysLabel setHidden:NO];
     [_secondaryTimesBegin setHidden:NO];
     [_courseLabel setText: _course];
     [_sectionLabel setText:[NSString stringWithFormat:@"Section %@",_section]];
     [_primaryBuildingLabel setText:_primaryBldgString];
     NSUInteger length = [_primaryDays length];
-    for(int i = 1; i< length; i++){
-        [_primaryDays insertString:@" " atIndex: i+(i-1)];
+    
+    for(int i = 0; i< length; i++){
+        char currDay = [_primaryDays characterAtIndex:i];
+        if(currDay == 'M'){
+            // String evan = evan
+            _mainMLabel.layer.cornerRadius = 5.0f;
+            [_mainMLabel setAlpha:1];
+            [_mainMLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+            [_mainMLabel.layer setBorderWidth:1.0f];
+        }else if (currDay == 'T'){
+            _mainTuLabel.layer.cornerRadius = 5.0f;
+            [_mainTuLabel setAlpha:1];
+            [_mainTuLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+            [_mainTuLabel.layer setBorderWidth:1.0f];
+        }else if (currDay == 'W'){
+            _mainWLabel.layer.cornerRadius = 5.0f;
+            [_mainWLabel setAlpha:1];
+            [_mainWLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+            [_mainWLabel.layer setBorderWidth:1.0f];
+        }else if (currDay == 'H'){
+            _mainThLabel.layer.cornerRadius = 5.0f;
+            [_mainThLabel setAlpha:1];
+            [_mainThLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+            [_mainThLabel.layer setBorderWidth:1.0f];
+        }else{
+            _mainFLabel.layer.cornerRadius = 5.0f;
+            [_mainFLabel setAlpha:1];
+            [_mainFLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+            [_mainFLabel.layer setBorderWidth:1.0f];
+        }
     }
-    _primaryDays = (NSMutableString *)[_primaryDays stringByReplacingOccurrencesOfString:@"T" withString:@"Tu"];
-    _primaryDays = (NSMutableString *)[_primaryDays stringByReplacingOccurrencesOfString:@"H" withString:@"Th"];
-    [_primaryDaysLabel setText:_primaryDays];
+
     NSString *primBeginAMPM = @"";
     NSInteger primBeginHour = [[[_primaryTimes substringToIndex:4] substringToIndex:2] integerValue];
     NSString *primBeginMin = [[_primaryTimes substringToIndex:4] substringFromIndex:2];
@@ -290,12 +235,38 @@
     if(_hasDiscussion){
         [_secondaryBuildingLabel setText:_secondaryBldgString];
         length = [_secondaryDays length];
-        for(int i = 1; i< length; i++){
-            [_secondaryDays insertString:@" " atIndex: i+(i-1)];
+        for(int i = 0; i< length; i++){
+            char currDay = [_secondaryDays characterAtIndex:i];
+            if(currDay == 'M'){
+                _secMLabel.layer.cornerRadius = 5.0f;
+                [_secMLabel setAlpha:1];
+                [_secMLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+                [_secMLabel.layer setBorderWidth:1.0f];
+            }else if (currDay == 'T'){
+                _secTuLabel.layer.cornerRadius = 5.0f;
+                [_secTuLabel setAlpha:1];
+                [_secTuLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+                [_secTuLabel.layer setBorderWidth:1.0f];
+            }else if (currDay == 'W'){
+                _secWLabel.layer.cornerRadius = 5.0f;
+                [_secWLabel setAlpha:1];
+                [_secWLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+                [_secWLabel.layer setBorderWidth:1.0f];
+            }else if (currDay == 'H'){
+                _secThLabel.layer.cornerRadius = 5.0f;
+                [_secThLabel setAlpha:1];
+                [_secThLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+                [_secThLabel.layer setBorderWidth:1.0f];
+            }else{
+                _secFLabel.layer.cornerRadius = 5.0f;
+                [_secFLabel setAlpha:1];
+                [_secFLabel.layer setBorderColor:[UIColor blackColor].CGColor];
+                [_secFLabel.layer setBorderWidth:1.0f];
+            }
         }
+        
         _secondaryDays = (NSMutableString *)[_secondaryDays stringByReplacingOccurrencesOfString:@"T" withString:@"Tu"];
         _secondaryDays = (NSMutableString *)[_secondaryDays stringByReplacingOccurrencesOfString:@"H" withString:@"Th"];
-        [_secondaryDaysLabel setText:_secondaryDays];
         NSString *secBeginAMPM = @"";
         NSInteger secBeginHour = [[[_secondaryTimes substringToIndex:4] substringToIndex:2] integerValue];
         NSString *secBeginMin = [[_secondaryTimes substringToIndex:4] substringFromIndex:2];
@@ -307,6 +278,7 @@
                 secBeginHour /= 12;
             }
         }
+        
         NSString *secEndAMPM = @"";
         NSInteger secEndHour = [[[_secondaryTimes substringFromIndex:4] substringToIndex:2] integerValue];
         NSString *secEndMin = [[_secondaryTimes substringFromIndex:4]substringFromIndex:2];
@@ -324,12 +296,127 @@
     }else{
         [_discussionLabel setText:@"No Discussion"];
         [_secondaryBuildingLabel setHidden:YES];
-        [_secondaryDaysLabel setHidden:YES];
         [_secondaryTimesBegin setHidden:YES];
     }
     
+    // Set default region to UMCP
+    CLLocationCoordinate2D umcpCenter = CLLocationCoordinate2DMake(38.9875, -76.9400);
+    MKCoordinateRegion zoomedRegion = [_mapView regionThatFits: MKCoordinateRegionMakeWithDistance(umcpCenter, 1500, 1500)];
+    [_mapView setRegion:zoomedRegion animated:YES];
+    
     updateBox = YES;
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    NSLog(@"Course Detail Did Appear");
+    network = [internetReachability currentReachabilityStatus];
+    
+    if(network == NotReachable){
+        NSLog(@"No Internet");
+        [_etaLabel setText:@"No Internet Connction"];
+    }else{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            NSString *primBldg = @"";
+            for(NSDictionary *building in _bldgCodes){
+                if([[building objectForKey:@"code"] isEqualToString:[_primaryBldgString substringToIndex:3]]){
+                    primBldg = [[building objectForKey:@"name"] objectForKey:@"text"];
+                    if([primBldg rangeOfString:@" ("].location != NSNotFound){
+                        primBldg = [primBldg substringToIndex:[primBldg rangeOfString:@"("].location];
+                    }
+                    primBldg = [primBldg stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+                }
+            }
+            NSURL *primSearchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&format=json&addressdetails=1",primBldg]];
+            NSData *primData = [NSData dataWithContentsOfURL:primSearchURL];
+            NSError *err;
+            NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:primData options:kNilOptions error:&err];
+            for(NSDictionary *address in addresses){
+                if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
+                    primaryAddress = address;
+                }
+            }
+            NSDictionary *address = [primaryAddress objectForKey:@"address"];
+            NSLog(@"%@",[primaryAddress description]);
+            CLLocationDegrees lat = [[primaryAddress objectForKey:@"lat"] doubleValue];
+            CLLocationDegrees lon = [[primaryAddress objectForKey:@"lon"] doubleValue];
+            CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
+            bldgPoint = [[MKPointAnnotation alloc] init];
+            [bldgPoint setCoordinate:coordinates];
+            [bldgPoint setTitle:[address objectForKey:@"building"]];
+            [bldgPoint setSubtitle:@"Main"];
+            
+            // Pin class on the map
+            // moved away from mkplacemark to mkpoint to customize the labels
+            
+            if(_hasDiscussion){
+                NSString *secBldg = @"";
+                for(NSDictionary *building in _bldgCodes){
+                    if([[building objectForKey:@"code"] isEqualToString:[_primaryBldgString substringToIndex:3]]){
+                        secBldg = [[building objectForKey:@"name"] objectForKey:@"text"];
+                        if([secBldg rangeOfString:@" ("].location != NSNotFound){
+                            secBldg = [secBldg substringToIndex:[secBldg rangeOfString:@"("].location];
+                        }
+                        secBldg = [secBldg stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+                    }
+                }
+                if(![secBldg isEqualToString:primBldg]){
+                    NSURL *secSearchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&format=json&addressdetails=1",secBldg]];
+                    NSData *secData = [NSData dataWithContentsOfURL:secSearchURL];
+                    NSError *err;
+                    NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:secData options:kNilOptions error:&err];
+                    for(NSDictionary *address in addresses){
+                        if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
+                            secondaryAddress = address;
+                        }
+                    }
+                }
+            }
+            
+            [self performSelectorOnMainThread:@selector(placeClassAndZoom) withObject:nil waitUntilDone:NO];
+        });
+        //dispatch_async(dispatch_get_main_queue(), ^{});
+    }
+}
+
+-(void)placeClassAndZoom{
+    NSLog(@"%@",[bldgPoint description]);
+    if(![CLLocationManager locationServicesEnabled] || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusDenied){
+        //MKCoordinateRegion zoomedRegion = [_mapView regionThatFits: MKCoordinateRegionMakeWithDistance(coordinates, 200, 200)];
+        //[_mapView setRegion:zoomedRegion animated:NO];
+        _alertView = [[UIAlertView alloc] initWithTitle:@"Location error" message:@"Please allow UMDSocialScheduler to use your location in the Settings app. We use your location to provide a route to your class" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+        [_alertView show];
+        [_etaLabel setText:@"Est Time: Check Location Settings"];
+        MKCoordinateRegion zoomedRegion = [_mapView regionThatFits: MKCoordinateRegionMakeWithDistance(bldgPoint.coordinate, 200, 200)];
+        [_mapView setRegion:zoomedRegion animated:YES];
+    }
+    [_mapView addAnnotation:bldgPoint];
     updateRoute = YES;
+    [locationManager startUpdatingLocation];
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    [locationManager setDelegate:nil];
+    [locationManager stopUpdatingLocation];
+    [_mapView removeOverlays:[_mapView overlays]];
+    [_mapView setDelegate: nil];
+    oldLocation = nil;
+    //[self.mapView setDelegate:nil];
+}
+
+#pragma mark - MkMapViewDelegate
+
+-(MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation{
+    MKPinAnnotationView *pinView = nil;
+    if(annotation != mapView.userLocation){
+        static NSString *defaultPin = @"pinIdentifier";
+        pinView = (MKPinAnnotationView*)[mapView dequeueReusableAnnotationViewWithIdentifier:defaultPin];
+        if(pinView == nil)
+            pinView = [[MKPinAnnotationView alloc]initWithAnnotation:annotation reuseIdentifier:defaultPin];
+        //pinView.pinColor = MKPinAnnotationColorPurple; //Optional
+        //pinView.canShowCallout = YES; // Optional
+        pinView.animatesDrop = YES;
+    }
+    return pinView;
 }
 
 -(MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay{

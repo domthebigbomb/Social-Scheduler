@@ -11,10 +11,10 @@
 #import "Reachability.h"
 
 @interface LoginViewController ()
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *superViewCenterConstraint;
 @property (weak, nonatomic) IBOutlet UITextField *usernameField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordField;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
-@property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet FBProfilePictureView *profilePictureView;
 @property (weak, nonatomic) IBOutlet UIImageView *circleMask;
@@ -23,14 +23,12 @@
 @property (weak, nonatomic) IBOutlet UIView *visualView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 - (IBAction)login:(UIButton *)sender;
-- (IBAction)cancel:(UIButton *)sender;
 @property (strong, nonatomic) UIWebView *webPage;
 @property (strong, nonatomic)UITapGestureRecognizer *tap;
 @property (strong, nonatomic) UIAlertView *alertMsg;
 @property (strong, nonatomic) UIActionSheet *actionMsg;
-@property CGPoint originalCenter;
 @property (weak, nonatomic) IBOutlet UIView *loginFieldsView;
-@property (strong, nonatomic) IBOutlet UIPickerView *semesterPickerView;
+@property (strong, nonatomic) UIPickerView *semesterPickerView;
 @property (weak, nonatomic) IBOutlet UITextField *semesterField;
 @property (weak, nonatomic) IBOutlet FBLoginView *fbLoginView;
 
@@ -91,7 +89,7 @@
     }
     [_fbLoginView setReadPermissions:@[@"public_profile",@"user_friends",@"email",@"user_likes"]];
     [_fbLoginView setDefaultAudience:FBSessionDefaultAudienceFriends];
-    [_fbLoginView setPublishPermissions:@[@"publish_actions" ]];
+    [_fbLoginView setPublishPermissions:@[@"publish_actions"]];
     [_fbLoginView setDelegate:self];
     
     renderScheduleURL = @"http://www.umdsocialscheduler.com/render_schedule?";
@@ -110,18 +108,37 @@
     _webPage = [[UIWebView alloc] init];
     
     _tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
+    //_tap = [[UITapGestureRecognizer alloc] initwi]
     _tap.enabled = YES;
     [self.view addGestureRecognizer:_tap];
     [_semesterField setInputView:_semesterPickerView];
 
-    self.originalCenter = self.view.center;
+    //self.originalCenter = self.view.center;
     [self loadDesignElements];
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-    //scheduleURL = @"https://mobilemy.umd.edu/portal/server.pt;MYUMSESSION=31CqSykpJ1DWxzwpvwRFK6J2XT4ccpltBcNSX9cybklfbKmfjxvS!1501198949?cached=false&redirect=https%3A%2F%2Fmobilemy.umd.edu%2Fportal%2Fserver.pt%2Fgateway%2FPTARGS_0_340574_368_211_0_43%2Fhttps%3B%2Fwww.sis.umd.edu%2Ftestudo%2FstudentSched%3Fterm%3D201401&space=Login";
+    [_semesterField setEnabled:YES];
+    [_usernameField setEnabled:YES];
+    [_passwordField setEnabled:YES];
+    [_loginButton setEnabled:YES];
+    
+    if([[NSUserDefaults standardUserDefaults] boolForKey:@"save_login"] && [[NSUserDefaults standardUserDefaults] stringForKey:@"username"] != nil){
+        NSLog(@"Found Credentials");
+        [_usernameField setText:[[NSUserDefaults standardUserDefaults] stringForKey:@"username"]];
+        [_passwordField setText:[[NSUserDefaults standardUserDefaults] stringForKey:@"password"]];
+    }else{
+        [_usernameField setText:@""];
+        [_passwordField setText:@""];
+    }
+
     scheduleURL = @"https://www.sis.umd.edu%2Ftestudo%2FstudentSched%3Fterm%3D201401&h=xAQGVU3yP";
     scheduleURL = @"https://www.sis.umd.edu/testudo/studentSched?term=";
+    if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil){
+        NSLog(@"Schedule: %@",[[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"]);
+        [self performSegueWithIdentifier:@"Relog" sender:self];
+    }
 }
 
 -(void)loadDesignElements{
@@ -130,31 +147,12 @@
     //_loginButton.layer.cornerRadius = 3.0f;
     //_loginButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
     [_loginButton setTitleColor:[self.view backgroundColor] forState:UIControlStateNormal];
-    [_backButton setTitleColor:[self.view backgroundColor] forState:UIControlStateNormal];
-    
     
     _circleMask.layer.cornerRadius = _circleMask.frame.size.width/2;
     [_circleMask addSubview:_profilePictureView];
     _borderMask.layer.cornerRadius = _borderMask.frame.size.width/2;
     [_borderMask addSubview:_circleMask];
     _loginContainer.layer.cornerRadius = 4.0f;
-    
-    if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil){
-        [_backButton setHidden:NO];
-        [_backButton setEnabled:YES];
-        [_loginButton setHidden:YES];
-        [_loginButton setEnabled:NO];
-    }
-    
-    if([[NSUserDefaults standardUserDefaults] boolForKey:@"save_login"] && [[NSUserDefaults standardUserDefaults] stringForKey:@"username"] != nil){
-        NSLog(@"Found Credentials");
-        [_usernameField setText:[[NSUserDefaults standardUserDefaults] stringForKey:@"username"]];
-        [_passwordField setText:[[NSUserDefaults standardUserDefaults] stringForKey:@"password"]];
-        [_backButton setHidden: YES];
-        [_backButton setEnabled:NO];
-        [_loginButton setHidden:NO];
-        [_loginButton setEnabled:YES];
-    }
 
     
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
@@ -162,6 +160,23 @@
         frame.size.height = 100;
         [_usernameField setFrame: frame];
         [_passwordField setFrame: frame];
+    }
+    if([[FBSession activeSession] accessTokenData] != nil){
+        NSLog(@"Facebook Token Found");
+        FBAccessTokenData *token = [[FBSession activeSession] accessTokenData];
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/me?access_token=%@",token]]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+            NSError *err;
+            if([(NSHTTPURLResponse *)response statusCode] != 200){
+                [[FBSession activeSession] closeAndClearTokenInformation];
+            }
+            NSLog(@"Facebook Response: %@",[response description]);
+        }];
+        if([[NSDate date] compare:[token expirationDate]] == NSOrderedDescending){
+            // Token is expired
+            [[FBSession activeSession] closeAndClearTokenInformation];
+        }else{
+            NSLog(@"Token valid");
+        }
     }
     
     //_visualView.center = CGPointMake(self.originalCenter.x, self.originalCenter.y - 120);
@@ -181,12 +196,14 @@
             _alertMsg = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"University ID and/or Password incorrect" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
             [_alertMsg show];
             [_activityIndicator stopAnimating];
+            [_loginButton setEnabled:YES];
             [_usernameField setEnabled:YES];
             [_passwordField setEnabled:YES];
         }else if ([htmlString rangeOfString:@"An Error occurred while running this application"].location != NSNotFound){
-            _alertMsg = [[UIAlertView alloc] initWithTitle:@"Server Error" message:@"There seems to be a problem loading schedules. Please contact the Office of the Registrar if problem persists" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+            _alertMsg = [[UIAlertView alloc] initWithTitle:@"Server Error" message:@"There seems to be a problem loading schedules. UMD sometimes shuts down the schedule viewing services on sundays to do maintence. Please contact the Office of the Registrar if problem persists." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
             [_alertMsg show];
             [_activityIndicator stopAnimating];
+            [_loginButton setEnabled:YES];
             [_usernameField setEnabled:YES];
             [_passwordField setEnabled:YES];
             [_semesterField setEnabled:YES];
@@ -194,6 +211,7 @@
             _alertMsg = [[UIAlertView alloc] initWithTitle:@"Schedule Error" message:@"You have not registered for any classes in the selected semester" delegate:nil cancelButtonTitle:@"Got it" otherButtonTitles: nil];
             [_alertMsg show];
             [_activityIndicator stopAnimating];
+            [_loginButton setEnabled:YES];
             [_usernameField setEnabled:YES];
             [_passwordField setEnabled:YES];
             [_semesterField setEnabled:YES];
@@ -219,7 +237,7 @@
             //String brodder = "jonathan";
             [_activityIndicator stopAnimating];
             _webPage.delegate = nil;
-            [self performSegueWithIdentifier:@"ShowSchedule" sender:self];
+            [self performSegueWithIdentifier:@"Login" sender:self];
         }
     }
 }
@@ -304,7 +322,7 @@
 }
 
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
-    NSLog(@"Logged in");
+    
 }
 
 -(void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView{
@@ -340,6 +358,28 @@
 }
 
 // Keyboard Related Methods
+-(void)animateTextField:(UITextField *)textfield up:(BOOL)up{
+    int movementDistance = 120;
+    
+    if(([[UIScreen mainScreen] bounds].size.height - 568) ? YES:NO){
+        movementDistance = 160;
+    }
+    
+    const float movementDuration = 1.5f; // tweak as needed
+    
+    int movement = (up ? -movementDistance : movementDistance);
+    [UIView animateWithDuration:movementDuration animations:^{
+        _superViewCenterConstraint.constant = _superViewCenterConstraint.constant - movement;
+    }];
+    
+    /*
+    [UIView beginAnimations: @"anim" context: nil];
+    [UIView setAnimationBeginsFromCurrentState: YES];
+    [UIView setAnimationDuration: movementDuration];
+    [UIView commitAnimations];
+     */
+}
+
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     _tap.enabled = YES;
     return YES;
@@ -347,7 +387,13 @@
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField
 {
-    _visualView.center = CGPointMake(_originalCenter.x, _originalCenter.y - 120);
+    [self animateTextField:textField up:YES];
+}
+
+-(void)hideKeyboard{
+    [_usernameField resignFirstResponder];
+    [_semesterField resignFirstResponder];
+    [_passwordField resignFirstResponder];
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -362,30 +408,19 @@
 -(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
     if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil &&
        ([_usernameField.text length] != 0 || [_passwordField.text length] != 0)){
-        // Enabling Login button
-        [_loginButton setHidden:NO];
-        //[_loginButton setEnabled:YES];
-        //[_backButton setEnabled:NO];
-        [_backButton setHidden:YES];
     }
     if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil &&
        ([_usernameField.text length] == 0 && [_passwordField.text length] == 0)){
-        // Enabling Back button
-        [_loginButton setHidden:YES];
-        //[_loginButton setEnabled:NO];
-        //[_backButton setEnabled:YES];
-        [_backButton setHidden:NO];
+        // Enabling Back butto
     }
     return YES;
 }
 
--(void)hideKeyboard
-{
-    _visualView.center = _originalCenter;
+-(void)textFieldDidEndEditing:(UITextField *)textField{
     [_usernameField resignFirstResponder];
     [_passwordField resignFirstResponder];
     [_semesterField resignFirstResponder];
-    //_tap.enabled = NO;
+    [self animateTextField:textField up:NO];
 }
 
 - (void)didReceiveMemoryWarning
@@ -395,7 +430,7 @@
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
-    if([[segue identifier] isEqualToString:@"ShowSchedule"]){
+    if([[segue identifier] isEqualToString:@"Login"]){
         NSString *webPageCode = htmlString;
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Courses"];
@@ -405,7 +440,7 @@
         [[NSUserDefaults standardUserDefaults] setObject:webPageCode forKey:@"Schedule"];
         [[NSUserDefaults standardUserDefaults] setObject:courseString forKey:@"Courses"];
         [[NSUserDefaults standardUserDefaults] setObject:courseDetails forKey:@"CourseDetails"];
-    }else if ([[segue identifier] isEqualToString:@"CancelLogin"]){
+    }else if ([[segue identifier] isEqualToString:@"Cancel"]){
         [[NSUserDefaults standardUserDefaults] setBool: NO forKey:@"refreshSchedule"];
         [[NSUserDefaults standardUserDefaults] setBool: NO forKey:@"refreshClasses"];
         [[NSUserDefaults standardUserDefaults] setBool: NO forKey:@"refreshFriends"];
@@ -438,7 +473,7 @@
                 [_actionMsg showInView:self.view];
                 */
                 _alertMsg = [[UIAlertView alloc] initWithTitle:@"Warning" message:
-                             @"You are not logged into Facebook. You will not be able to: \n -View friends in your classes \n -View your friends' schedules \nwithout being logged in!" delegate:self cancelButtonTitle:@"I'll login" otherButtonTitles:@"Not right not", nil];
+                             @"You are not logged into Facebook. You will not be able to: \n -Share your schedule to Facebook \n -View friends in your classes \n -View your friends' schedules" delegate:self cancelButtonTitle:@"I'll login" otherButtonTitles:@"Not right not", nil];
                 [_alertMsg show];
             }else{
                 NSString *username = _usernameField.text;
@@ -466,13 +501,34 @@
                 [_passwordField setEnabled:NO];
                 [_semesterField setEnabled:NO];
                 [_activityIndicator startAnimating];
+                NSLog(@"URL: %@",newScheduleURL);
                 [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:newScheduleURL]]];
             }
         }
     }
 }
 
-- (IBAction)cancel:(UIButton *)sender {
-    [self performSegueWithIdentifier:@"CancelLogin" sender:self];
+- (void)openSession
+{
+    if(FBSession.activeSession.state != FBSessionStateOpen)
+    {
+        [FBSession openActiveSessionWithPublishPermissions:@[@"stuff"]
+                                           defaultAudience:FBSessionDefaultAudienceFriends
+                                              allowLoginUI:NO
+                                         completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+                                             if(!error && session.isOpen)
+                                             {
+                                             }
+                                             else
+                                             {
+                                                 // handle the error
+                                             }
+                                             // here, you can handle the session state changes in switch case or
+                                             //something else
+                                             
+                                             
+                                         }];
+    }
 }
+
 @end

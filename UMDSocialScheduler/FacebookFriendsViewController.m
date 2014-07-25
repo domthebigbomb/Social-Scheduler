@@ -135,6 +135,12 @@
     _numFinished = 0;
     NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+    if(courseString == nil || termCode == nil){
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Session Expired" message:@"Please login to refresh class data" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [_alertMsg show];
+        [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+        return;
+    }
     userSchedule = [[NSMutableDictionary alloc] init];
     NSUInteger index;
     while(![courseString isEqualToString:@""]){
@@ -241,6 +247,7 @@
                                     [_activityIndicator stopAnimating];
                                     [_closeScheduleButton setHidden:NO];
                                     [_greyedBackgroundView setHidden:YES];
+                                    [_progressBar setHidden:YES];
                                     [[self contactTableView] setHidden:NO];
                                     [[self contactTableView] reloadData];
                                     isRefreshing = NO;
@@ -347,6 +354,7 @@
 
 -(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
     if(!isRefreshing){
+        [loginView setHidden:YES];
         [self refreshFriends];
     }
 }
@@ -355,18 +363,32 @@
     NSLog(@"Logged into Facebook");
 }
 
+-(void)updateScheduleImage:(UIImage *)image{
+    [_scheduleScrollView setZoomScale:1.0];
+    [_scheduleImageView setImage:contactScheduleImage];
+}
+
+-(IBAction)logout:(id)sender{
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
 - (IBAction)showSchedule:(UIButton *)sender {
+    [_scheduleImageView setImage:nil];
     [_closeScheduleButton setHidden:NO];
     [_greyedBackgroundView setHidden:NO];
+    [_activityIndicator startAnimating];
     CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self.contactTableView];
     NSIndexPath *indexPath = [self.contactTableView indexPathForRowAtPoint:buttonPosition];
     scheduleIndex = [indexPath row];
     ContactCell *contact = (ContactCell *) [[self contactTableView] cellForRowAtIndexPath:indexPath];
-    UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule_image?term=%@&fbid=%@",termCode, contact.fbid]]]];
-    contactScheduleImage = contactPic;
-    [_tapGesture setEnabled: YES];
-    [_scheduleScrollView setZoomScale:1.0];
-    [_scheduleImageView setImage:contactScheduleImage];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule_image?term=%@&fbid=%@",termCode, contact.fbid]]]];
+        contactScheduleImage = contactPic;
+        [self performSelectorOnMainThread:@selector(updateScheduleImage:) withObject:contactScheduleImage waitUntilDone:NO];
+        [_tapGesture setEnabled: YES];
+        [_activityIndicator stopAnimating];
+    });
 }
 
 - (IBAction)hideSchedule:(UIButton *)sender {
@@ -381,6 +403,8 @@
     }else{
         [_sharingEnabledLabel setText:@"No"];
         toggleSharingString = @"disable_sharing";
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Warning" message:@"By disabling sharing, your friends' wont be able to view your schedule!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+        [_alertMsg show];
     }
     NSURL *url = [NSURL URLWithString:[socialSchedulerURLString stringByAppendingString:toggleSharingString]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];

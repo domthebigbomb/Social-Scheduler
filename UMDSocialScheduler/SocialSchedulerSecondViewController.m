@@ -9,6 +9,7 @@
 
 #import "SocialSchedulerSecondViewController.h"
 #import "CourseCell.h"
+#import "FBLoginCell.h"
 #import "Reachability.h"
 #import "ClassContactCell.h"
 #import "CourseDetailViewController.h"
@@ -16,6 +17,7 @@
 @interface SocialSchedulerSecondViewController ()
 @property (strong,nonatomic) NSMutableDictionary *courses;
 @property (weak, nonatomic) IBOutlet UITableView *courseTableView;
+@property (weak, nonatomic) IBOutlet UILabel *cellMsgLabel;
 @property (strong,nonatomic) NSArray *courseKeys;
 @property (strong, nonatomic) NSMutableArray *contacts;
 @property (strong, nonatomic) UIAlertView *alertMsg;
@@ -40,20 +42,35 @@
     BOOL loggedIntoFB;
     BOOL showContact;
     BOOL isUpdating;
+    BOOL isAnimating;
+}
+
+-(void)refreshFacebookToken{
+    if([FBSession activeSession].state == FBSessionStateCreatedTokenLoaded){
+        //[FBSession open]
+    }
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [_cellMsgLabel setAlpha:0.0];
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     classesWithContactURLString = @"friends?";
     fbLoginURLString = @"access?access_token=";
     internetReachability = [Reachability reachabilityForInternetConnection];
-    loggedIntoFB = NO;
-    NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
-    NSData *data = [NSData dataWithContentsOfURL:bldgURL];
-    NSError *error;
-    bldgCodes = [[NSArray alloc] initWithArray:[[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"]];
+    network = [internetReachability currentReachabilityStatus];
+    loggedIntoFB = YES;
+    if(network == NotReachable){
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"No internet connection" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+        [_alertMsg show];
+    }else{
+        NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
+        NSData *data = [NSData dataWithContentsOfURL:bldgURL];
+        NSError *error;
+        bldgCodes = [[NSArray alloc] initWithArray:[[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"]];
+    }
+    
     insertIndexPaths = [[NSMutableArray alloc] init];
     contactPics = [[NSMutableDictionary alloc] init];
     //[self refreshClasses];
@@ -62,7 +79,7 @@
 -(void)viewDidAppear:(BOOL)animated{
     network = [internetReachability currentReachabilityStatus];
     isUpdating = NO;
-
+    isAnimating = NO;
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
@@ -80,12 +97,23 @@
     NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
     NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
     [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        NSLog(@"Successfully logged into Facebook");
-        loggedIntoFB = YES;
-        [_courseTableView reloadData];
+        NSError *err;
+        NSDictionary *responseData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&err];
+        NSLog(@"Attempt to submit token: %@",[responseData description]);
+        if(responseData == nil){
+            loggedIntoFB = NO;
+            [_courseTableView reloadData];
+        }
     }];
     courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
     courseDetails = [[NSUserDefaults standardUserDefaults] stringForKey:@"CourseDetails"];
+    
+    if(courseString == nil){
+        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Session Expired" message:@"Please login again to refresh class data" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+        [_alertMsg show];
+        [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+        return;
+    }
     
     // Parse Course String to get classes
     _courses = [[NSMutableDictionary alloc] init];
@@ -137,6 +165,18 @@
     
 }
 
+-(void)animateCellMsg{
+    [UIView animateWithDuration:.5 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+        [_cellMsgLabel setAlpha:1.0];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:1.0 delay:2.5f options:UIViewAnimationOptionCurveEaseOut animations:^{
+            [_cellMsgLabel setAlpha:0];
+        } completion:^(BOOL finished) {
+            isAnimating = NO;
+        }];
+    }];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -152,18 +192,31 @@
     [self performSegueWithIdentifier:@"ShowCourseDetails" sender:self];
 }
 
+-(NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(isAnimating){
+        return nil;
+    }
+    return indexPath;
+}
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     //Address the bug in ios7 where separators would disappear
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if(!isUpdating && loggedIntoFB){
-    network = [internetReachability currentReachabilityStatus];
-    if(network == NotReachable){
-        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
-        [_alertMsg show];
-    }else if([[FBSession activeSession] accessTokenData] == nil){
-        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"You are not signed into facebook. In order to view friends in your classes, please sign into facebook at the login screen." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
-        [_alertMsg show];
-    }else{
+    if(!isUpdating){
+        network = [internetReachability currentReachabilityStatus];
+        if(network == NotReachable){
+            isAnimating = YES;
+            [_cellMsgLabel setText:@"Please check internet connection"];
+            [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
+            //_alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
+            //[_alertMsg show];
+        }else if([[FBSession activeSession] accessTokenData] == nil){
+            isAnimating = YES;
+            [_cellMsgLabel setText:@"Log in to Facebook to view friends"];
+            [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
+            //_alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"You are not signed into facebook. In order to view friends in your classes, please sign into facebook at the login screen." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+            //[_alertMsg show];
+        }else{
             NSInteger row = indexPath.row;
             selectedIndex = row;
             if(!showContact){
@@ -176,18 +229,25 @@
                     NSError *error;
                     NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                     _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
-                
-                    for(int i = 0; i< [_contacts count]; i++){
-                        [insertIndexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
+                    if([_contacts count] > 0){
+                        for(int i = 0; i< [_contacts count]; i++){
+                            [insertIndexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
+                        }
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [_courseTableView beginUpdates];
+                            showContact = YES;
+                            [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationFade];
+                            [_courseTableView endUpdates];
+                            isUpdating = NO;
+                        });
+                    }else{
+                        isUpdating = NO;
+                        
+                        [_cellMsgLabel setText:[NSString stringWithFormat:@"No friends in %@ 😥",course]];
+                        [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
                     }
                     
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [_courseTableView beginUpdates];
-                        showContact = YES;
-                        [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationFade];
-                        [_courseTableView endUpdates];
-                        isUpdating = NO;
-                    });
                 }];
             }else{
                 isUpdating = YES;
@@ -197,11 +257,11 @@
                     [_courseTableView beginUpdates];
                     showContact = NO;
                     [_contacts removeAllObjects];
-
+                    
                     [_courseTableView deleteRowsAtIndexPaths:insertIndexPaths withRowAnimation:     UITableViewRowAnimationAutomatic];
                     [insertIndexPaths removeAllObjects];
                     [_courseTableView endUpdates];
-                        isUpdating = NO;
+                    isUpdating = NO;
                 });
             }
         }
@@ -209,13 +269,25 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [_courses count] + [_contacts count];
+    int fbConst = 0;
+    if(!loggedIntoFB){
+        fbConst = 1;
+    }
+    return [_courses count] + [_contacts count] + fbConst;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSInteger rowNumber = indexPath.row;
     NSInteger numContacts = [_contacts count];
+    if(indexPath.row == ([_contacts count]+[_courseKeys count])){
+        FBLoginCell *fbCell = (FBLoginCell *)[tableView dequeueReusableCellWithIdentifier:@"Facebook"];
+        [fbCell.loginView setReadPermissions:@[@"public_profile",@"user_friends",@"email",@"user_likes"]];
+        [fbCell.loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
+        [fbCell.loginView setPublishPermissions:@[@"publish_actions"]];
+        [fbCell.loginView setDelegate:self];
+        return fbCell;
+    }
     if((rowNumber >= selectedIndex+1 && rowNumber < selectedIndex + numContacts +1)  && showContact){
         ClassContactCell* cell = [tableView dequeueReusableCellWithIdentifier:@"ContactCell"];
         NSDictionary *contact = [_contacts objectAtIndex:numContacts - (rowNumber - selectedIndex)];
@@ -252,6 +324,31 @@
     }
 }
 
+#pragma mark FBLoginViewDelegate methods
+// Facebook login related functions
+-(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
+}
+
+- (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
+    NSLog(@"Logged in");
+    NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
+    [_activityIndicator startAnimating];
+    NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
+    NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
+    [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        
+        NSLog(@"Successfully submitted fb token");
+        loggedIntoFB = YES;
+        [_courseTableView reloadData];
+        [_activityIndicator stopAnimating];
+    }];
+}
+
+-(void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView{
+    loggedIntoFB = NO;
+    [_courseTableView reloadData];
+}
+
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:@"ShowCourseDetails"]){
         CourseDetailViewController *viewController = [segue destinationViewController];
@@ -279,6 +376,11 @@
     }
 }
 
+-(IBAction)logout:(id)sender{
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
 -(IBAction)dismissDetails:(UIStoryboardSegue *)segue{
     
 }
@@ -292,13 +394,14 @@
         }else if(granted){
             //NSDateComponents *components = [[NSDateComponents alloc] init];
             for(NSString *course in _courseKeys){
-                NSDictionary *properties = [_courses objectForKey:course];
-                NSInteger classLength = [[[properties objectForKey:@"PrimaryTimes"] substringFromIndex:4] integerValue] - [[[properties objectForKey:@"PrimaryTimes"] substringToIndex:4] integerValue];
-                EKEvent *event = [EKEvent eventWithEventStore:eventStore];
+                //NSDictionary *properties = [_courses objectForKey:course];
+                //NSInteger classLength = [[[properties objectForKey:@"PrimaryTimes"] substringFromIndex:4] integerValue] - [[[properties objectForKey:@"PrimaryTimes"] substringToIndex:4] integerValue];
+                //EKEvent *event = [EKEvent eventWithEventStore:eventStore];
                 
-                NSString *days = [properties objectForKeyedSubscript:@"PrimaryDays"];
-                NSMutableArray *daysOfTheWeek = [[NSMutableArray alloc] init];
-                
+                //NSString *days = [properties objectForKeyedSubscript:@"PrimaryDays"];
+                //NSMutableArray *daysOfTheWeek = [[NSMutableArray alloc] init];
+               
+                /*
                 EKRecurrenceRule *recurrence = [[EKRecurrenceRule alloc] initRecurrenceWithFrequency:EKRecurrenceFrequencyWeekly
                                                                                             interval:1
                                                                                        daysOfTheWeek:daysOfTheWeek
@@ -316,6 +419,7 @@
                 
                 NSError *error;
                 [eventStore saveEvent:event span:EKSpanThisEvent error:&error];
+                 */
             }
         }else{
             NSLog(@"Calendar access not granted");

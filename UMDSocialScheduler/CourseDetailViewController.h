@@ -13,30 +13,39 @@
 #import <CoreLocation/CoreLocation.h>
 @interface CourseDetailViewController : UIViewController<MKMapViewDelegate, CLLocationManagerDelegate>
 
-@property (weak, nonatomic) NSString *course;
-@property (weak, nonatomic) NSString *section;
-@property (weak, nonatomic) NSString *primaryBldgString;
-@property (weak, nonatomic) NSString *secondaryBldgString;
-@property (weak, nonatomic) NSMutableString *primDays;
-@property (weak, nonatomic) NSMutableString *secDays;
-@property (weak, nonatomic) NSString *primaryTimes;
-@property (weak, nonatomic) NSString *secondaryTimes;
-@property (weak, nonatomic) NSArray *bldgCodes;
+@property (strong, nonatomic) NSString *course;
+@property (strong, nonatomic) NSString *section;
+@property (strong, nonatomic) NSString *primaryBldgString;
+@property (strong, nonatomic) NSString *secondaryBldgString;
+@property (strong, nonatomic) NSMutableString *primDays;
+@property (strong, nonatomic) NSMutableString *secDays;
+@property (strong, nonatomic) NSString *primaryTimes;
+@property (strong, nonatomic) NSString *secondaryTimes;
+@property (strong, nonatomic) NSArray *bldgCodes;
 @property (strong, nonatomic) NSMutableString *primaryDays;
 @property (strong, nonatomic) NSMutableString *secondaryDays;
 
 @property BOOL hasDiscussion;
 
+@property (weak, nonatomic) IBOutlet UILabel *mainMLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mainTuLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mainWLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mainThLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mainFLabel;
+@property (weak, nonatomic) IBOutlet UILabel *secMLabel;
+@property (weak, nonatomic) IBOutlet UILabel *secTuLabel;
+@property (weak, nonatomic) IBOutlet UILabel *secWLabel;
+@property (weak, nonatomic) IBOutlet UILabel *secThLabel;
+@property (weak, nonatomic) IBOutlet UILabel *secFLabel;
 @property (weak, nonatomic) IBOutlet UILabel *discussionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *courseLabel;
 @property (weak, nonatomic) IBOutlet UILabel *sectionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *primaryBuildingLabel;
 @property (weak, nonatomic) IBOutlet UILabel *secondaryBuildingLabel;
-@property (weak, nonatomic) IBOutlet UILabel *primaryDaysLabel;
-@property (weak, nonatomic) IBOutlet UILabel *secondaryDaysLabel;
 @property (weak, nonatomic) IBOutlet UILabel *primaryTimesBegin;
 @property (weak, nonatomic) IBOutlet UILabel *secondaryTimesBegin;
 @property (weak, nonatomic) IBOutlet UIButton *licenseButton;
+@property (weak, nonatomic) IBOutlet UILabel *etaLabel;
 -(IBAction)showOpenStreetLicense:(UIButton *)button;
 
 @end

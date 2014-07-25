@@ -7,11 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B3B89D5197DB4AB00E89B12 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */; };
 		0B3C9F7218A9631800506FDC /* ContactScheduleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */; };
 		0B4154291951FC6100EAE8E9 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B4154281951FC6100EAE8E9 /* FacebookSDK.framework */; };
 		0B41542B1951FC6D00EAE8E9 /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0B41542A1951FC6D00EAE8E9 /* FBUserSettingsViewResources.bundle */; };
 		0B4386B818AAFBF200D50DFC /* SocialSchedulerIpad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B4386B718AAFBF200D50DFC /* SocialSchedulerIpad.storyboard */; };
 		0B653FF11947BCFD00C78028 /* CourseDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B653FF01947BCFD00C78028 /* CourseDetailViewController.m */; };
+		0B7299FB197A68E50044B46C /* FBLoginCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B7299FA197A68E50044B46C /* FBLoginCell.m */; };
+		0B761C1E197F2DD40035620C /* BG.png in Resources */ = {isa = PBXBuildFile; fileRef = 0B761C1D197F2DD40035620C /* BG.png */; };
 		0B77469118AD4008006E0550 /* fb_default.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0B77469018AD4008006E0550 /* fb_default.jpg */; };
 		0B8E0BA918A2099100863181 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BA818A2099100863181 /* Foundation.framework */; };
 		0B8E0BAB18A2099100863181 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BAA18A2099100863181 /* CoreGraphics.framework */; };
@@ -50,6 +53,10 @@
 		0BA8C14018AB1BB4000F3734 /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */; };
 		0BC9322219465E0A00237EF2 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BC9322119465E0A00237EF2 /* Settings.bundle */; };
 		0BC9A2341948D0F20048562F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BC9A2331948D0F20048562F /* MapKit.framework */; };
+		0BCAB20F197F6F0C006FC406 /* Launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB20E197F6F0C006FC406 /* Launcher.png */; };
+		0BCAB211197F70A1006FC406 /* R4Launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB210197F70A1006FC406 /* R4Launcher.png */; };
+		0BCAB214197F7198006FC406 /* ipad1xLauncher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB212197F7198006FC406 /* ipad1xLauncher.png */; };
+		0BCAB215197F7198006FC406 /* ipad2xLauncher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB213197F7198006FC406 /* ipad2xLauncher.png */; };
 		0BD6925319534765007C6081 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BD6925219534765007C6081 /* EventKit.framework */; };
 		0BDC092318A9F5D500BC82CE /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BDC091D18A9F5D500BC82CE /* libTestFlight.a */; };
 		0BDC092418A9F5D500BC82CE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091E18A9F5D500BC82CE /* README.md */; };
@@ -70,6 +77,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0B3C9F7018A9631800506FDC /* ContactScheduleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactScheduleCell.h; sourceTree = "<group>"; };
 		0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactScheduleCell.m; sourceTree = "<group>"; };
 		0B4154281951FC6100EAE8E9 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
@@ -77,6 +85,9 @@
 		0B4386B718AAFBF200D50DFC /* SocialSchedulerIpad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SocialSchedulerIpad.storyboard; sourceTree = "<group>"; };
 		0B653FEF1947BCFD00C78028 /* CourseDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CourseDetailViewController.h; sourceTree = "<group>"; };
 		0B653FF01947BCFD00C78028 /* CourseDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CourseDetailViewController.m; sourceTree = "<group>"; };
+		0B7299F9197A68E50044B46C /* FBLoginCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBLoginCell.h; sourceTree = "<group>"; };
+		0B7299FA197A68E50044B46C /* FBLoginCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginCell.m; sourceTree = "<group>"; };
+		0B761C1D197F2DD40035620C /* BG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BG.png; path = Images/BG.png; sourceTree = "<group>"; };
 		0B77469018AD4008006E0550 /* fb_default.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fb_default.jpg; sourceTree = "<group>"; };
 		0B8E0BA518A2099100863181 /* UMDSocialScheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UMDSocialScheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B8E0BA818A2099100863181 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -125,6 +136,10 @@
 		0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = "<group>"; };
 		0BC9322119465E0A00237EF2 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		0BC9A2331948D0F20048562F /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		0BCAB20E197F6F0C006FC406 /* Launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Launcher.png; path = Images/Launcher.png; sourceTree = "<group>"; };
+		0BCAB210197F70A1006FC406 /* R4Launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = R4Launcher.png; path = Images/R4Launcher.png; sourceTree = "<group>"; };
+		0BCAB212197F7198006FC406 /* ipad1xLauncher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ipad1xLauncher.png; path = Images/ipad1xLauncher.png; sourceTree = "<group>"; };
+		0BCAB213197F7198006FC406 /* ipad2xLauncher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ipad2xLauncher.png; path = Images/ipad2xLauncher.png; sourceTree = "<group>"; };
 		0BD6925219534765007C6081 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		0BDC091D18A9F5D500BC82CE /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		0BDC091E18A9F5D500BC82CE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
@@ -144,6 +159,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B3B89D5197DB4AB00E89B12 /* QuartzCore.framework in Frameworks */,
 				0BD6925319534765007C6081 /* EventKit.framework in Frameworks */,
 				0BC9A2341948D0F20048562F /* MapKit.framework in Frameworks */,
 				0BDC092718A9F68500BC82CE /* libz.dylib in Frameworks */,
@@ -181,6 +197,11 @@
 			children = (
 				0B41542A1951FC6D00EAE8E9 /* FBUserSettingsViewResources.bundle */,
 				0B77469018AD4008006E0550 /* fb_default.jpg */,
+				0B761C1D197F2DD40035620C /* BG.png */,
+				0BCAB210197F70A1006FC406 /* R4Launcher.png */,
+				0BCAB20E197F6F0C006FC406 /* Launcher.png */,
+				0BCAB212197F7198006FC406 /* ipad1xLauncher.png */,
+				0BCAB213197F7198006FC406 /* ipad2xLauncher.png */,
 				0BFF8B0F18AE899600817BFD /* Reachability */,
 				0BDC091818A9F59100BC82CE /* Testflight SDK */,
 				0B8E0BAE18A2099100863181 /* UMDSocialScheduler */,
@@ -202,6 +223,7 @@
 		0B8E0BA718A2099100863181 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */,
 				0BD6925219534765007C6081 /* EventKit.framework */,
 				0B4154281951FC6100EAE8E9 /* FacebookSDK.framework */,
 				0BC9A2331948D0F20048562F /* MapKit.framework */,
@@ -288,6 +310,8 @@
 				0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */,
 				0BDC092818AAAB0700BC82CE /* ClassContactCell.h */,
 				0BDC092918AAAB0700BC82CE /* ClassContactCell.m */,
+				0B7299F9197A68E50044B46C /* FBLoginCell.h */,
+				0B7299FA197A68E50044B46C /* FBLoginCell.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -433,20 +457,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B761C1E197F2DD40035620C /* BG.png in Resources */,
 				0BA8C13418AB1BB4000F3734 /* AppIcon40x40@2x.png in Resources */,
 				0BDC092518A9F5D500BC82CE /* release_notes.md in Resources */,
+				0BCAB215197F7198006FC406 /* ipad2xLauncher.png in Resources */,
 				0BA8C13D18AB1BB4000F3734 /* AppIcon76x76.png in Resources */,
 				0BA8C13518AB1BB4000F3734 /* AppIcon50x50.png in Resources */,
 				0BA8C13A18AB1BB4000F3734 /* AppIcon60x60@2x.png in Resources */,
 				0BA8C13318AB1BB4000F3734 /* AppIcon40x40.png in Resources */,
 				0BA8C13718AB1BB4000F3734 /* AppIcon57x57.png in Resources */,
 				0BA8C14018AB1BB4000F3734 /* iTunesArtwork@2x.png in Resources */,
+				0BCAB211197F70A1006FC406 /* R4Launcher.png in Resources */,
 				0BA8C13B18AB1BB4000F3734 /* AppIcon72x72.png in Resources */,
 				0BA8C13C18AB1BB4000F3734 /* AppIcon72x72@2x.png in Resources */,
+				0BCAB20F197F6F0C006FC406 /* Launcher.png in Resources */,
 				0B8E0BC418A2099100863181 /* Images.xcassets in Resources */,
 				0BA8C13118AB1BB4000F3734 /* AppIcon29x29.png in Resources */,
 				0BA8C13918AB1BB4000F3734 /* AppIcon60x60.png in Resources */,
 				0BDC092418A9F5D500BC82CE /* README.md in Resources */,
+				0BCAB214197F7198006FC406 /* ipad1xLauncher.png in Resources */,
 				0B77469118AD4008006E0550 /* fb_default.jpg in Resources */,
 				0B8E0BB318A2099100863181 /* InfoPlist.strings in Resources */,
 				0BA8C13E18AB1BB4000F3734 /* AppIcon76x76@2x.png in Resources */,
@@ -477,6 +506,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BA0CB8A18A87CD2005AAFD5 /* ContactCell.m in Sources */,
+				0B7299FB197A68E50044B46C /* FBLoginCell.m in Sources */,
 				0B8E0BBF18A2099100863181 /* SocialSchedulerFirstViewController.m in Sources */,
 				0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */,
 				0BFF8B1218AE899600817BFD /* Reachability.m in Sources */,

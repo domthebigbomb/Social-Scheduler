@@ -12,13 +12,13 @@
 #import "Reachability.h"
 
 @interface SocialSchedulerFirstViewController ()
-- (IBAction)takeSnapshot:(UIButton *)sender;
 - (IBAction)postSchedule:(UIButton *)sender;
 - (IBAction)logout:(UIButton *)sender;
 - (IBAction)shareBarButton:(UIBarButtonItem *)sender;
 @property (weak, nonatomic) IBOutlet UIButton *shareToFbButton;
-@property (weak, nonatomic) IBOutlet UIScrollView *scheduleScrollView;
 @property (weak, nonatomic) IBOutlet UIWebView *visibleWebView;
+@property (weak, nonatomic) IBOutlet UILabel *shareMsgLabel;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *sharingActivity;
 @property (strong,nonatomic) UIImageView *scheduleImageView;
 @property (strong, nonatomic) UIAlertView *alertMsg;
 @end
@@ -40,7 +40,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"View Did Load");
     count = 0;
+    [_shareMsgLabel setAlpha:0];
     zoomScript = @"document.body.style.zoom = 1.8;";
     fbLoginURLString = @"access?access_token=";
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
@@ -59,7 +61,10 @@
 
 
 -(void)viewDidAppear:(BOOL)animated{
+    NSLog(@"View Did Appear");
+
     _visibleWebView.delegate = self;
+    
     _newSchedule = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshSchedule"];
     _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
     coursesString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
@@ -139,7 +144,7 @@
         }
         //NSLog(@"%@",_htmlString);
     }else{
-        [self performSegueWithIdentifier:@"ShowLogin" sender:self];
+        //[self performSegueWithIdentifier:@"ShowLogin" sender:self];
     }
 }
 
@@ -226,6 +231,8 @@
 }
 
 - (IBAction)postSchedule:(UIButton *)sender {
+    [_shareToFbButton setEnabled:NO];
+    [_sharingActivity startAnimating];
     if([[FBSession activeSession] accessTokenData]){
         NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
         NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
@@ -271,12 +278,13 @@
                     NSLog(@"Render Error: %@", connectionError);
                     NSLog(@"Render JSON: %@", [JSON description]);
                     
-                    BOOL success = (BOOL)[JSON valueForKey:@"success"];
+                    BOOL success = [[JSON valueForKey:@"success"] boolValue];
                     if(!success){
                         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Uh Oh" message:@"There seems to be a problem sharing your schedule to Facebook. Check your connection and make sure you are logged into FB" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
                         [_alertMsg show];
+                        [_sharingActivity stopAnimating];
+                        [_shareToFbButton setEnabled:YES];
                     }else{
-                        
                         [NSURLConnection sendAsynchronousRequest:shareRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                             NSError *error;
                             NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];                            NSLog(@"Share Rsponse: %@", response);
@@ -286,18 +294,38 @@
                             if(!success){
                                 _alertMsg = [[UIAlertView alloc] initWithTitle:@"Uh Oh" message:@"There seems to be a problem connecting to UMDSocialScheduler server." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
                                 [_alertMsg show];
+                                [_sharingActivity stopAnimating];
+                                [_shareToFbButton setEnabled:YES];
                             }else{
-                                _alertMsg = [[UIAlertView alloc] initWithTitle:@"Yay!" message:@"Successfully posted to Facebook" delegate:nil cancelButtonTitle:@"Done" otherButtonTitles: nil];
-                                [_alertMsg show];
+                                [_shareMsgLabel setText:@"Successfully posted to Facebook!"];
+                                [self performSelectorOnMainThread:@selector(animateShareLabel) withObject:nil waitUntilDone:NO];
                             }
                         }];
                     }
+                }else{
+                    [_shareMsgLabel setText:@"Successfully posted to Facebook!"];
+                    [self performSelectorOnMainThread:@selector(animateShareLabel) withObject:nil waitUntilDone:NO];
                 }
             }];
         }];
+    }else{
+        [_shareMsgLabel setText:@"Log in to Facebook to share"];
+        [self performSelectorOnMainThread:@selector(animateShareLabel) withObject:nil waitUntilDone:NO];
     }
 }
 
+-(void)animateShareLabel{
+    [_sharingActivity stopAnimating];
+    [UIView animateWithDuration:.5 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+        [_shareMsgLabel setAlpha:1.0];
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:1.0 delay:2.5f options:UIViewAnimationOptionCurveEaseOut animations:^{
+            [_shareMsgLabel setAlpha:0];
+        } completion:^(BOOL finished) {
+            _shareToFbButton.enabled = YES;
+        }];
+    }];
+}
 
 
 - (IBAction)shareBarButton:(UIBarButtonItem *)sender {
@@ -309,8 +337,9 @@
     [self presentViewController:activityViewController animated:YES completion:^{}];
 }
 
--(IBAction)logout:(UIButton *)sender{
-    [self performSegueWithIdentifier:@"ShowLogin" sender:self];
+-(IBAction)logout:(id)sender{
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
+    [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 
