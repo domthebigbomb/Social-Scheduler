@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UISwitch *sharingSwitch;
 @property (weak,nonatomic) IBOutlet UIToolbar *sharingToolbar;
 @property (weak,nonatomic) IBOutlet UIProgressView *progressBar;
+@property (strong,nonatomic) UIRefreshControl *friendRefresher;
 
 @property int numFinished;
 @end
@@ -66,8 +67,12 @@
     contactPics = [[NSMutableDictionary alloc] init];
     contactSchedules = [[NSMutableDictionary alloc] init];
     contactWithMutualClasses = [[NSMutableArray alloc] init];
-
+    
     isRefreshing = NO;
+    
+    _friendRefresher = [[UIRefreshControl alloc] init];
+    [_friendRefresher addTarget:self action:@selector(refreshFriends) forControlEvents:UIControlEventValueChanged];
+    [_contactTableView addSubview:_friendRefresher];
     
     _sharingToolbar.layer.masksToBounds = NO;
     _sharingToolbar.layer.shadowOffset = CGSizeMake(0, 2);
@@ -139,6 +144,7 @@
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Session Expired" message:@"Please login to refresh class data" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         [_alertMsg show];
         [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+        [_friendRefresher endRefreshing];
         return;
     }
     userSchedule = [[NSMutableDictionary alloc] init];
@@ -161,11 +167,13 @@
         [_alertMsg show];
         [_activityIndicator stopAnimating];
         [loginView setHidden:NO];
+        [_friendRefresher endRefreshing];
     }
     
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
+        [_friendRefresher endRefreshing];
     }else{
         if([[FBSession activeSession] accessTokenData] != nil){
             NSString *getContactString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,getListOfFriendsURLString];
@@ -251,6 +259,7 @@
                                     [[self contactTableView] setHidden:NO];
                                     [[self contactTableView] reloadData];
                                     isRefreshing = NO;
+                                    [_friendRefresher endRefreshing];
                                 });
                             }
                             
