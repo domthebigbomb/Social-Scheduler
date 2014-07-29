@@ -50,6 +50,9 @@
     NSInteger semesterIndex;
     NSInteger yearIndex;
     NSDictionary *semesterDict;
+    NSURL *semesterURL;
+    Reachability *internetReachability;
+    NetworkStatus network;
     int count;
 }
 
@@ -65,28 +68,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSLog(@"App Loaded");
     _semesterPickerView = [[UIPickerView alloc] init];
     
-    NSURL *semesterURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/d9c7z5py?apikey=e228433aba70a1ea083189f321776248"];
+    semesterURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/d9c7z5py?apikey=e228433aba70a1ea083189f321776248"];
     
-    Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus network = [internetReachability currentReachabilityStatus];
+    internetReachability = [Reachability reachabilityForInternetConnection];
+    network = [internetReachability currentReachabilityStatus];
     
     semesters = [[NSMutableArray alloc] init];
-    if(network == NotReachable){
-        semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
-    }else{
-        NSData *data = [NSData dataWithContentsOfURL:semesterURL];
-        if(data != nil){
-            NSError *error;
-            semesterDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-            NSString *semesterText = [[[[[semesterDict objectForKey:@"results"] objectForKey:@"Data"] firstObject] objectForKey:@"property1"] objectForKey:@"text"];
-            semesterText = [semesterText substringFromIndex:[semesterText rangeOfString:@"Continue"].location + 11];
-            semesters = [semesterText componentsSeparatedByString:@"\n"];
-        }else{
-            semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
-        }
-    }
+    semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
     [_fbLoginView setReadPermissions:@[@"public_profile",@"user_friends",@"email",@"user_likes"]];
     [_fbLoginView setDefaultAudience:FBSessionDefaultAudienceFriends];
     [_fbLoginView setPublishPermissions:@[@"publish_actions"]];
@@ -119,10 +110,27 @@
 }
 
 -(void)viewDidAppear:(BOOL)animated{
+    NSLog(@"App Appeared");
     [_semesterField setEnabled:YES];
     [_usernameField setEnabled:YES];
     [_passwordField setEnabled:YES];
     [_loginButton setEnabled:YES];
+    
+    if(network != NotReachable){
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:semesterURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+            if(data != nil){
+                NSError *error;
+                semesterDict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+                NSString *semesterText = [[[[[semesterDict objectForKey:@"results"] objectForKey:@"Data"] firstObject] objectForKey:@"property1"] objectForKey:@"text"];
+                semesterText = [semesterText substringFromIndex:[semesterText rangeOfString:@"Continue"].location + 11];
+                semesters = [semesterText componentsSeparatedByString:@"\n"];
+                [_semesterPickerView selectRow:[semesters count]/2 inComponent:0 animated:YES];
+                [_semesterPickerView reloadAllComponents];
+                NSLog(@"Semesters Loaded");
+            }
+        }];
+        // NSData *data = [NSData dataWithContentsOfURL:semesterURL];
+    }
     
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"save_login"] && [[NSUserDefaults standardUserDefaults] stringForKey:@"username"] != nil){
         NSLog(@"Found Credentials");
@@ -154,6 +162,8 @@
     [_borderMask addSubview:_circleMask];
     _loginContainer.layer.cornerRadius = 4.0f;
 
+    
+    
     
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
         CGRect frame = _usernameField.frame;
@@ -473,7 +483,7 @@
                 [_actionMsg showInView:self.view];
                 */
                 _alertMsg = [[UIAlertView alloc] initWithTitle:@"Warning" message:
-                             @"You are not logged into Facebook. You will not be able to: \n -Share your schedule to Facebook \n -View friends in your classes \n -View your friends' schedules" delegate:self cancelButtonTitle:@"I'll login" otherButtonTitles:@"Not right not", nil];
+                             @"You are not logged into Facebook. You will not be able to: \n -Share your schedule to Facebook \n -View friends in your classes \n -View your friends' schedules" delegate:self cancelButtonTitle:@"I'll login" otherButtonTitles:@"Not right now", nil];
                 [_alertMsg show];
             }else{
                 NSString *username = _usernameField.text;

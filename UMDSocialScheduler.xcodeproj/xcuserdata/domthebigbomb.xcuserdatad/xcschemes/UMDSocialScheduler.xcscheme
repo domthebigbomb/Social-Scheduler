@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0B8E0BA418A2099100863181"
-               BuildableName = "UMDSocialScheduler.app"
-               BlueprintName = "UMDSocialScheduler"
+               BuildableName = "Scheduler.app"
+               BlueprintName = "Scheduler"
                ReferencedContainer = "container:UMDSocialScheduler.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -43,8 +43,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0B8E0BA418A2099100863181"
-            BuildableName = "UMDSocialScheduler.app"
-            BlueprintName = "UMDSocialScheduler"
+            BuildableName = "Scheduler.app"
+            BlueprintName = "Scheduler"
             ReferencedContainer = "container:UMDSocialScheduler.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0B8E0BA418A2099100863181"
-            BuildableName = "UMDSocialScheduler.app"
-            BlueprintName = "UMDSocialScheduler"
+            BuildableName = "Scheduler.app"
+            BlueprintName = "Scheduler"
             ReferencedContainer = "container:UMDSocialScheduler.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -80,8 +80,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0B8E0BA418A2099100863181"
-            BuildableName = "UMDSocialScheduler.app"
-            BlueprintName = "UMDSocialScheduler"
+            BuildableName = "Scheduler.app"
+            BlueprintName = "Scheduler"
             ReferencedContainer = "container:UMDSocialScheduler.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

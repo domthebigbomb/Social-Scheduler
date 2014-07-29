@@ -64,13 +64,14 @@
     NSLog(@"View Did Appear");
 
     _visibleWebView.delegate = self;
-    
+    [_sharingActivity startAnimating];
     _newSchedule = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshSchedule"];
     _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
     coursesString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
-    if(_htmlString != nil)
+    if(_htmlString != nil){
         scheduleHtml = [NSString stringWithString: _htmlString];
+    }
     if(_newSchedule == YES || [_htmlString length]>0){
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshSchedule"];
         NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
@@ -107,7 +108,6 @@
                 if(renderConnection)
                 {
                     NSLog(@"Schedule request...");
-                    NSLog(@"Connection Successful");
                     [renderConnection start];
                 }
                 else
@@ -140,11 +140,16 @@
                     NSLog(@"Courses request...");
                     NSLog(@"Connection could not be made");
                 }
+                [_sharingActivity stopAnimating];
             }];
+            
+        }else{
+            [_sharingActivity stopAnimating];
         }
         //NSLog(@"%@",_htmlString);
     }else{
         //[self performSegueWithIdentifier:@"ShowLogin" sender:self];
+        [_sharingActivity stopAnimating];
     }
 }
 

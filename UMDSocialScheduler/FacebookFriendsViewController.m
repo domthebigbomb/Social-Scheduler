@@ -132,6 +132,7 @@
 
 -(void)refreshFriends{
     isRefreshing = YES;
+    [_scheduleImageView setImage:nil];
     [_progressBar setProgress:0.0];
     [_activityIndicator startAnimating];
     [_progressBar setHidden: NO];
@@ -298,6 +299,20 @@
     NSString *share = [NSString stringWithFormat:@"%@",[contactInfo objectForKey:@"share"]];
     NSArray *contactPicFbids = [contactPics allKeys];
     
+    cell.contactPic.layer.cornerRadius = cell.contactPic.layer.frame.size.width/2;
+    cell.contactPic.layer.masksToBounds = YES;
+    cell.contactPic.layer.borderColor = [self.view backgroundColor].CGColor;
+    if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+        cell.contactPic.layer.borderWidth = 2.0f;
+    }else{
+        cell.contactPic.layer.borderWidth = 1.75f;
+    }
+    cell.imageShadow.layer.shadowColor = [UIColor blackColor].CGColor;
+    cell.imageShadow.layer.shadowOffset = CGSizeMake(1, 3);
+    cell.imageShadow.layer.shadowOpacity = 0.8;
+    cell.imageShadow.layer.shadowRadius = 3.0f;
+    cell.imageShadow.layer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:cell.contactPic.frame cornerRadius:cell.contactPic.layer.frame.size.width/2].CGPath;
+
     [cell.contactPic setImage:[UIImage imageNamed:@"fb_default.jpg"]];
     network = [internetReachability currentReachabilityStatus];
     if(network != NotReachable){

@@ -10,6 +10,7 @@
 
 @interface ClassContactCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UIView *shadow;
 @property (weak, nonatomic) IBOutlet UIImageView *contactPictureView;
 
 @end
