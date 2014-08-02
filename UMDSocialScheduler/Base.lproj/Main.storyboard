@@ -325,6 +325,73 @@
             </objects>
             <point key="canvasLocation" x="1129" y="533"/>
         </scene>
+        <!--Schedule Theater View Controller-->
+        <scene sceneID="lhK-4K-Bvd">
+            <objects>
+                <viewController storyboardIdentifier="ScheduleTheater" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Vcz-z9-6V7" customClass="ScheduleTheaterViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Dti-74-8vA"/>
+                        <viewControllerLayoutGuide type="bottom" id="0Kl-Wf-UHa"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="bbQ-A5-X4Z">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <scrollView autoresizesSubviews="NO" appearanceType="aqua" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" maximumZoomScale="2" translatesAutoresizingMaskIntoConstraints="NO" id="ClQ-Nk-nZY">
+                                <rect key="frame" x="0.0" y="20" width="320" height="528"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <subviews>
+                                    <imageView appearanceType="aqua" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x5M-JK-dhT">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="528"/>
+                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        <gestureRecognizers/>
+                                        <connections>
+                                            <outletCollection property="gestureRecognizers" destination="PmK-p6-2nF" appends="YES" id="Pod-ZX-bzP"/>
+                                        </connections>
+                                    </imageView>
+                                </subviews>
+                            </scrollView>
+                            <button appearanceType="aqua" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dX2-Ls-njt">
+                                <rect key="frame" x="241" y="27" width="59" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
+                                <state key="normal" title="Done">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="dismissSchedule:" destination="Vcz-z9-6V7" eventType="touchUpInside" id="t0m-aY-n1Z"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView hidden="YES" appearanceType="aqua" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="1aq-Xd-QNn">
+                                <rect key="frame" x="141" y="266" width="37" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.90000000000000002" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="centerY" secondItem="ClQ-Nk-nZY" secondAttribute="centerY" id="8ge-uV-465"/>
+                            <constraint firstAttribute="centerY" secondItem="1aq-Xd-QNn" secondAttribute="centerY" constant="-0.5" id="smw-aB-Acf"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="activity" destination="1aq-Xd-QNn" id="m5t-MF-iV3"/>
+                        <outlet property="doneButton" destination="dX2-Ls-njt" id="qDv-6K-ZHQ"/>
+                        <outlet property="picPanGesture" destination="PmK-p6-2nF" id="BZf-ld-gc0"/>
+                        <outlet property="scheduleView" destination="x5M-JK-dhT" id="530-pW-D0d"/>
+                        <outlet property="scrollView" destination="ClQ-Nk-nZY" id="7nq-yn-sTc"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="64r-8X-CWx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="PmK-p6-2nF"/>
+            </objects>
+            <point key="canvasLocation" x="1665" y="60"/>
+        </scene>
         <!--Social Scheduler Second View Controller - Second-->
         <scene sceneID="ot8-2e-RuS">
             <objects>
@@ -376,7 +443,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view appearanceType="aqua" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LM6-wt-LbK" userLabel="Shadow">
-                                                    <rect key="frame" x="37" y="7" width="40" height="40"/>
+                                                    <rect key="frame" x="30" y="7" width="40" height="40"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <subviews>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="fb_default.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="fHO-rQ-tbD">
@@ -385,10 +452,20 @@
                                                     </subviews>
                                                 </view>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Dominic Ong" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="xkt-h2-91A">
-                                                    <rect key="frame" x="98" y="15" width="202" height="24"/>
+                                                    <rect key="frame" x="90" y="15" width="181" height="24"/>
                                                     <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button appearanceType="aqua" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5ZN-3A-Rwf">
+                                                    <rect key="frame" x="270" y="0.0" width="50" height="53"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <state key="normal" image="ViewSchedule">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="showSchedule:" destination="QUy-BD-bpt" eventType="touchUpInside" id="X6h-fE-3mN"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                         </tableViewCellContentView>
                                         <inset key="separatorInset" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -514,8 +591,9 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Main" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xz4-q1-PvT">
-                                        <rect key="frame" x="20" y="81" width="45" height="24"/>
+                                        <rect key="frame" x="20" y="81" width="102" height="24"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="17"/>
+                                        <color key="textColor" red="0.84916695441988954" green="0.02672311431760592" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="11:00am - 11:50am" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4pY-ru-PRp">
@@ -531,6 +609,7 @@
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Discussion" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SSn-aQ-WUs">
                                         <rect key="frame" x="20" y="134" width="112" height="24"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="17"/>
+                                        <color key="textColor" red="0.84416004834254144" green="0.17271929294926705" blue="0.83096559411645254" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="11:00am - 11:50am" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6IM-qI-96Q">
@@ -648,6 +727,7 @@
                         <outlet property="licenseButton" destination="nDg-oO-QKF" id="ziT-PK-zbr"/>
                         <outlet property="mainDetailView" destination="xFr-y2-DUa" id="kAp-ZV-ThC"/>
                         <outlet property="mainFLabel" destination="u13-ua-Zdm" id="M4h-Tc-CFr"/>
+                        <outlet property="mainLabel" destination="xz4-q1-PvT" id="OHc-Fc-mje"/>
                         <outlet property="mainMLabel" destination="2FM-Jr-JAz" id="eiY-H3-D6b"/>
                         <outlet property="mainThLabel" destination="Zmx-K0-d2z" id="9RK-LZ-fwx"/>
                         <outlet property="mainTuLabel" destination="YbL-hw-cr7" id="d1l-5M-fxn"/>
@@ -668,7 +748,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pXb-zn-thX" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="DJB-Bg-Zag" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1595" y="-230"/>
+            <point key="canvasLocation" x="1907" y="-662"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="Vex-rW-GRa">

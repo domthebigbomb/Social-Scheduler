@@ -15,5 +15,6 @@
 
 -(IBAction)dismissDetails:(UIStoryboardSegue *)segue;
 -(IBAction)addToCalendar:(UIBarButtonItem *)sender;
+- (IBAction)showSchedule:(UIButton *)sender;
 
 @end

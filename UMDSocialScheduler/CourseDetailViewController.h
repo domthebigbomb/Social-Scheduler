@@ -37,6 +37,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *secWLabel;
 @property (weak, nonatomic) IBOutlet UILabel *secThLabel;
 @property (weak, nonatomic) IBOutlet UILabel *secFLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mainLabel;
 @property (weak, nonatomic) IBOutlet UILabel *discussionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *courseLabel;
 @property (weak, nonatomic) IBOutlet UILabel *sectionLabel;

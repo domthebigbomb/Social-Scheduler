@@ -88,7 +88,7 @@
             NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
             NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
        
-            
+            [_sharingActivity stopAnimating];
             [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                 NSString *renderURLString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,uploadScheduleURLString];
                 NSMutableURLRequest *renderRequest = [NSMutableURLRequest requestWithURL:[[NSURL URLWithString:renderURLString] standardizedURL]];
@@ -140,7 +140,6 @@
                     NSLog(@"Courses request...");
                     NSLog(@"Connection could not be made");
                 }
-                [_sharingActivity stopAnimating];
             }];
             
         }else{

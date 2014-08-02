@@ -10,12 +10,12 @@
 #import "Reachability.h"
 #import "ContactCell.h"
 #import "ContactScheduleCell.h"
+#import "ScheduleTheaterViewController.h"
 
 @interface FacebookFriendsViewController ()
 - (IBAction)showSchedule:(UIButton *)sender;
 - (IBAction)hideSchedule:(UIButton *)sender;
 - (IBAction)toggleSharing:(UISwitch *)sender;
-
 @property (strong,nonatomic) UITapGestureRecognizer *tapGesture;
 @property (strong, nonatomic) UIAlertView *alertMsg;
 @property (weak, nonatomic) IBOutlet UILabel *sharingEnabledLabel;
@@ -205,66 +205,73 @@
                     [contactData appendData:data];
                     [_progressBar setProgress:0.1 animated:YES];
                     NSError *error;
-                    NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
-                    contacts = [[NSMutableArray alloc] initWithArray:[JSON valueForKey:@"data"]];
-                    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-                    [contacts sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
-                    NSLog(@"Sorted Contacts: %@",[contacts description]);
-                    
-                    NSArray *courses = [userSchedule allKeys];
-                    //for(NSString *course in courses){
-                    for(int i = 0; i < [courses count]; i++){
-                        NSLog(@"Progress: %f",[_progressBar progress]);
-                        NSString *course = [courses objectAtIndex:i];
-                        NSURLRequest *getCourseFriendsRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,getFriendsInCourseURLString,termCode,course]]];
-                        [NSURLConnection sendAsynchronousRequest:getCourseFriendsRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                            NSError *error;
-                            NSMutableDictionary *courseFriendsJSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
-                            NSArray *friends = [courseFriendsJSON objectForKey:@"data"];
-                            for(NSDictionary *friend in friends){
-                                NSString *fbid = [friend objectForKey:@"fbid"];
-                                if(![contactWithMutualClasses containsObject:fbid]){
-                                    [contactWithMutualClasses addObject:fbid];
-                                }
-                            }
-                            
-                            //NSLog(@"Contact With Mutual Classes: %@",[contactWithMutualClasses description]);
-                            
-                            for(NSString *fbid in contactWithMutualClasses){
-                                NSURLRequest *scheduleRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule?term=%@&fbid=%@",termCode,fbid]]];
-                                NSURLResponse *response;
-                                NSError *error;
-                                NSData *data = [NSURLConnection sendSynchronousRequest:scheduleRequest returningResponse:&response error:&error];
-                                NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
-                                NSArray *contactCourses = [[NSArray alloc] initWithArray:[JSON valueForKey:@"data"]];
-                                [contactSchedules setObject:contactCourses forKey:fbid];
-                            }
-                            
-                            NSLog(@"%@",[jsonDict description]);
-                            NSLog(@"Contact Response: %@", response);
-                            NSLog(@"Contact Error: %@", connectionError);
-                            
-                            [_progressBar setProgress:[_progressBar progress] + (.9/[courses count]) animated:YES];
-
+                    NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error: &error];
+                    if([[JSON valueForKey:@"success"] integerValue] == 1){
+                        contacts = [[NSMutableArray alloc] initWithArray:[JSON valueForKey:@"data"]];
+                        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+                        [contacts sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+                        NSLog(@"Sorted Contacts: %@",[contacts description]);
+                        
+                        NSArray *courses = [userSchedule allKeys];
+                        //for(NSString *course in courses){
+                        for(int i = 0; i < [courses count]; i++){
                             NSLog(@"Progress: %f",[_progressBar progress]);
-                            // DEBUGGING PURPOSES
-                            //[contacts removeAllObjects];
-                            _numFinished += 1;
-                            if(_numFinished == [courses count]){
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                    //[_progressBar setProgress:1.0 animated:YES];
-                                    [_activityIndicator stopAnimating];
-                                    [_closeScheduleButton setHidden:NO];
-                                    [_greyedBackgroundView setHidden:YES];
-                                    [_progressBar setHidden:YES];
-                                    [[self contactTableView] setHidden:NO];
-                                    [[self contactTableView] reloadData];
-                                    isRefreshing = NO;
-                                    [_friendRefresher endRefreshing];
-                                });
-                            }
-                            
-                        }];
+                            NSString *course = [courses objectAtIndex:i];
+                            NSURLRequest *getCourseFriendsRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,getFriendsInCourseURLString,termCode,course]]];
+                            [NSURLConnection sendAsynchronousRequest:getCourseFriendsRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                                NSError *error;
+                                NSMutableDictionary *courseFriendsJSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
+                                NSArray *friends = [courseFriendsJSON objectForKey:@"data"];
+                                for(NSDictionary *friend in friends){
+                                    NSString *fbid = [friend objectForKey:@"fbid"];
+                                    if(![contactWithMutualClasses containsObject:fbid]){
+                                        [contactWithMutualClasses addObject:fbid];
+                                    }
+                                }
+                                
+                                //NSLog(@"Contact With Mutual Classes: %@",[contactWithMutualClasses description]);
+                                
+                                for(NSString *fbid in contactWithMutualClasses){
+                                    NSURLRequest *scheduleRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule?term=%@&fbid=%@",termCode,fbid]]];
+                                    NSURLResponse *response;
+                                    NSError *error;
+                                    NSData *data = [NSURLConnection sendSynchronousRequest:scheduleRequest returningResponse:&response error:&error];
+                                    NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
+                                    NSArray *contactCourses = [[NSArray alloc] initWithArray:[JSON valueForKey:@"data"]];
+                                    [contactSchedules setObject:contactCourses forKey:fbid];
+                                }
+                                
+                                NSLog(@"%@",[jsonDict description]);
+                                NSLog(@"Contact Response: %@", response);
+                                NSLog(@"Contact Error: %@", connectionError);
+                                
+                                [_progressBar setProgress:[_progressBar progress] + (.9/[courses count]) animated:YES];
+                                
+                                NSLog(@"Progress: %f",[_progressBar progress]);
+                                // DEBUGGING PURPOSES
+                                //[contacts removeAllObjects];
+                                _numFinished += 1;
+                                if(_numFinished == [courses count]){
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        //[_progressBar setProgress:1.0 animated:YES];
+                                        [_activityIndicator stopAnimating];
+                                        [_closeScheduleButton setHidden:NO];
+                                        [_greyedBackgroundView setHidden:YES];
+                                        [_progressBar setHidden:YES];
+                                        [[self contactTableView] setHidden:NO];
+                                        [[self contactTableView] reloadData];
+                                        isRefreshing = NO;
+                                        [_friendRefresher endRefreshing];
+                                    });
+                                }
+                                
+                            }];
+                        }
+                    }else{
+                        NSLog(@"Failed to authenticate facebook with umd social scheduiler");
+                        _alertMsg = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Couldn't connect facebook to UMD Social Scheduler service" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
+                        [_alertMsg show];
+                        [_activityIndicator stopAnimating];
                     }
                 }];
             }];
@@ -308,8 +315,8 @@
         cell.contactPic.layer.borderWidth = 1.75f;
     }
     cell.imageShadow.layer.shadowColor = [UIColor blackColor].CGColor;
-    cell.imageShadow.layer.shadowOffset = CGSizeMake(1, 3);
-    cell.imageShadow.layer.shadowOpacity = 0.8;
+    cell.imageShadow.layer.shadowOffset = CGSizeMake(1, 2);
+    cell.imageShadow.layer.shadowOpacity = 0.5;
     cell.imageShadow.layer.shadowRadius = 3.0f;
     cell.imageShadow.layer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:cell.contactPic.frame cornerRadius:cell.contactPic.layer.frame.size.width/2].CGPath;
 
@@ -376,7 +383,7 @@
     [super didReceiveMemoryWarning];
 }
 
--(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
+-(void)loginViewFetchedUserInfo:(FBLoginView *)fbloginView user:(id<FBGraphUser>)user{
     if(!isRefreshing){
         [loginView setHidden:YES];
         [self refreshFriends];
@@ -398,6 +405,7 @@
 }
 
 - (IBAction)showSchedule:(UIButton *)sender {
+    /*
     [_scheduleImageView setImage:nil];
     [_closeScheduleButton setHidden:NO];
     [_greyedBackgroundView setHidden:NO];
@@ -413,6 +421,20 @@
         [_tapGesture setEnabled: YES];
         [_activityIndicator stopAnimating];
     });
+    */
+    ScheduleTheaterViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ScheduleTheater"];
+    
+    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:_contactTableView];
+    NSIndexPath *indexPath = [_contactTableView indexPathForRowAtPoint:buttonPosition];
+    ContactCell *contact = (ContactCell *) [[self contactTableView] cellForRowAtIndexPath:indexPath];
+    vc.fbid = contact.fbid;
+    [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
+    [self.tabBarController presentViewController:vc animated:NO completion:NO];
+    [vc.view setAlpha:0];
+    [UIView animateWithDuration:0.5 animations:^{
+        [vc.view setAlpha:1];
+    }];
+
 }
 
 - (IBAction)hideSchedule:(UIButton *)sender {

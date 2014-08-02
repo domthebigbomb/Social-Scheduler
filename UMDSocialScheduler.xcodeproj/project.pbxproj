@@ -52,6 +52,7 @@
 		0BA8C13F18AB1BB4000F3734 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12F18AB1BB4000F3734 /* iTunesArtwork.png */; };
 		0BA8C14018AB1BB4000F3734 /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */; };
 		0BC9322219465E0A00237EF2 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BC9322119465E0A00237EF2 /* Settings.bundle */; };
+		0BC94462198B093500BD3140 /* ScheduleTheaterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BC94461198B093500BD3140 /* ScheduleTheaterViewController.m */; };
 		0BC9A2341948D0F20048562F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BC9A2331948D0F20048562F /* MapKit.framework */; };
 		0BCAB20F197F6F0C006FC406 /* Launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB20E197F6F0C006FC406 /* Launcher.png */; };
 		0BCAB211197F70A1006FC406 /* R4Launcher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB210197F70A1006FC406 /* R4Launcher.png */; };
@@ -89,7 +90,7 @@
 		0B7299FA197A68E50044B46C /* FBLoginCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginCell.m; sourceTree = "<group>"; };
 		0B761C1D197F2DD40035620C /* BG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BG.png; path = Images/BG.png; sourceTree = "<group>"; };
 		0B77469018AD4008006E0550 /* fb_default.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fb_default.jpg; sourceTree = "<group>"; };
-		0B8E0BA518A2099100863181 /* Scheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8E0BA518A2099100863181 /* UMD Schedule.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UMD Schedule.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B8E0BA818A2099100863181 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0B8E0BAA18A2099100863181 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0B8E0BAC18A2099100863181 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -135,6 +136,8 @@
 		0BA8C12F18AB1BB4000F3734 /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = "<group>"; };
 		0BC9322119465E0A00237EF2 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		0BC94460198B093500BD3140 /* ScheduleTheaterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleTheaterViewController.h; sourceTree = "<group>"; };
+		0BC94461198B093500BD3140 /* ScheduleTheaterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleTheaterViewController.m; sourceTree = "<group>"; };
 		0BC9A2331948D0F20048562F /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		0BCAB20E197F6F0C006FC406 /* Launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Launcher.png; path = Images/Launcher.png; sourceTree = "<group>"; };
 		0BCAB210197F70A1006FC406 /* R4Launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = R4Launcher.png; path = Images/R4Launcher.png; sourceTree = "<group>"; };
@@ -214,7 +217,7 @@
 		0B8E0BA618A2099100863181 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0B8E0BA518A2099100863181 /* Scheduler.app */,
+				0B8E0BA518A2099100863181 /* UMD Schedule.app */,
 				0B8E0BC918A2099100863181 /* UMDSocialSchedulerTests.xctest */,
 			);
 			name = Products;
@@ -295,6 +298,8 @@
 				0B8E0BC118A2099100863181 /* SocialSchedulerSecondViewController.m */,
 				0B8E0BF518A5EB8100863181 /* FacebookFriendsViewController.h */,
 				0B8E0BF618A5EB8100863181 /* FacebookFriendsViewController.m */,
+				0BC94460198B093500BD3140 /* ScheduleTheaterViewController.h */,
+				0BC94461198B093500BD3140 /* ScheduleTheaterViewController.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -380,9 +385,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0B8E0BA418A2099100863181 /* Scheduler */ = {
+		0B8E0BA418A2099100863181 /* UMD Schedule */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0B8E0BDA18A2099100863181 /* Build configuration list for PBXNativeTarget "Scheduler" */;
+			buildConfigurationList = 0B8E0BDA18A2099100863181 /* Build configuration list for PBXNativeTarget "UMD Schedule" */;
 			buildPhases = (
 				0B8E0BA118A2099100863181 /* Sources */,
 				0B8E0BA218A2099100863181 /* Frameworks */,
@@ -392,9 +397,9 @@
 			);
 			dependencies = (
 			);
-			name = Scheduler;
+			name = "UMD Schedule";
 			productName = UMDSocialScheduler;
-			productReference = 0B8E0BA518A2099100863181 /* Scheduler.app */;
+			productReference = 0B8E0BA518A2099100863181 /* UMD Schedule.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0B8E0BC818A2099100863181 /* UMDSocialSchedulerTests */ = {
@@ -446,7 +451,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0B8E0BA418A2099100863181 /* Scheduler */,
+				0B8E0BA418A2099100863181 /* UMD Schedule */,
 				0B8E0BC818A2099100863181 /* UMDSocialSchedulerTests */,
 			);
 		};
@@ -508,6 +513,7 @@
 				0BA0CB8A18A87CD2005AAFD5 /* ContactCell.m in Sources */,
 				0B7299FB197A68E50044B46C /* FBLoginCell.m in Sources */,
 				0B8E0BBF18A2099100863181 /* SocialSchedulerFirstViewController.m in Sources */,
+				0BC94462198B093500BD3140 /* ScheduleTheaterViewController.m in Sources */,
 				0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */,
 				0BFF8B1218AE899600817BFD /* Reachability.m in Sources */,
 				0B8E0BF718A5EB8100863181 /* FacebookFriendsViewController.m in Sources */,
@@ -534,7 +540,7 @@
 /* Begin PBXTargetDependency section */
 		0B8E0BCF18A2099100863181 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0B8E0BA418A2099100863181 /* Scheduler */;
+			target = 0B8E0BA418A2099100863181 /* UMD Schedule */;
 			targetProxy = 0B8E0BCE18A2099100863181 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -750,7 +756,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0B8E0BDA18A2099100863181 /* Build configuration list for PBXNativeTarget "Scheduler" */ = {
+		0B8E0BDA18A2099100863181 /* Build configuration list for PBXNativeTarget "UMD Schedule" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0B8E0BDB18A2099100863181 /* Debug */,

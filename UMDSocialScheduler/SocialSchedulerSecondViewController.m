@@ -14,7 +14,7 @@
 #import "ClassContactCell.h"
 #import "CourseDetailViewController.h"
 #import <QuartzCore/QuartzCore.h>
-
+#import "ScheduleTheaterViewController.h"
 
 @interface SocialSchedulerSecondViewController ()
 @property (strong,nonatomic) NSMutableDictionary *courses;
@@ -45,6 +45,7 @@
     BOOL showContact;
     BOOL isUpdating;
     BOOL isAnimating;
+    BOOL loggedIntoScheduler;
 }
 
 -(void)refreshFacebookToken{
@@ -63,7 +64,7 @@
     internetReachability = [Reachability reachabilityForInternetConnection];
     network = [internetReachability currentReachabilityStatus];
     loggedIntoFB = YES;
-    
+    loggedIntoScheduler = NO;
     insertIndexPaths = [[NSMutableArray alloc] init];
     contactPics = [[NSMutableDictionary alloc] init];
     //[self refreshClasses];
@@ -75,18 +76,16 @@
     isAnimating = NO;
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     
+    if([[FBSession activeSession] accessTokenData] == nil){
+        loggedIntoFB = NO;
+    }
+    
     if(network == NotReachable){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
     }else if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshClasses"]){
         [self refreshClasses];
     }else if([_courseKeys count] == 0){
-        /*
-        NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
-        NSData *data = [NSData dataWithContentsOfURL:bldgURL];
-        NSError *error;
-        bldgCodes = [[NSArray alloc] initWithArray:[[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"]];
-         */
         [self refreshClasses];
     }
 }
@@ -104,12 +103,20 @@
         NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
         [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
             NSError *err;
-            NSDictionary *responseData = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&err];
+            NSDictionary *responseData = [[NSDictionary alloc] initWithDictionary:[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&err]] ;
             NSLog(@"Attempt to submit token: %@",[responseData description]);
             if(responseData == nil){
                 loggedIntoFB = NO;
-                [_courseTableView reloadData];
+            }else if([[responseData objectForKey:@"success"] integerValue] == 0){
+                NSLog(@"Unsuccessful authorization of access token");
+            }else{
+                loggedIntoScheduler = YES;
+                [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshClasses"];
             }
+            [self courseTableView].dataSource = self;
+            [self courseTableView].delegate = self;
+            [[self courseTableView] reloadData];
+            [_activityIndicator stopAnimating];
             [_courseTableView setUserInteractionEnabled:YES];
         }];
         courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
@@ -163,11 +170,7 @@
         }
         _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
         NSLog(@"Courses: %@",[_courses description]);
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshClasses"];
-        [_activityIndicator stopAnimating];
-        [self courseTableView].dataSource = self;
-        [self courseTableView].delegate = self;
-        [[self courseTableView] reloadData];
+        //[_activityIndicator stopAnimating];
     }];
     //NSData *data = [NSData dataWithContentsOfURL:bldgURL];
     
@@ -227,6 +230,10 @@
             [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
             //_alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"You are not signed into facebook. In order to view friends in your classes, please sign into facebook at the login screen." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
             //[_alertMsg show];
+        }else if(!loggedIntoScheduler){
+            isAnimating = YES;
+            [_cellMsgLabel setText:@"Error connecting Facebook to Scheduler"];
+            [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
         }else{
             NSInteger row = indexPath.row;
             selectedIndex = row;
@@ -387,6 +394,7 @@
         
         NSLog(@"Successfully submitted fb token");
         loggedIntoFB = YES;
+        loggedIntoScheduler = YES;
         [_courseTableView reloadData];
         [_activityIndicator stopAnimating];
     }];
@@ -422,6 +430,31 @@
         viewController.primaryTimes = primTime;
         viewController.bldgCodes = bldgCodes;
     }
+}
+
+-(IBAction)debugShowSchedule:(id)sender{
+    ScheduleTheaterViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ScheduleTheater"];
+    vc.fbid = @"623886246";
+    [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
+    [self.tabBarController presentViewController:vc animated:NO completion:NO];
+}
+
+-(IBAction)showSchedule:(UIButton *)sender{
+    ScheduleTheaterViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ScheduleTheater"];
+    
+    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:_courseTableView];
+    NSIndexPath *indexPath = [_courseTableView indexPathForRowAtPoint:buttonPosition];
+    NSInteger rowNumber = indexPath.row;
+    NSInteger numContacts = [_contacts count];
+    NSDictionary *selectedContact;
+    selectedContact = [[NSDictionary alloc] initWithDictionary:[_contacts objectAtIndex:numContacts - (rowNumber - selectedIndex)]];
+    vc.fbid = [selectedContact objectForKey:@"fbid"];
+    [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
+    [self.tabBarController presentViewController:vc animated:NO completion:NO];
+    [vc.view setAlpha:0];
+    [UIView animateWithDuration:0.5 animations:^{
+        [vc.view setAlpha:1];
+    }];
 }
 
 -(IBAction)logout:(id)sender{

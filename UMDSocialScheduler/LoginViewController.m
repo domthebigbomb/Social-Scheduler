@@ -144,7 +144,7 @@
     scheduleURL = @"https://www.sis.umd.edu%2Ftestudo%2FstudentSched%3Fterm%3D201401&h=xAQGVU3yP";
     scheduleURL = @"https://www.sis.umd.edu/testudo/studentSched?term=";
     if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil){
-        NSLog(@"Schedule: %@",[[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"]);
+        //NSLog(@"Schedule: %@",[[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"]);
         [self performSegueWithIdentifier:@"Relog" sender:self];
     }
 }
