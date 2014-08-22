@@ -18,6 +18,7 @@
 
 @interface SocialSchedulerSecondViewController ()
 @property (strong,nonatomic) NSMutableDictionary *courses;
+@property (strong,nonatomic) NSMutableDictionary *contactsInCourses;
 @property (weak, nonatomic) IBOutlet UITableView *courseTableView;
 @property (weak, nonatomic) IBOutlet UILabel *cellMsgLabel;
 @property (strong,nonatomic) NSArray *courseKeys;
@@ -67,7 +68,7 @@
     loggedIntoScheduler = NO;
     insertIndexPaths = [[NSMutableArray alloc] init];
     contactPics = [[NSMutableDictionary alloc] init];
-    //[self refreshClasses];
+    _contactsInCourses = [[NSMutableDictionary alloc] init];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -92,12 +93,73 @@
 
 -(void)refreshClasses{
     [_courseTableView setUserInteractionEnabled:NO];
-    [_activityIndicator startAnimating];
     NSURL *bldgURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/cqwtzoos?apikey=437387afa6c3bf7f0367e782c707b51d"];
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:bldgURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        NSError *error;
-        bldgCodes = [[NSArray alloc] initWithArray:[[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"]];
-        
+    
+    if([bldgCodes count] == 0){
+        [_activityIndicator startAnimating];
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:bldgURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+            NSError *error;
+            bldgCodes = [[NSArray alloc] initWithArray:[[[NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error] objectForKey:@"results"] objectForKey:@"BuildingCodes"]];
+            
+            courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+            courseDetails = [[NSUserDefaults standardUserDefaults] stringForKey:@"CourseDetails"];
+            
+            if(courseString == nil){
+                _alertMsg = [[UIAlertView alloc] initWithTitle:@"Session Expired" message:@"Please login again to refresh class data" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
+                [_alertMsg show];
+                [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+                return;
+            }
+            
+            // Parse Course String to get classes
+            _courses = [[NSMutableDictionary alloc] init];
+            NSUInteger index;
+            while(![courseString isEqualToString:@""]){
+                index =[courseString rangeOfString:@"|"].location;
+                NSString *class = [courseString substringToIndex:index];
+                courseString = [courseString substringFromIndex:index + 1];
+                index =[courseString rangeOfString:@"/"].location;
+                NSString *section = [courseString substringToIndex: index];
+                NSMutableDictionary *properties = [[NSMutableDictionary alloc] init];
+                [properties setObject:section forKey:@"section"];
+                courseString = [courseString substringFromIndex:index + 1];
+                [_courses setObject:properties forKey:class];
+            }
+            
+            for(NSString *class in _courses){
+                NSMutableDictionary *properties = [_courses objectForKey:class];
+                NSString *relevantData = [courseDetails substringFromIndex:[courseDetails rangeOfString:class].location];
+                relevantData = [relevantData substringToIndex:130];
+                NSNumber *credits = [[NSNumber alloc] initWithDouble: [[[[relevantData substringFromIndex:32] substringToIndex:5] stringByReplacingOccurrencesOfString:@" " withString:@""] doubleValue]];
+                NSString *primaryDays = [[[relevantData substringFromIndex:46] substringToIndex:5] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                NSString *primaryTimes = [[[relevantData substringFromIndex:53] substringToIndex:8] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                NSString *primaryBldgCode = [[[relevantData substringFromIndex:61] substringToIndex:3] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                NSString *primaryRoomNum = [[[relevantData substringFromIndex:65] substringToIndex:4] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                NSString *secondaryDays = [[[relevantData substringFromIndex:74] substringToIndex:5] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                NSString *secondaryTimes = [[[relevantData substringFromIndex:81] substringToIndex:8] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                NSString *secondaryBldgCode = [[[relevantData substringFromIndex:89] substringToIndex:3]stringByReplacingOccurrencesOfString:@" " withString:@""];
+                NSString *secondaryRoomNum = [[[relevantData substringFromIndex:93] substringToIndex:4] stringByReplacingOccurrencesOfString:@" " withString:@""];
+                [properties setValue:credits forKey:@"Credits"];
+                [properties setObject:primaryDays forKey:@"PrimaryDays"];
+                [properties setObject:primaryTimes forKey:@"PrimaryTimes"];
+                [properties setObject:primaryBldgCode forKey:@"PrimaryBldgCode"];
+                [properties setObject:primaryRoomNum forKey:@"PrimaryRoomNum"];
+                [properties setObject:secondaryDays forKey:@"SecondaryDays"];
+                [properties setObject:secondaryTimes forKey:@"SecondaryTimes"];
+                [properties setObject:secondaryBldgCode forKey:@"SecondaryBldgCode"];
+                [properties setObject:secondaryRoomNum forKey:@"SecondaryRoomNum"];
+                //[_courses setObject:properties forKey:class];
+            }
+            _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
+            NSLog(@"Courses: %@",[_courses description]);
+            [_activityIndicator stopAnimating];
+            [self courseTableView].dataSource = self;
+            [self courseTableView].delegate = self;
+            [[self courseTableView] reloadData];
+        }];
+    }
+    
+    if([[FBSession activeSession] accessTokenData] != nil){
         NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
         NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
         NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
@@ -113,65 +175,16 @@
                 loggedIntoScheduler = YES;
                 [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshClasses"];
             }
-            [self courseTableView].dataSource = self;
-            [self courseTableView].delegate = self;
-            [[self courseTableView] reloadData];
-            [_activityIndicator stopAnimating];
+            [_courseTableView setDataSource:self];
+            [_courseTableView setDelegate:self];
+            [_courseTableView reloadData];
+            //[_activityIndicator stopAnimating];
             [_courseTableView setUserInteractionEnabled:YES];
         }];
-        courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
-        courseDetails = [[NSUserDefaults standardUserDefaults] stringForKey:@"CourseDetails"];
-        
-        if(courseString == nil){
-            _alertMsg = [[UIAlertView alloc] initWithTitle:@"Session Expired" message:@"Please login again to refresh class data" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
-            [_alertMsg show];
-            [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
-            return;
-        }
-        
-        // Parse Course String to get classes
-        _courses = [[NSMutableDictionary alloc] init];
-        NSUInteger index;
-        while(![courseString isEqualToString:@""]){
-            index =[courseString rangeOfString:@"|"].location;
-            NSString *class = [courseString substringToIndex:index];
-            courseString = [courseString substringFromIndex:index + 1];
-            index =[courseString rangeOfString:@"/"].location;
-            NSString *section = [courseString substringToIndex: index];
-            NSMutableDictionary *properties = [[NSMutableDictionary alloc] init];
-            [properties setObject:section forKey:@"section"];
-            courseString = [courseString substringFromIndex:index + 1];
-            [_courses setObject:properties forKey:class];
-        }
-        
-        for(NSString *class in _courses){
-            NSMutableDictionary *properties = [_courses objectForKey:class];
-            NSString *relevantData = [courseDetails substringFromIndex:[courseDetails rangeOfString:class].location];
-            relevantData = [relevantData substringToIndex:130];
-            NSNumber *credits = [[NSNumber alloc] initWithDouble: [[[[relevantData substringFromIndex:32] substringToIndex:5] stringByReplacingOccurrencesOfString:@" " withString:@""] doubleValue]];
-            NSString *primaryDays = [[[relevantData substringFromIndex:46] substringToIndex:5] stringByReplacingOccurrencesOfString:@" " withString:@""];
-            NSString *primaryTimes = [[[relevantData substringFromIndex:53] substringToIndex:8] stringByReplacingOccurrencesOfString:@" " withString:@""];
-            NSString *primaryBldgCode = [[[relevantData substringFromIndex:61] substringToIndex:3] stringByReplacingOccurrencesOfString:@" " withString:@""];
-            NSString *primaryRoomNum = [[[relevantData substringFromIndex:65] substringToIndex:4] stringByReplacingOccurrencesOfString:@" " withString:@""];
-            NSString *secondaryDays = [[[relevantData substringFromIndex:74] substringToIndex:5] stringByReplacingOccurrencesOfString:@" " withString:@""];
-            NSString *secondaryTimes = [[[relevantData substringFromIndex:81] substringToIndex:8] stringByReplacingOccurrencesOfString:@" " withString:@""];
-            NSString *secondaryBldgCode = [[[relevantData substringFromIndex:89] substringToIndex:3]stringByReplacingOccurrencesOfString:@" " withString:@""];
-            NSString *secondaryRoomNum = [[[relevantData substringFromIndex:93] substringToIndex:4] stringByReplacingOccurrencesOfString:@" " withString:@""];
-            [properties setValue:credits forKey:@"Credits"];
-            [properties setObject:primaryDays forKey:@"PrimaryDays"];
-            [properties setObject:primaryTimes forKey:@"PrimaryTimes"];
-            [properties setObject:primaryBldgCode forKey:@"PrimaryBldgCode"];
-            [properties setObject:primaryRoomNum forKey:@"PrimaryRoomNum"];
-            [properties setObject:secondaryDays forKey:@"SecondaryDays"];
-            [properties setObject:secondaryTimes forKey:@"SecondaryTimes"];
-            [properties setObject:secondaryBldgCode forKey:@"SecondaryBldgCode"];
-            [properties setObject:secondaryRoomNum forKey:@"SecondaryRoomNum"];
-            //[_courses setObject:properties forKey:class];
-        }
-        _courseKeys = [[NSArray alloc] initWithArray:[_courses allKeys]];
-        NSLog(@"Courses: %@",[_courses description]);
-        //[_activityIndicator stopAnimating];
-    }];
+    }else{
+        [_courseTableView setUserInteractionEnabled:YES];
+    }
+
     //NSData *data = [NSData dataWithContentsOfURL:bldgURL];
     
     
@@ -222,14 +235,10 @@
             isAnimating = YES;
             [_cellMsgLabel setText:@"Please check internet connection"];
             [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
-            //_alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
-            //[_alertMsg show];
         }else if([[FBSession activeSession] accessTokenData] == nil){
             isAnimating = YES;
             [_cellMsgLabel setText:@"Log in to Facebook to view friends"];
             [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
-            //_alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"You are not signed into facebook. In order to view friends in your classes, please sign into facebook at the login screen." delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles: nil];
-            //[_alertMsg show];
         }else if(!loggedIntoScheduler){
             isAnimating = YES;
             [_cellMsgLabel setText:@"Error connecting Facebook to Scheduler"];
@@ -237,9 +246,12 @@
         }else{
             NSInteger row = indexPath.row;
             selectedIndex = row;
+            //NSString *course = [_courseKeys objectAtIndex:row];
+
             if(!showContact){
                 isUpdating = YES;
                 NSString *course = [_courseKeys objectAtIndex:row];
+
                 NSString *requestString = [NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,classesWithContactURLString,termCode,course];
                 NSURL *requestURL = [NSURL URLWithString:requestString];
                 NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
@@ -247,15 +259,31 @@
                     NSError *error;
                     NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
                     _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
+                    NSMutableDictionary *properties = [_courses objectForKey:course];
+                    [properties setObject:[[NSArray alloc] initWithArray:[JSON objectForKey:@"data"]]forKey:@"contacts"];
                     if([_contacts count] > 0){
+                        NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
                         for(int i = 0; i< [_contacts count]; i++){
-                            [insertIndexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
+                            [indexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
                         }
-                        
+                        [insertIndexPaths addObjectsFromArray:indexPaths];
+                        [properties setObject:indexPaths forKey:@"indexPaths"];
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [_courseTableView beginUpdates];
                             showContact = YES;
-                            [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationFade];
+                            /*
+                            [_courseTableView insertRowsAtIndexPaths:@[[insertIndexPaths firstObject]] withRowAnimation:UITableViewRowAnimationMiddle];
+                            NSMutableArray *latterIndexs = [[NSMutableArray alloc] init];
+                            for(NSIndexPath *path in insertIndexPaths){
+                                if(![path isEqual:[insertIndexPaths firstObject]]){
+                                    [latterIndexs addObject:path];
+                                }
+                            }
+                            if([latterIndexs count] != 0){
+                                [_courseTableView insertRowsAtIndexPaths:latterIndexs withRowAnimation: UITableViewRowAnimationTop];
+                            }
+                             */
+                            [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationLeft];
                             [_courseTableView endUpdates];
                             isUpdating = NO;
                         });
@@ -265,7 +293,6 @@
                         [_cellMsgLabel setText:[NSString stringWithFormat:@"No friends in %@ 😥",course]];
                         [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
                     }
-                    
                 }];
             }else{
                 isUpdating = YES;
@@ -275,8 +302,11 @@
                     [_courseTableView beginUpdates];
                     showContact = NO;
                     [_contacts removeAllObjects];
-                    
-                    [_courseTableView deleteRowsAtIndexPaths:insertIndexPaths withRowAnimation:     UITableViewRowAnimationFade];
+                    //NSMutableDictionary *properties = [_courses objectForKey:course];
+
+                    [_courseTableView deleteRowsAtIndexPaths:insertIndexPaths withRowAnimation: UITableViewRowAnimationRight];
+                    //NSMutableArray *indexPaths = [properties objectForKey:@"indexPaths"];
+                    //[indexPaths removeAllObjects];
                     [insertIndexPaths removeAllObjects];
                     [_courseTableView endUpdates];
                     isUpdating = NO;
@@ -337,20 +367,29 @@
         NSString *fbid = [contact objectForKey:@"fbid"];
         NSString *section = [contact objectForKey:@"section"];
         NSString *nameWithSection = [NSString stringWithFormat:@"%@ (%@)",name, section];
+        BOOL shareEnabled = [[contact objectForKey:@"share"] boolValue];
         
+        // Disable share button is necessary
+        if(!shareEnabled){
+            [cell.scheduleButton setHidden:YES];
+        }else{
+            [cell.scheduleButton setHidden:NO];
+        }
+        
+        // Layout contact picture design
         cell.contactPictureView.layer.cornerRadius = cell.contactPictureView.layer.frame.size.width/2;
         cell.contactPictureView.layer.masksToBounds = YES;
-        cell.contactPictureView.layer.borderColor = [self.view backgroundColor].CGColor;
+        //cell.contactPictureView.layer.borderColor = [self.view backgroundColor].CGColor;
         if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
-            cell.contactPictureView.layer.borderWidth = 2.0f;
+            //cell.contactPictureView.layer.borderWidth = 2.0f;
         }else{
-            cell.contactPictureView.layer.borderWidth = 1.0f;
+            //cell.contactPictureView.layer.borderWidth = 1.0f;
         }
-        cell.shadow.layer.shadowColor = [UIColor blackColor].CGColor;
-        cell.shadow.layer.shadowOffset = CGSizeMake(1, 3);
-        cell.shadow.layer.shadowOpacity = 0.8;
-        cell.shadow.layer.shadowRadius = 1.0f;
-        cell.shadow.layer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:cell.contactPictureView.frame cornerRadius:cell.contactPictureView.layer.frame.size.width/2].CGPath;
+        //cell.shadow.layer.shadowColor = [UIColor blackColor].CGColor;
+        //cell.shadow.layer.shadowOffset = CGSizeMake(1, 3);
+        //cell.shadow.layer.shadowOpacity = 0.8;
+        //cell.shadow.layer.shadowRadius = 1.0f;
+        //cell.shadow.layer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:cell.contactPictureView.frame cornerRadius:cell.contactPictureView.layer.frame.size.width/2].CGPath;
         [cell.contactPictureView setImage:[UIImage imageNamed:@"fb_default.jpg"]];
         [cell.nameLabel setText:nameWithSection];
         if([[contactPics allKeys] containsObject:fbid]){
@@ -387,16 +426,20 @@
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     NSLog(@"Logged in");
     NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
-    [_activityIndicator startAnimating];
+    //[_activityIndicator startAnimating];
     NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
     NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];
     [NSURLConnection sendAsynchronousRequest:fbLoginRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        
+        NSError *error;
+        NSDictionary *submitDict = [[NSDictionary alloc] initWithDictionary:[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error]];
         NSLog(@"Successfully submitted fb token");
         loggedIntoFB = YES;
         loggedIntoScheduler = YES;
+        if([[submitDict objectForKey:@"success"] boolValue]){
+            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshClasses"];
+        }
         [_courseTableView reloadData];
-        [_activityIndicator stopAnimating];
+        //[_activityIndicator stopAnimating];
     }];
 }
 
@@ -407,6 +450,7 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     if([segue.identifier isEqualToString:@"ShowCourseDetails"]){
+        [self.tabBarController setModalPresentationStyle:UIModalPresentationFullScreen];
         CourseDetailViewController *viewController = [segue destinationViewController];
         NSString *course = [_courseKeys objectAtIndex:courseIndex];
         NSDictionary *properties = [_courses objectForKey:course];
@@ -448,6 +492,7 @@
     NSInteger numContacts = [_contacts count];
     NSDictionary *selectedContact;
     selectedContact = [[NSDictionary alloc] initWithDictionary:[_contacts objectAtIndex:numContacts - (rowNumber - selectedIndex)]];
+    vc.pointOfOrigin = buttonPosition;
     vc.fbid = [selectedContact objectForKey:@"fbid"];
     [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
     [self.tabBarController presentViewController:vc animated:NO completion:NO];

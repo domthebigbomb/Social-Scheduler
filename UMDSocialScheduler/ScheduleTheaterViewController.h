@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) NSString *termCode;
 @property (strong, nonatomic) NSString *fbid;
+@property CGPoint pointOfOrigin;
 @property (weak, nonatomic) IBOutlet UIPanGestureRecognizer *picPanGesture;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activity;

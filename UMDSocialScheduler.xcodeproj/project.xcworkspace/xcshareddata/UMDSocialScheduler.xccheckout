@@ -10,29 +10,29 @@
 	<string>UMDSocialScheduler</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>63D51AB5-46D7-47EF-9B86-D6E5720809F3</key>
+		<key>F86A7F5DC1CCAB72EF83B6FC5E8E1B15D983DE63</key>
 		<string>https://github.com/domthebigbomb/Social-Scheduler.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>UMDSocialScheduler.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>63D51AB5-46D7-47EF-9B86-D6E5720809F3</key>
+		<key>F86A7F5DC1CCAB72EF83B6FC5E8E1B15D983DE63</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/domthebigbomb/Social-Scheduler.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>63D51AB5-46D7-47EF-9B86-D6E5720809F3</string>
+	<string>F86A7F5DC1CCAB72EF83B6FC5E8E1B15D983DE63</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>63D51AB5-46D7-47EF-9B86-D6E5720809F3</string>
+			<string>F86A7F5DC1CCAB72EF83B6FC5E8E1B15D983DE63</string>
 			<key>IDESourceControlWCCName</key>
 			<string>UMDSocialScheduler</string>
 		</dict>

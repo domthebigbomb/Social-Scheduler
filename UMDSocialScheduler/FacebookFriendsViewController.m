@@ -11,6 +11,7 @@
 #import "ContactCell.h"
 #import "ContactScheduleCell.h"
 #import "ScheduleTheaterViewController.h"
+#import  <QuartzCore/QuartzCore.h>
 
 @interface FacebookFriendsViewController ()
 - (IBAction)showSchedule:(UIButton *)sender;
@@ -272,6 +273,8 @@
                         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Couldn't connect facebook to UMD Social Scheduler service" delegate:self cancelButtonTitle:@"Dismiss" otherButtonTitles: nil];
                         [_alertMsg show];
                         [_activityIndicator stopAnimating];
+                        [_progressBar setHidden:YES];
+                        isRefreshing = NO;
                     }
                 }];
             }];
@@ -298,7 +301,9 @@
     }
     
     ContactCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    
 
+    
     NSInteger rowNumber = indexPath.row;
     NSDictionary *contactInfo = [contacts objectAtIndex:rowNumber];
     NSString *name = [NSString stringWithFormat:@"%@",[contactInfo objectForKey:@"name"]];
@@ -307,25 +312,35 @@
     NSArray *contactPicFbids = [contactPics allKeys];
     
     cell.contactPic.layer.cornerRadius = cell.contactPic.layer.frame.size.width/2;
-    cell.contactPic.layer.masksToBounds = YES;
     cell.contactPic.layer.borderColor = [self.view backgroundColor].CGColor;
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
-        cell.contactPic.layer.borderWidth = 2.0f;
+        //[cell.cardView.layer setCornerRadius:4.0f];
+        //[cell.cardShadow.layer setCornerRadius:4.0f];
+        //cell.contactPic.layer.borderWidth = 2.0f;
     }else{
-        cell.contactPic.layer.borderWidth = 1.75f;
+        [cell.cardView.layer setCornerRadius:2.0f];
+        [cell.cardShadow.layer setCornerRadius:2.0f];
+        //cell.contactPic.layer.borderWidth = 1.5f;
     }
     cell.imageShadow.layer.shadowColor = [UIColor blackColor].CGColor;
     cell.imageShadow.layer.shadowOffset = CGSizeMake(1, 2);
     cell.imageShadow.layer.shadowOpacity = 0.5;
     cell.imageShadow.layer.shadowRadius = 3.0f;
     cell.imageShadow.layer.shadowPath = [UIBezierPath bezierPathWithRoundedRect:cell.contactPic.frame cornerRadius:cell.contactPic.layer.frame.size.width/2].CGPath;
+    cell.contactPic.layer.masksToBounds = YES;
 
     [cell.contactPic setImage:[UIImage imageNamed:@"fb_default.jpg"]];
     network = [internetReachability currentReachabilityStatus];
     if(network != NotReachable){
         if(![contactPicFbids containsObject:fbid]){
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=100&width=100",fbid]]]];
+                NSString *contactPicString;
+                if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
+                    contactPicString = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=160&width=160",fbid];
+                }else{
+                    contactPicString = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=100&width=100",fbid];
+                }
+                UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contactPicString]]];
                 [contactPics setObject:contactPic forKey:fbid];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     ContactCell *updatedContact = (ContactCell *)[_contactTableView cellForRowAtIndexPath:indexPath];
@@ -369,6 +384,9 @@
     if([share isEqualToString:@"0"]){
         [cell.showScheduleButton setEnabled:NO];
         [cell.showScheduleButton setHidden:YES];
+    }else{
+        [cell.showScheduleButton setEnabled:YES];
+        [cell.showScheduleButton setHidden:NO];
     }
     return cell;
 }
@@ -455,7 +473,7 @@
     NSURL *url = [NSURL URLWithString:[socialSchedulerURLString stringByAppendingString:toggleSharingString]];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        NSLog(@"Sharing Response: %@",[response description]);
+        //NSLog(@"Sharing Response: %@",[response description]);
         NSString *description = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NSLog(@"Sharing Data: %@", description);
     }];

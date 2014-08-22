@@ -14,8 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        [_whiteBackgroundView layer].cornerRadius = 3.0f;
-        [_shadowView layer].cornerRadius = 3.0f;
         
     }
     return self;

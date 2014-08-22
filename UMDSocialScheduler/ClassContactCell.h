@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UIView *shadow;
 @property (weak, nonatomic) IBOutlet UIImageView *contactPictureView;
+@property (weak, nonatomic) IBOutlet UIButton *scheduleButton;
 
 @end

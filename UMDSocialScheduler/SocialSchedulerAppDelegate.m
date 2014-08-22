@@ -7,8 +7,8 @@
 //
 
 #import "SocialSchedulerAppDelegate.h"
-#import <FacebookSDK/FacebookSDK.h>
 #import "TestFlight.h"
+#import <FacebookSDK/FacebookSDK.h>
 @implementation SocialSchedulerAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -36,6 +36,7 @@
     // Handle the user leaving the app while the Facebook login dialog is being shown
     // For example: when the user presses the iOS "home" button while the login dialog is active
     [FBAppCall handleDidBecomeActive];
+    [FBAppEvents activateApp];
 }
 
 							

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0B3B89D5197DB4AB00E89B12 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */; };
 		0B3C9F7218A9631800506FDC /* ContactScheduleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */; };
-		0B4154291951FC6100EAE8E9 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B4154281951FC6100EAE8E9 /* FacebookSDK.framework */; };
 		0B41542B1951FC6D00EAE8E9 /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0B41542A1951FC6D00EAE8E9 /* FBUserSettingsViewResources.bundle */; };
 		0B4386B818AAFBF200D50DFC /* SocialSchedulerIpad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B4386B718AAFBF200D50DFC /* SocialSchedulerIpad.storyboard */; };
 		0B653FF11947BCFD00C78028 /* CourseDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B653FF01947BCFD00C78028 /* CourseDetailViewController.m */; };
@@ -64,6 +63,7 @@
 		0BDC092518A9F5D500BC82CE /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091F18A9F5D500BC82CE /* release_notes.md */; };
 		0BDC092718A9F68500BC82CE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BDC092618A9F68500BC82CE /* libz.dylib */; };
 		0BDC092A18AAAB0700BC82CE /* ClassContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BDC092918AAAB0700BC82CE /* ClassContactCell.m */; };
+		0BE3D1F619916D7C00AE3634 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BE3D1F519916D7C00AE3634 /* FacebookSDK.framework */; };
 		0BFF8B1218AE899600817BFD /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BFF8B1118AE899600817BFD /* Reachability.m */; };
 /* End PBXBuildFile section */
 
@@ -81,7 +81,6 @@
 		0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0B3C9F7018A9631800506FDC /* ContactScheduleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactScheduleCell.h; sourceTree = "<group>"; };
 		0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactScheduleCell.m; sourceTree = "<group>"; };
-		0B4154281951FC6100EAE8E9 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		0B41542A1951FC6D00EAE8E9 /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
 		0B4386B718AAFBF200D50DFC /* SocialSchedulerIpad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SocialSchedulerIpad.storyboard; sourceTree = "<group>"; };
 		0B653FEF1947BCFD00C78028 /* CourseDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CourseDetailViewController.h; sourceTree = "<group>"; };
@@ -90,7 +89,7 @@
 		0B7299FA197A68E50044B46C /* FBLoginCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginCell.m; sourceTree = "<group>"; };
 		0B761C1D197F2DD40035620C /* BG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BG.png; path = Images/BG.png; sourceTree = "<group>"; };
 		0B77469018AD4008006E0550 /* fb_default.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fb_default.jpg; sourceTree = "<group>"; };
-		0B8E0BA518A2099100863181 /* UMD Schedule.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UMD Schedule.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8E0BA518A2099100863181 /* UMD Schedule Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UMD Schedule Beta.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B8E0BA818A2099100863181 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0B8E0BAA18A2099100863181 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0B8E0BAC18A2099100863181 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -153,6 +152,7 @@
 		0BDC092618A9F68500BC82CE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		0BDC092818AAAB0700BC82CE /* ClassContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassContactCell.h; sourceTree = "<group>"; };
 		0BDC092918AAAB0700BC82CE /* ClassContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassContactCell.m; sourceTree = "<group>"; };
+		0BE3D1F519916D7C00AE3634 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		0BFF8B1018AE899600817BFD /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		0BFF8B1118AE899600817BFD /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -167,10 +167,10 @@
 				0BC9A2341948D0F20048562F /* MapKit.framework in Frameworks */,
 				0BDC092718A9F68500BC82CE /* libz.dylib in Frameworks */,
 				0B8E0BAB18A2099100863181 /* CoreGraphics.framework in Frameworks */,
+				0BE3D1F619916D7C00AE3634 /* FacebookSDK.framework in Frameworks */,
 				0B8E0BAD18A2099100863181 /* UIKit.framework in Frameworks */,
 				0BDC092318A9F5D500BC82CE /* libTestFlight.a in Frameworks */,
 				0B8E0BA918A2099100863181 /* Foundation.framework in Frameworks */,
-				0B4154291951FC6100EAE8E9 /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,7 +217,7 @@
 		0B8E0BA618A2099100863181 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0B8E0BA518A2099100863181 /* UMD Schedule.app */,
+				0B8E0BA518A2099100863181 /* UMD Schedule Beta.app */,
 				0B8E0BC918A2099100863181 /* UMDSocialSchedulerTests.xctest */,
 			);
 			name = Products;
@@ -226,9 +226,9 @@
 		0B8E0BA718A2099100863181 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0BE3D1F519916D7C00AE3634 /* FacebookSDK.framework */,
 				0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */,
 				0BD6925219534765007C6081 /* EventKit.framework */,
-				0B4154281951FC6100EAE8E9 /* FacebookSDK.framework */,
 				0BC9A2331948D0F20048562F /* MapKit.framework */,
 				0BDC092618A9F68500BC82CE /* libz.dylib */,
 				0B8E0BA818A2099100863181 /* Foundation.framework */,
@@ -399,7 +399,7 @@
 			);
 			name = "UMD Schedule";
 			productName = UMDSocialScheduler;
-			productReference = 0B8E0BA518A2099100863181 /* UMD Schedule.app */;
+			productReference = 0B8E0BA518A2099100863181 /* UMD Schedule Beta.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0B8E0BC818A2099100863181 /* UMDSocialSchedulerTests */ = {

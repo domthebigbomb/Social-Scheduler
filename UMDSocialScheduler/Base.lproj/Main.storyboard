@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="It7-Ve-8SO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="14A314h" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="It7-Ve-8SO">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -111,8 +111,8 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="78" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="2P3-z4-F2j">
                                 <rect key="frame" x="0.0" y="108" width="320" height="411"/>
-                                <color key="backgroundColor" red="0.84295280610000001" green="0.84295280610000001" blue="0.84295280610000001" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="separatorColor" red="0.84295280610000001" green="0.84295280610000001" blue="0.84295280610000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.86835290055248615" green="0.86835290055248615" blue="0.86835290055248615" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="separatorColor" red="0.86835290060000003" green="0.86835290060000003" blue="0.86835290060000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <inset key="separatorInset" minX="360" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <color key="sectionIndexTrackingBackgroundColor" red="0.88962850770000002" green="0.24572826117094862" blue="0.13834424344717974" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
@@ -123,11 +123,11 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f3X-zl-RtE">
-                                                    <rect key="frame" x="10" y="11" width="302" height="65"/>
-                                                    <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f3X-zl-RtE" userLabel="Shadow View">
+                                                    <rect key="frame" x="10" y="12" width="300" height="65"/>
+                                                    <color key="backgroundColor" red="0.61807234116022092" green="0.61807234116022092" blue="0.61807234116022092" alpha="0.75" colorSpace="calibratedRGB"/>
                                                 </view>
-                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g24-l8-4Yj">
+                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g24-l8-4Yj" userLabel="Main View">
                                                     <rect key="frame" x="9" y="10" width="302" height="65"/>
                                                     <subviews>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Dominic Ong" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.75" translatesAutoresizingMaskIntoConstraints="NO" id="JeP-kR-yu3">
@@ -150,9 +150,8 @@
                                                                 <action selector="showSchedule:" destination="keV-ci-FUd" eventType="touchUpInside" id="VN8-go-J8w"/>
                                                             </connections>
                                                         </button>
-                                                        <view appearanceType="aqua" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OjY-65-K41" userLabel="Shadow">
+                                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OjY-65-K41" userLabel="Shadow">
                                                             <rect key="frame" x="7" y="7" width="50" height="50"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                             <subviews>
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="fb_default.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="dP6-sS-Lld">
                                                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -164,17 +163,16 @@
                                                 </view>
                                             </subviews>
                                         </tableViewCellContentView>
-                                        <color key="backgroundColor" red="0.84295280612244894" green="0.84295280612244894" blue="0.84295280612244894" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="backgroundColor" red="0.86835290060000003" green="0.86835290060000003" blue="0.86835290060000003" alpha="1" colorSpace="calibratedRGB"/>
                                         <inset key="separatorInset" minX="360" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
+                                            <outlet property="cardShadow" destination="f3X-zl-RtE" id="hY0-tb-rIT"/>
                                             <outlet property="cardView" destination="g24-l8-4Yj" id="gJH-1X-lbp"/>
                                             <outlet property="contactPic" destination="dP6-sS-Lld" id="E1s-xI-uMV"/>
                                             <outlet property="imageShadow" destination="OjY-65-K41" id="9AX-oM-lwb"/>
                                             <outlet property="nameLabel" destination="JeP-kR-yu3" id="ta5-gc-RAd"/>
                                             <outlet property="numCoursesLabel" destination="vRW-ix-bb2" id="YjJ-cm-mrc"/>
-                                            <outlet property="shadowView" destination="f3X-zl-RtE" id="yL3-Cm-Xwv"/>
                                             <outlet property="showScheduleButton" destination="noj-eJ-iyX" id="7h7-Tr-4ai"/>
-                                            <outlet property="whiteBackgroundView" destination="g24-l8-4Yj" id="IA2-6d-OOe"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="NoFriends" id="J3v-iO-loT">
@@ -184,11 +182,16 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="77"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LMQ-x6-0GM">
-                                                    <rect key="frame" x="10" y="7" width="302" height="65"/>
-                                                    <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LMQ-x6-0GM" userLabel="Shadow View">
+                                                    <rect key="frame" x="10" y="8" width="300" height="65"/>
+                                                    <color key="backgroundColor" red="0.61807234119999999" green="0.61807234119999999" blue="0.61807234119999999" alpha="0.75" colorSpace="calibratedRGB"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                            <integer key="value" value="2"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
                                                 </view>
-                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VhQ-Ep-gAl">
+                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VhQ-Ep-gAl" userLabel="Main View">
                                                     <rect key="frame" x="9" y="6" width="302" height="65"/>
                                                     <subviews>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="😥 No friends here. Invite your friends to UMD Social Scheduler!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="255" translatesAutoresizingMaskIntoConstraints="NO" id="71h-Ax-1Db">
@@ -199,10 +202,15 @@
                                                         </label>
                                                     </subviews>
                                                     <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                            <integer key="value" value="2"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
                                                 </view>
                                             </subviews>
                                         </tableViewCellContentView>
-                                        <color key="backgroundColor" red="0.83075573979999995" green="0.83075573979999995" blue="0.83075573979999995" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="backgroundColor" red="0.86835290060000003" green="0.86835290060000003" blue="0.86835290060000003" alpha="1" colorSpace="calibratedRGB"/>
                                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </tableViewCell>
                                 </prototypes>
@@ -337,13 +345,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <scrollView autoresizesSubviews="NO" appearanceType="aqua" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" maximumZoomScale="2" translatesAutoresizingMaskIntoConstraints="NO" id="ClQ-Nk-nZY">
+                            <scrollView autoresizesSubviews="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" maximumZoomScale="2" translatesAutoresizingMaskIntoConstraints="NO" id="ClQ-Nk-nZY">
                                 <rect key="frame" x="0.0" y="20" width="320" height="528"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <subviews>
-                                    <imageView appearanceType="aqua" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x5M-JK-dhT">
+                                    <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x5M-JK-dhT">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="528"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <gestureRecognizers/>
                                         <connections>
                                             <outletCollection property="gestureRecognizers" destination="PmK-p6-2nF" appends="YES" id="Pod-ZX-bzP"/>
@@ -351,9 +357,8 @@
                                     </imageView>
                                 </subviews>
                             </scrollView>
-                            <button appearanceType="aqua" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dX2-Ls-njt">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dX2-Ls-njt">
                                 <rect key="frame" x="241" y="27" width="59" height="28"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="15"/>
                                 <state key="normal" title="Done">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -368,9 +373,8 @@
                                     <action selector="dismissSchedule:" destination="Vcz-z9-6V7" eventType="touchUpInside" id="t0m-aY-n1Z"/>
                                 </connections>
                             </button>
-                            <activityIndicatorView hidden="YES" appearanceType="aqua" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="1aq-Xd-QNn">
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="1aq-Xd-QNn">
                                 <rect key="frame" x="141" y="266" width="37" height="37"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.90000000000000002" colorSpace="calibratedRGB"/>
@@ -442,23 +446,21 @@
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="54"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view appearanceType="aqua" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LM6-wt-LbK" userLabel="Shadow">
-                                                    <rect key="frame" x="30" y="7" width="40" height="40"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LM6-wt-LbK" userLabel="Shadow">
+                                                    <rect key="frame" x="17" y="4" width="46" height="46"/>
                                                     <subviews>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="fb_default.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="fHO-rQ-tbD">
-                                                            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="46" height="46"/>
                                                         </imageView>
                                                     </subviews>
                                                 </view>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Dominic Ong" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="xkt-h2-91A">
-                                                    <rect key="frame" x="90" y="15" width="181" height="24"/>
+                                                    <rect key="frame" x="71" y="15" width="200" height="24"/>
                                                     <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button appearanceType="aqua" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5ZN-3A-Rwf">
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5ZN-3A-Rwf">
                                                     <rect key="frame" x="270" y="0.0" width="50" height="53"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <state key="normal" image="ViewSchedule">
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
@@ -468,10 +470,11 @@
                                                 </button>
                                             </subviews>
                                         </tableViewCellContentView>
-                                        <inset key="separatorInset" minX="30" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <connections>
                                             <outlet property="contactPictureView" destination="fHO-rQ-tbD" id="D3h-1a-iAY"/>
                                             <outlet property="nameLabel" destination="xkt-h2-91A" id="dfY-as-zFP"/>
+                                            <outlet property="scheduleButton" destination="5ZN-3A-Rwf" id="D9H-P3-UWf"/>
                                             <outlet property="shadow" destination="LM6-wt-LbK" id="eM1-sa-q6i"/>
                                         </connections>
                                     </tableViewCell>
@@ -524,7 +527,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="oiO-Ze-pxI">
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="oiO-Ze-pxI">
                                 <rect key="frame" x="150" y="250" width="20" height="20"/>
                             </activityIndicatorView>
                         </subviews>
@@ -532,6 +535,7 @@
                         <constraints>
                             <constraint firstItem="PzK-Ef-7DE" firstAttribute="top" secondItem="TFL-Ee-DjA" secondAttribute="bottom" id="EQx-mc-zcY"/>
                             <constraint firstItem="pWo-ub-5aQ" firstAttribute="top" secondItem="ddG-lc-wCs" secondAttribute="bottom" constant="-1" id="GcW-Gw-NEL"/>
+                            <constraint firstAttribute="centerX" secondItem="oiO-Ze-pxI" secondAttribute="centerX" id="iSp-0z-fij"/>
                             <constraint firstItem="pWo-ub-5aQ" firstAttribute="top" secondItem="PzK-Ef-7DE" secondAttribute="bottom" id="qFI-dV-ani"/>
                         </constraints>
                     </view>
@@ -704,7 +708,7 @@
                                     <action selector="showOpenStreetLicense:" destination="JUW-PI-EEF" eventType="touchUpInside" id="mLL-9N-YWi"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Est Time: Getting Location" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X5S-x5-ECy">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Fetching Map Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X5S-x5-ECy">
                                 <rect key="frame" x="0.0" y="293" width="320" height="24"/>
                                 <color key="backgroundColor" white="1" alpha="0.69999999999999996" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="17"/>

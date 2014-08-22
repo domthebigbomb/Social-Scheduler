@@ -23,6 +23,7 @@
     [self.view setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.9]];
     [_scrollView setDelegate:self];
     [_picPanGesture addTarget:self action:@selector(dragPicture:)];
+    NSLog(@"Center: %f", _scheduleView.center.y);
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -35,8 +36,6 @@
 
 -(void)dragPicture:(UIPanGestureRecognizer *)gesture{
     UIGestureRecognizerState state = [gesture state];
-    
-    
     switch (state) {
         case UIGestureRecognizerStateBegan:
             scheduleCenter = _scheduleView.center;
@@ -46,6 +45,7 @@
             CGPoint translation = [gesture translationInView:_scheduleView.superview];
             _scheduleView.center = CGPointMake(_scheduleView.center.x, _scheduleView.center.y + translation.y);
             [gesture setTranslation:CGPointZero inView:_scheduleView.superview];
+            
             // Difference between current position and the original position
             double difference = fabs(_scheduleView.center.y - scheduleCenter.y);
             if(difference < 150){
@@ -93,7 +93,6 @@
             }];
             break;
         }
-            
         default:
             break;
     }
@@ -101,10 +100,15 @@
 
 -(void)updateScheduleImage:(UIImage *)image{
     [_scrollView setZoomScale:1.0];
+    _scheduleView.transform = CGAffineTransformMakeScale(0.01, 0.01);
     [_scheduleView setImage:image];
-    scheduleOrigin = _scheduleView.frame;
-    lastGesturePoint = [_picPanGesture translationInView:_picPanGesture.view];
-    [_activity stopAnimating];
+    [UIView animateWithDuration:0.2 animations:^{
+        _scheduleView.transform = CGAffineTransformIdentity;
+    } completion:^(BOOL finished) {
+        scheduleOrigin = _scheduleView.frame;
+        lastGesturePoint = [_picPanGesture translationInView:_picPanGesture.view];
+        [_activity stopAnimating];
+    }];
 }
 
 -(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
@@ -113,7 +117,15 @@
 
 -(IBAction)dismissSchedule:(id)sender{
     [_scrollView setZoomScale:1 animated:YES];
-    [self dismissViewControllerAnimated:YES completion:nil];
+
+    [UIView animateWithDuration:0.2 animations:^{
+        //_scheduleView.layer.anchorPoint = CGPointMake(_pointOfOrigin.x/viewWidth, _pointOfOrigin.y/viewHeight);
+        //_scheduleView.transform = CGAffineTransformMakeScale(0.01, 0.01);
+        [_scheduleView setAlpha:0.7];
+        [self.view setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.0]];
+    } completion:^(BOOL finished) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }];
 }
 
 @end

@@ -93,9 +93,11 @@
     //years = @[@"2014",@"2013",@"2012"];
     semesterIndex = 0;
     yearIndex = 0;
+    
+    [_semesterPickerView selectRow:[semesters count]/2 inComponent:0 animated:NO];
+    //[_semesterPickerView selectRow:0 inComponent:0 animated:NO];
     [_semesterPickerView setDelegate:self];
     [_semesterPickerView setDataSource: self];
-    [_semesterPickerView selectRow:[semesters count]/2 inComponent:0 animated:YES];
     _webPage = [[UIWebView alloc] init];
     
     _tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
@@ -125,7 +127,9 @@
                 semesterText = [semesterText substringFromIndex:[semesterText rangeOfString:@"Continue"].location + 11];
                 semesters = [semesterText componentsSeparatedByString:@"\n"];
                 [_semesterPickerView selectRow:[semesters count]/2 inComponent:0 animated:YES];
+                [_semesterPickerView selectRow:0 inComponent:0 animated:YES];
                 [_semesterPickerView reloadAllComponents];
+                [_semesterField setText:@""];
                 NSLog(@"Semesters Loaded");
             }
         }];
@@ -175,7 +179,6 @@
         NSLog(@"Facebook Token Found");
         FBAccessTokenData *token = [[FBSession activeSession] accessTokenData];
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://graph.facebook.com/me?access_token=%@",token]]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-            NSError *err;
             if([(NSHTTPURLResponse *)response statusCode] != 200){
                 [[FBSession activeSession] closeAndClearTokenInformation];
             }
@@ -188,9 +191,6 @@
             NSLog(@"Token valid");
         }
     }
-    
-    //_visualView.center = CGPointMake(self.originalCenter.x, self.originalCenter.y - 120);
-    //_visualView.center = self.originalCenter;
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView{
@@ -278,11 +278,11 @@
 }
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
-    if (component == 0)
+    //if (component == 0)
         return [semesters objectAtIndex:row];
-    else{
-        return [years objectAtIndex:row];
-    }
+    //else{
+    //    return [years objectAtIndex:row];
+    //}
 }
 
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
@@ -321,6 +321,10 @@
     semesterInfo = [[NSArray alloc] initWithObjects:season, [NSString stringWithFormat:@"%ld",(long)year], nil];
     NSString *termCode = [NSString stringWithFormat:@"%ld%@",(long)year,season];
     [[NSUserDefaults standardUserDefaults] setObject:termCode forKey:@"SemesterInfo"];
+    
+}
+
+-(void)saveTermCode{
     
 }
 
@@ -440,6 +444,8 @@
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    SocialSchedulerFirstViewController *vc = (SocialSchedulerFirstViewController *)[((UITabBarController *)[segue destinationViewController]).viewControllers objectAtIndex:0];
+    vc.loginData = @"Potato";
     if([[segue identifier] isEqualToString:@"Login"]){
         NSString *webPageCode = htmlString;
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
@@ -464,8 +470,8 @@
 }
 
 -(IBAction)login:(UIButton *)sender {
-    Reachability *internetReachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus network = [internetReachability currentReachabilityStatus];
+    internetReachability = [Reachability reachabilityForInternetConnection];
+    network = [internetReachability currentReachabilityStatus];
     if([[_usernameField text]isEqualToString:@""] || [[_passwordField text] isEqualToString:@""]){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"Please complete enter both University ID (Not a number) and Password" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];

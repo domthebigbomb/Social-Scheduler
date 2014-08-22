@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <FacebookSDK/FacebookSDK.h>
 @interface SocialSchedulerFirstViewController : UIViewController<UIWebViewDelegate,UIScrollViewDelegate,FBLoginViewDelegate,NSURLConnectionDelegate>
-
+@property (strong) NSString *loginData;
 @property (strong,nonatomic) NSString *htmlString;
 @property BOOL newSchedule;
 -(void)renderSchedule;
