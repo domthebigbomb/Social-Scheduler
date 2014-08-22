@@ -53,7 +53,9 @@ Currently catering to the University of Maryland College Park system
 </p>
    
 
-New: App can be found in the itunes store
+App can be found in the itunes store
     https://itunes.apple.com/us/app/umd-social-scheduler/id819921928?ls=1&mt=8
+
+Over 850 people have downloaded and are using this iOS app to connect to the Social Scheduler service!
     
 If you need any assistance running this app (primarily login info), send me a message at dominicong94@gmail.com
