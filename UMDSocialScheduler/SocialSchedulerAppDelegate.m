@@ -9,11 +9,17 @@
 #import "SocialSchedulerAppDelegate.h"
 #import "TestFlight.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import "AFNetworking.h"
 @implementation SocialSchedulerAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
+    AFNetworkReachabilityManager *reachability = [AFNetworkReachabilityManager sharedManager];
+    [reachability setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        NSLog(@"Reachability: %@", AFStringFromNetworkReachabilityStatus(status));
+    }];
+    [reachability startMonitoring];
     return YES;
 }
 

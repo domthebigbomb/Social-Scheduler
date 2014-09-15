@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 
-@interface ScheduleTheaterViewController : UIViewController<UIScrollViewDelegate>
+@interface ScheduleTheaterViewController : UIViewController<UIScrollViewDelegate,UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
 
+@property (strong, nonatomic) NSString *studentName;
 @property (strong, nonatomic) NSString *termCode;
 @property (strong, nonatomic) NSString *fbid;
 @property CGPoint pointOfOrigin;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="14A314h" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="q5e-IK-rEt">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="14A343f" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="q5e-IK-rEt">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -245,10 +245,8 @@
                                 <color key="backgroundColor" red="0.86835290060000003" green="0.86835290060000003" blue="0.86835290060000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="separatorColor" red="0.86835290060000003" green="0.86835290060000003" blue="0.86835290060000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <inset key="separatorInset" minX="786" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                <color key="sectionIndexBackgroundColor" red="0.83075573979999995" green="0.83075573979999995" blue="0.83075573979999995" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="sectionIndexTrackingBackgroundColor" red="0.88962850770000002" green="0.24572826119999999" blue="0.13834424340000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ContactCell" id="Xhi-2G-OMs" customClass="ContactCell">
+                                    <tableViewCell autoresizesSubviews="NO" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="ContactCell" id="Xhi-2G-OMs" customClass="ContactCell">
                                         <rect key="frame" x="0.0" y="22" width="768" height="120"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xhi-2G-OMs" id="dUe-M6-Yfx">
@@ -265,7 +263,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </view>
                                                 <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="C0J-Jd-XJH" userLabel="Main View">
-                                                    <rect key="frame" x="38" y="8" width="692" height="106"/>
+                                                    <rect key="frame" x="38" y="8" width="690" height="106"/>
                                                     <subviews>
                                                         <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Lq-h3-9mH">
                                                             <rect key="frame" x="0.0" y="0.0" width="692" height="106"/>
@@ -361,7 +359,7 @@
                                             </subviews>
                                             <color key="backgroundColor" red="0.86835290060000003" green="0.86835290060000003" blue="0.86835290060000003" alpha="1" colorSpace="calibratedRGB"/>
                                         </tableViewCellContentView>
-                                        <color key="backgroundColor" patternImage="C20FFF5F-8FA1-43BC-889E-5CF8EB0813F1" colorSpace="pattern"/>
+                                        <color key="backgroundColor" patternImage="F30EE12C-1F70-4E7B-A78D-B571CE03FDFF" colorSpace="pattern"/>
                                         <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                     </tableViewCell>
                                 </prototypes>
@@ -887,6 +885,8 @@
                                         <gestureRecognizers/>
                                         <connections>
                                             <outletCollection property="gestureRecognizers" destination="cRU-1Z-J3O" appends="YES" id="bVO-2u-ATM"/>
+                                            <outletCollection property="gestureRecognizers" destination="pG2-N9-6p8" appends="YES" id="Mnm-zh-mhs"/>
+                                            <outletCollection property="gestureRecognizers" destination="O5E-Bp-mG0" appends="YES" id="RD7-dO-Ckc"/>
                                         </connections>
                                     </imageView>
                                 </subviews>
@@ -927,12 +927,24 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oze-pE-L5e" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <panGestureRecognizer minimumNumberOfTouches="1" id="cRU-1Z-J3O"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="pG2-N9-6p8">
+                    <connections>
+                        <action selector="tappedSchedule:" destination="fyz-sT-aPU" id="9UP-dC-rLk"/>
+                    </connections>
+                </pongPressGestureRecognizer>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="O5E-Bp-mG0">
+                    <connections>
+                        <action selector="doubleTappedSchedule:" destination="fyz-sT-aPU" id="O6f-hZ-5nv"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="2137" y="1288"/>
         </scene>
     </scenes>
     <resources>
-        <image name="C20FFF5F-8FA1-43BC-889E-5CF8EB0813F1" width="320" height="460">
+        <image name="Classes" width="26" height="17"/>
+        <image name="CloseX" width="28" height="28"/>
+        <image name="F30EE12C-1F70-4E7B-A78D-B571CE03FDFF" width="320" height="460">
             <mutableData key="keyedArchiveRepresentation">
 YnBsaXN0MDDUAQIDBAUGQkNYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoK4HCBMU
 GR4fIyQsMDQ6PlUkbnVsbNUJCgsMDQ4PEBESVk5TU2l6ZVYkY2xhc3NcTlNJbWFnZUZsYWdzVk5TUmVw
@@ -10819,8 +10831,6 @@ CQqKAAkKjwAJCp4ACQqiAAkKqgAJCrEACQq5AAkKxgAJCssACQrNAAkKzwAJCtQACQrcAAkK3wAJCucA
 CQrsAAkK9AAJCvcACQr/AAkLEQAJCxQACQsZAAAAAAAABAEAAAAAAAAARgAAAAAAAAAAAAAAAAAJCxs
 </mutableData>
         </image>
-        <image name="Classes" width="26" height="17"/>
-        <image name="CloseX" width="28" height="28"/>
         <image name="Profile" width="24" height="21"/>
         <image name="Schedule" width="23" height="25"/>
         <image name="Share" width="44" height="44"/>

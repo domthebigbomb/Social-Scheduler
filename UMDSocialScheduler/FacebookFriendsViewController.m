@@ -7,11 +7,11 @@
 //
 
 #import "FacebookFriendsViewController.h"
-#import "Reachability.h"
 #import "ContactCell.h"
 #import "ContactScheduleCell.h"
 #import "ScheduleTheaterViewController.h"
 #import  <QuartzCore/QuartzCore.h>
+#import "AFNetworking.h"
 
 @interface FacebookFriendsViewController ()
 - (IBAction)showSchedule:(UIButton *)sender;
@@ -35,17 +35,17 @@
     NSString *scheduleSharingURLString;
     NSMutableData *contactData;
     NSDictionary *jsonDict;
+    NSDictionary *organizedContacts;
     NSMutableDictionary *userSchedule;
     NSMutableDictionary *contactSchedules;
-    NSMutableArray *contacts;
     NSMutableDictionary *contactPics;
-    NSString *getFriendsInCourseURLString;
+    NSMutableArray *contacts;
     NSMutableArray *contactWithMutualClasses;
+    NSString *getFriendsInCourseURLString;
     UIImage *contactScheduleImage;
     NSString *scheduleFbid;
     NSString *termCode;
-    Reachability *internetReachability;
-    NetworkStatus network;
+    AFNetworkReachabilityManager *reachability;
     FBLoginView *loginView;
     BOOL showSchedule;
     BOOL isRefreshing;
@@ -80,7 +80,8 @@
     _sharingToolbar.layer.shadowRadius = 5;
     _sharingToolbar.layer.shadowOpacity = 0.5;
     
-    internetReachability = [Reachability reachabilityForInternetConnection];
+    reachability = [AFNetworkReachabilityManager sharedManager];
+
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     getListOfFriendsURLString = @"friends_with_app";
     fbLoginURLString = @"access?access_token=";
@@ -100,6 +101,11 @@
     [_closeScheduleButton setHidden:YES];
     [_greyedBackgroundView addSubview:loginView];
     
+    if ([_contactTableView respondsToSelector:@selector(setSectionIndexColor:)]) {
+        _contactTableView.sectionIndexColor = [UIColor redColor]; // some color
+        _contactTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor]; // some other color
+        _contactTableView.sectionIndexBackgroundColor = [UIColor clearColor];
+    }
     
     /*
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"]){
@@ -161,7 +167,6 @@
         [userSchedule setObject:section forKey:class];
     }
     
-    network = [internetReachability currentReachabilityStatus];
     [loginView setHidden:YES];
     
     if([[FBSession activeSession] accessTokenData] == nil){
@@ -172,7 +177,7 @@
         [_friendRefresher endRefreshing];
     }
     
-    if(network == NotReachable){
+    if(![reachability isReachable]){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
         [_friendRefresher endRefreshing];
@@ -259,6 +264,7 @@
                                         [_closeScheduleButton setHidden:NO];
                                         [_greyedBackgroundView setHidden:YES];
                                         [_progressBar setHidden:YES];
+                                        organizedContacts = [[NSDictionary alloc] initWithDictionary:[self organizeNamesFromList:contacts]];
                                         [[self contactTableView] setHidden:NO];
                                         [[self contactTableView] reloadData];
                                         isRefreshing = NO;
@@ -283,11 +289,42 @@
     }
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+-(NSMutableDictionary *)organizeNamesFromList:(NSArray *)list{
+    NSMutableDictionary *organizedNames = [[NSMutableDictionary alloc] init];
+    for(NSDictionary *contact in list){
+        NSString *name = [contact objectForKey:@"name"];
+        NSString *firstChar = [name substringToIndex:1];
+        NSMutableArray *names = [organizedNames objectForKey:firstChar];
+        if(names == nil){
+            names = [[NSMutableArray alloc] init];
+        }
+        [names addObject:contact];
+        [organizedNames setObject:names forKey:firstChar];
+    }
+    return organizedNames;
+}
+
+/*
+-(NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return [[organizedContacts allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+}
+*/
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return [[organizedContacts allKeys] count];
+    // Try adding sections 
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    NSArray *letters = [[organizedContacts allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    NSString *letter = [letters objectAtIndex:section];
+    return [[organizedContacts objectForKey:letter] count];
+    /* old logic
     if ([contacts count] == 0){
             return 1;
     }
     return [contacts count];
+     */
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -302,10 +339,11 @@
     
     ContactCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     
-
-    
+    NSArray *contactKeys = [[organizedContacts allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    NSString *letter = [contactKeys objectAtIndex:indexPath.section];
     NSInteger rowNumber = indexPath.row;
-    NSDictionary *contactInfo = [contacts objectAtIndex:rowNumber];
+    NSDictionary *contactInfo = [[organizedContacts objectForKey:letter] objectAtIndex:rowNumber];
+    // NSDictionary *contactInfo = [contacts objectAtIndex:rowNumber];
     NSString *name = [NSString stringWithFormat:@"%@",[contactInfo objectForKey:@"name"]];
     NSString *fbid = [NSString stringWithFormat:@"%@",[contactInfo objectForKey:@"fbid"]];
     NSString *share = [NSString stringWithFormat:@"%@",[contactInfo objectForKey:@"share"]];
@@ -330,8 +368,7 @@
     cell.contactPic.layer.masksToBounds = YES;
 
     [cell.contactPic setImage:[UIImage imageNamed:@"fb_default.jpg"]];
-    network = [internetReachability currentReachabilityStatus];
-    if(network != NotReachable){
+    if([reachability isReachable]){
         if(![contactPicFbids containsObject:fbid]){
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSString *contactPicString;
@@ -423,29 +460,14 @@
 }
 
 - (IBAction)showSchedule:(UIButton *)sender {
-    /*
-    [_scheduleImageView setImage:nil];
-    [_closeScheduleButton setHidden:NO];
-    [_greyedBackgroundView setHidden:NO];
-    [_activityIndicator startAnimating];
-    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:self.contactTableView];
-    NSIndexPath *indexPath = [self.contactTableView indexPathForRowAtPoint:buttonPosition];
-    scheduleIndex = [indexPath row];
-    ContactCell *contact = (ContactCell *) [[self contactTableView] cellForRowAtIndexPath:indexPath];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://www.umdsocialscheduler.com/schedule_image?term=%@&fbid=%@",termCode, contact.fbid]]]];
-        contactScheduleImage = contactPic;
-        [self performSelectorOnMainThread:@selector(updateScheduleImage:) withObject:contactScheduleImage waitUntilDone:NO];
-        [_tapGesture setEnabled: YES];
-        [_activityIndicator stopAnimating];
-    });
-    */
     ScheduleTheaterViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ScheduleTheater"];
     
     CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:_contactTableView];
     NSIndexPath *indexPath = [_contactTableView indexPathForRowAtPoint:buttonPosition];
     ContactCell *contact = (ContactCell *) [[self contactTableView] cellForRowAtIndexPath:indexPath];
     vc.fbid = contact.fbid;
+    vc.studentName = contact.nameLabel.text;
+
     [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
     [self.tabBarController presentViewController:vc animated:NO completion:NO];
     [vc.view setAlpha:0];

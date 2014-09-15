@@ -10,11 +10,11 @@
 #import "SocialSchedulerSecondViewController.h"
 #import "CourseCell.h"
 #import "FBLoginCell.h"
-#import "Reachability.h"
 #import "ClassContactCell.h"
 #import "CourseDetailViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "ScheduleTheaterViewController.h"
+#import "AFNetworking.h"
 
 @interface SocialSchedulerSecondViewController ()
 @property (strong,nonatomic) NSMutableDictionary *courses;
@@ -38,8 +38,7 @@
     NSArray *bldgCodes;
     NSMutableArray *insertIndexPaths;
     NSMutableDictionary *contactPics;
-    Reachability *internetReachability;
-    NetworkStatus network;
+    AFNetworkReachabilityManager *reachability;
     NSInteger selectedIndex;
     NSInteger courseIndex;
     BOOL loggedIntoFB;
@@ -62,8 +61,7 @@
     socialSchedulerURLString = @"http://www.umdsocialscheduler.com/";
     classesWithContactURLString = @"friends?";
     fbLoginURLString = @"access?access_token=";
-    internetReachability = [Reachability reachabilityForInternetConnection];
-    network = [internetReachability currentReachabilityStatus];
+    reachability = [AFNetworkReachabilityManager sharedManager];
     loggedIntoFB = YES;
     loggedIntoScheduler = NO;
     insertIndexPaths = [[NSMutableArray alloc] init];
@@ -72,7 +70,6 @@
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-    network = [internetReachability currentReachabilityStatus];
     isUpdating = NO;
     isAnimating = NO;
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
@@ -81,7 +78,7 @@
         loggedIntoFB = NO;
     }
     
-    if(network == NotReachable){
+    if(![reachability isReachable]){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
     }else if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshClasses"]){
@@ -230,8 +227,7 @@
     //Address the bug in ios7 where separators would disappear
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if(!isUpdating){
-        network = [internetReachability currentReachabilityStatus];
-        if(network == NotReachable){
+        if(![reachability isReachable]){
             isAnimating = YES;
             [_cellMsgLabel setText:@"Please check internet connection"];
             [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
@@ -257,41 +253,44 @@
                 NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
                 [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
                     NSError *error;
-                    NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
-                    _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
-                    NSMutableDictionary *properties = [_courses objectForKey:course];
-                    [properties setObject:[[NSArray alloc] initWithArray:[JSON objectForKey:@"data"]]forKey:@"contacts"];
-                    if([_contacts count] > 0){
-                        NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
-                        for(int i = 0; i< [_contacts count]; i++){
-                            [indexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
-                        }
-                        [insertIndexPaths addObjectsFromArray:indexPaths];
-                        [properties setObject:indexPaths forKey:@"indexPaths"];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [_courseTableView beginUpdates];
-                            showContact = YES;
-                            /*
-                            [_courseTableView insertRowsAtIndexPaths:@[[insertIndexPaths firstObject]] withRowAnimation:UITableViewRowAnimationMiddle];
-                            NSMutableArray *latterIndexs = [[NSMutableArray alloc] init];
-                            for(NSIndexPath *path in insertIndexPaths){
-                                if(![path isEqual:[insertIndexPaths firstObject]]){
-                                    [latterIndexs addObject:path];
-                                }
+                    if(data != nil){
+                        NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
+                        _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
+                        NSMutableDictionary *properties = [_courses objectForKey:course];
+                        [properties setObject:[[NSArray alloc] initWithArray:[JSON objectForKey:@"data"]]forKey:@"contacts"];
+                        if([_contacts count] > 0){
+                            NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
+                            for(int i = 0; i< [_contacts count]; i++){
+                                [indexPaths addObject:[NSIndexPath indexPathForRow:row+i+1 inSection:0]];
                             }
-                            if([latterIndexs count] != 0){
-                                [_courseTableView insertRowsAtIndexPaths:latterIndexs withRowAnimation: UITableViewRowAnimationTop];
-                            }
-                             */
-                            [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationLeft];
-                            [_courseTableView endUpdates];
+                            [insertIndexPaths addObjectsFromArray:indexPaths];
+                            [properties setObject:indexPaths forKey:@"indexPaths"];
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [_courseTableView beginUpdates];
+                                showContact = YES;
+                                /*
+                                 [_courseTableView insertRowsAtIndexPaths:@[[insertIndexPaths firstObject]] withRowAnimation:UITableViewRowAnimationMiddle];
+                                 NSMutableArray *latterIndexs = [[NSMutableArray alloc] init];
+                                 for(NSIndexPath *path in insertIndexPaths){
+                                 if(![path isEqual:[insertIndexPaths firstObject]]){
+                                 [latterIndexs addObject:path];
+                                 }
+                                 }
+                                 if([latterIndexs count] != 0){
+                                 [_courseTableView insertRowsAtIndexPaths:latterIndexs withRowAnimation: UITableViewRowAnimationTop];
+                                 }
+                                 */
+                                [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationLeft];
+                                [_courseTableView endUpdates];
+                                isUpdating = NO;
+                            });
+                        }else{
                             isUpdating = NO;
-                        });
-                    }else{
-                        isUpdating = NO;
-                        
-                        [_cellMsgLabel setText:[NSString stringWithFormat:@"No friends in %@ 😥",course]];
-                        [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
+                            
+                            [_cellMsgLabel setText:[NSString stringWithFormat:@"No friends in %@ 😥",course]];
+                            [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
+                        }
+
                     }
                 }];
             }else{
@@ -493,6 +492,7 @@
     NSDictionary *selectedContact;
     selectedContact = [[NSDictionary alloc] initWithDictionary:[_contacts objectAtIndex:numContacts - (rowNumber - selectedIndex)]];
     vc.pointOfOrigin = buttonPosition;
+    vc.studentName = [selectedContact objectForKey:@"name"];
     vc.fbid = [selectedContact objectForKey:@"fbid"];
     [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
     [self.tabBarController presentViewController:vc animated:NO completion:NO];

@@ -8,7 +8,7 @@
 
 #import "LoginViewController.h"
 #import "SocialSchedulerFirstViewController.h"
-#import "Reachability.h"
+#import "AFNetworking.h"
 
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *superViewCenterConstraint;
@@ -51,8 +51,7 @@
     NSInteger yearIndex;
     NSDictionary *semesterDict;
     NSURL *semesterURL;
-    Reachability *internetReachability;
-    NetworkStatus network;
+    AFNetworkReachabilityManager *reachability;
     int count;
 }
 
@@ -73,8 +72,7 @@
     
     semesterURL = [NSURL URLWithString:@"http://www.kimonolabs.com/api/d9c7z5py?apikey=e228433aba70a1ea083189f321776248"];
     
-    internetReachability = [Reachability reachabilityForInternetConnection];
-    network = [internetReachability currentReachabilityStatus];
+    reachability = [AFNetworkReachabilityManager sharedManager];
     
     semesters = [[NSMutableArray alloc] init];
     semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
@@ -118,7 +116,7 @@
     [_passwordField setEnabled:YES];
     [_loginButton setEnabled:YES];
     
-    if(network != NotReachable){
+    if([reachability isReachable]){
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:semesterURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
             if(data != nil){
                 NSError *error;
@@ -132,8 +130,11 @@
                 [_semesterField setText:@""];
                 NSLog(@"Semesters Loaded");
             }
+            [_semesterField setText:[semesters firstObject]];
         }];
         // NSData *data = [NSData dataWithContentsOfURL:semesterURL];
+    }else{
+        [_semesterField setText:[semesters firstObject]];
     }
     
     if([[NSUserDefaults standardUserDefaults] boolForKey:@"save_login"] && [[NSUserDefaults standardUserDefaults] stringForKey:@"username"] != nil){
@@ -294,13 +295,16 @@
         yearIndex = row;
     }
     NSString *semesterString = [semesters objectAtIndex:semesterIndex];
+    [_semesterField setText:semesterString];
+    
+    [self saveTermCode:semesterString];
+}
+
+-(void)saveTermCode:(NSString *) semesterString{
     NSString *yearString = [semesterString substringFromIndex:[semesterString rangeOfString:@"2"].location];
     semesterString = [semesterString substringToIndex:[semesterString rangeOfString:@" 2"].location];
     
-    NSString *termString = [NSString stringWithFormat:@"%@ %@",semesterString,yearString];
-    [_semesterField setText:termString];
-    
-    NSString *season = [NSString stringWithString: semesterString ];
+    NSString *season = [NSString stringWithString: semesterString];
     NSInteger year = [yearString integerValue];
     if([season isEqualToString:@"Winter"]){
         year--;
@@ -321,11 +325,6 @@
     semesterInfo = [[NSArray alloc] initWithObjects:season, [NSString stringWithFormat:@"%ld",(long)year], nil];
     NSString *termCode = [NSString stringWithFormat:@"%ld%@",(long)year,season];
     [[NSUserDefaults standardUserDefaults] setObject:termCode forKey:@"SemesterInfo"];
-    
-}
-
--(void)saveTermCode{
-    
 }
 
 // Facebook login related functions
@@ -368,6 +367,9 @@
         [_semesterField setEnabled:NO];
         [_activityIndicator startAnimating];
         [_webPage loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:newScheduleURL]]];
+    }else{
+        [_fbLoginView.subviews[0] sendActionsForControlEvents:UIControlEventTouchUpInside];
+        [self performSelector:@selector(hideKeyboard)];
     }
 }
 
@@ -385,13 +387,6 @@
     [UIView animateWithDuration:movementDuration animations:^{
         _superViewCenterConstraint.constant = _superViewCenterConstraint.constant - movement;
     }];
-    
-    /*
-    [UIView beginAnimations: @"anim" context: nil];
-    [UIView setAnimationBeginsFromCurrentState: YES];
-    [UIView setAnimationDuration: movementDuration];
-    [UIView commitAnimations];
-     */
 }
 
 -(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
@@ -470,8 +465,6 @@
 }
 
 -(IBAction)login:(UIButton *)sender {
-    internetReachability = [Reachability reachabilityForInternetConnection];
-    network = [internetReachability currentReachabilityStatus];
     if([[_usernameField text]isEqualToString:@""] || [[_passwordField text] isEqualToString:@""]){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"Please complete enter both University ID (Not a number) and Password" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
@@ -479,7 +472,7 @@
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Login Error" message:@"Please select a semester to view" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
     }else{
-        if(network == NotReachable){
+        if(![reachability isReachable]){
             _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
             [_alertMsg show];
         }else{
@@ -502,6 +495,7 @@
                 //NSLog(@"\nUsername:%@ Password:%@",_usernameField.text,_passwordField.text);
                 [self performSelector:@selector(hideKeyboard)];
                 
+                [self saveTermCode:_semesterField.text];
                 NSString *termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
                 NSLog(@"TermCode: %@",termCode);
                 newScheduleURL = [NSString stringWithFormat:@"%@%@",scheduleURL,termCode];

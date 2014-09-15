@@ -145,7 +145,7 @@
     }else{
         primBeginAMPM = @"pm";
         if(primBeginHour > 12){
-            primBeginHour /= 12;
+            primBeginHour %= 12;
         }
     }
     NSString *primEndAMPM = @"";
@@ -156,7 +156,7 @@
     }else{
         primEndAMPM = @"pm";
         if(primEndHour > 12){
-            primEndHour /= 12;
+            primEndHour %= 12;
         }
     }
     
@@ -206,7 +206,7 @@
         }else{
             secBeginAMPM = @"pm";
             if(secBeginHour > 12){
-                secBeginHour /= 12;
+                secBeginHour %= 12;
             }
         }
         
@@ -218,7 +218,7 @@
         }else{
             secEndAMPM = @"pm";
             if(secEndHour > 12){
-                secEndHour /= 12;
+                secEndHour %= 12;
             }
         }
         

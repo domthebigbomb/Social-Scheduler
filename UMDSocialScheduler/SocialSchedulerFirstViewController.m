@@ -9,7 +9,7 @@
 #import "SocialSchedulerFirstViewController.h"
 #import "LoginViewController.h"
 #import <CoreGraphics/CoreGraphics.h>
-#import "Reachability.h"
+#import "AFNetworking.h"
 
 @interface SocialSchedulerFirstViewController ()
 - (IBAction)postSchedule:(UIButton *)sender;
@@ -35,6 +35,7 @@
     NSString *coursesString;
     NSString *termCode;
     int count;
+    AFNetworkReachabilityManager *reachability;
 }
 
 - (void)viewDidLoad
@@ -56,6 +57,8 @@
     [[UITabBar appearance] setTintColor:tintColor];
     _shareToFbButton.layer.cornerRadius = 3.0f;
     _newSchedule = NO;
+    
+    reachability = [AFNetworkReachabilityManager sharedManager];
 
 }
 
