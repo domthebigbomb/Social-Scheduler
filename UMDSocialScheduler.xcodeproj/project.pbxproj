@@ -39,6 +39,7 @@
 		0B55C94019BD60C7002FEE0C /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B55C8E919BD60C7002FEE0C /* UIRefreshControl+AFNetworking.m */; };
 		0B55C94119BD60C7002FEE0C /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B55C8EB19BD60C7002FEE0C /* UIWebView+AFNetworking.m */; };
 		0B653FF11947BCFD00C78028 /* CourseDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B653FF01947BCFD00C78028 /* CourseDetailViewController.m */; };
+		0B71092619C92CD5000FBCF7 /* ContactCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B71092519C92CD5000FBCF7 /* ContactCollectionCell.m */; };
 		0B7299FB197A68E50044B46C /* FBLoginCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B7299FA197A68E50044B46C /* FBLoginCell.m */; };
 		0B761C1E197F2DD40035620C /* BG.png in Resources */ = {isa = PBXBuildFile; fileRef = 0B761C1D197F2DD40035620C /* BG.png */; };
 		0B77469118AD4008006E0550 /* fb_default.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0B77469018AD4008006E0550 /* fb_default.jpg */; };
@@ -85,6 +86,7 @@
 		0BCAB214197F7198006FC406 /* ipad1xLauncher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB212197F7198006FC406 /* ipad1xLauncher.png */; };
 		0BCAB215197F7198006FC406 /* ipad2xLauncher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB213197F7198006FC406 /* ipad2xLauncher.png */; };
 		0BD6925319534765007C6081 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BD6925219534765007C6081 /* EventKit.framework */; };
+		0BD797FC19C9D6B500DFD1CF /* CourseSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BD797FB19C9D6B500DFD1CF /* CourseSplitViewController.m */; };
 		0BDC092318A9F5D500BC82CE /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BDC091D18A9F5D500BC82CE /* libTestFlight.a */; };
 		0BDC092418A9F5D500BC82CE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091E18A9F5D500BC82CE /* README.md */; };
 		0BDC092518A9F5D500BC82CE /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091F18A9F5D500BC82CE /* release_notes.md */; };
@@ -160,6 +162,8 @@
 		0B55C8EB19BD60C7002FEE0C /* UIWebView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+AFNetworking.m"; sourceTree = "<group>"; };
 		0B653FEF1947BCFD00C78028 /* CourseDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CourseDetailViewController.h; sourceTree = "<group>"; };
 		0B653FF01947BCFD00C78028 /* CourseDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CourseDetailViewController.m; sourceTree = "<group>"; };
+		0B71092419C92CD5000FBCF7 /* ContactCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactCollectionCell.h; sourceTree = "<group>"; };
+		0B71092519C92CD5000FBCF7 /* ContactCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactCollectionCell.m; sourceTree = "<group>"; };
 		0B7299F9197A68E50044B46C /* FBLoginCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBLoginCell.h; sourceTree = "<group>"; };
 		0B7299FA197A68E50044B46C /* FBLoginCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginCell.m; sourceTree = "<group>"; };
 		0B761C1D197F2DD40035620C /* BG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = BG.png; path = Images/BG.png; sourceTree = "<group>"; };
@@ -218,6 +222,8 @@
 		0BCAB212197F7198006FC406 /* ipad1xLauncher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ipad1xLauncher.png; path = Images/ipad1xLauncher.png; sourceTree = "<group>"; };
 		0BCAB213197F7198006FC406 /* ipad2xLauncher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ipad2xLauncher.png; path = Images/ipad2xLauncher.png; sourceTree = "<group>"; };
 		0BD6925219534765007C6081 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
+		0BD797FA19C9D6B500DFD1CF /* CourseSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CourseSplitViewController.h; sourceTree = "<group>"; };
+		0BD797FB19C9D6B500DFD1CF /* CourseSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CourseSplitViewController.m; sourceTree = "<group>"; };
 		0BDC091D18A9F5D500BC82CE /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
 		0BDC091E18A9F5D500BC82CE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		0BDC091F18A9F5D500BC82CE /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
@@ -451,6 +457,8 @@
 				0BC94461198B093500BD3140 /* ScheduleTheaterViewController.m */,
 				0BF6120D19B7F868005A8DBB /* ClassesViewController.h */,
 				0BF6120E19B7F868005A8DBB /* ClassesViewController.m */,
+				0BD797FA19C9D6B500DFD1CF /* CourseSplitViewController.h */,
+				0BD797FB19C9D6B500DFD1CF /* CourseSplitViewController.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -470,6 +478,8 @@
 				0B7299FA197A68E50044B46C /* FBLoginCell.m */,
 				0BF6121019B8047D005A8DBB /* CourseCollectionCell.h */,
 				0BF6121119B8047D005A8DBB /* CourseCollectionCell.m */,
+				0B71092419C92CD5000FBCF7 /* ContactCollectionCell.h */,
+				0B71092519C92CD5000FBCF7 /* ContactCollectionCell.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -673,6 +683,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BD797FC19C9D6B500DFD1CF /* CourseSplitViewController.m in Sources */,
 				0B55C8F719BD60C7002FEE0C /* AFURLSessionManager.m in Sources */,
 				0B55C8F419BD60C7002FEE0C /* AFURLConnectionOperation.m in Sources */,
 				0BF6120F19B7F868005A8DBB /* ClassesViewController.m in Sources */,
@@ -685,6 +696,7 @@
 				0B8E0BBF18A2099100863181 /* SocialSchedulerFirstViewController.m in Sources */,
 				0BC94462198B093500BD3140 /* ScheduleTheaterViewController.m in Sources */,
 				0B55C8F319BD60C7002FEE0C /* AFSecurityPolicy.m in Sources */,
+				0B71092619C92CD5000FBCF7 /* ContactCollectionCell.m in Sources */,
 				0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */,
 				0B55C93F19BD60C7002FEE0C /* UIProgressView+AFNetworking.m in Sources */,
 				0BFF8B1218AE899600817BFD /* Reachability.m in Sources */,

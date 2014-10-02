@@ -12,7 +12,7 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *courseNumberLabel;
 @property (weak, nonatomic) IBOutlet UILabel *sectionNumberLabel;
-@property (weak, nonatomic) IBOutlet UIView *contentView;
+@property (weak, nonatomic) IBOutlet UIView *mainContentView;
 @property (strong, nonatomic) NSArray *contacts;
 
 @end

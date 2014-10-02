@@ -15,8 +15,9 @@
 }
 
 -(void)viewDidLoad{
-    self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    self.modalPresentationStyle = UIModalPresentationFullScreen;
+    //self.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    //self.modalPresentationStyle = UIModalPresentationFullScreen;
+    //self.modalPresentationStyle = UIModalPresentationPopover;
     _termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     [_doneButton.layer setBorderColor:[UIColor whiteColor].CGColor];
     [_doneButton.layer setBorderWidth:1.0f];
@@ -193,7 +194,7 @@
         [_scheduleView setAlpha:0.7];
         [self.view setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.0]];
     } completion:^(BOOL finished) {
-        [self dismissViewControllerAnimated:YES completion:nil];
+        [self dismissViewControllerAnimated:NO completion:nil];
     }];
 }
 

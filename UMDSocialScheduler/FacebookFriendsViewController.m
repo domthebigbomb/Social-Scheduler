@@ -24,6 +24,8 @@
 @property (weak,nonatomic) IBOutlet UIToolbar *sharingToolbar;
 @property (weak,nonatomic) IBOutlet UIProgressView *progressBar;
 @property (strong,nonatomic) UIRefreshControl *friendRefresher;
+@property (weak, nonatomic) IBOutlet UINavigationBar *navBar;
+@property (weak, nonatomic) IBOutlet FBLoginView *loginView;
 
 @property int numFinished;
 @end
@@ -46,7 +48,7 @@
     NSString *scheduleFbid;
     NSString *termCode;
     AFNetworkReachabilityManager *reachability;
-    FBLoginView *loginView;
+    //FBLoginView *loginView;
     BOOL showSchedule;
     BOOL isRefreshing;
     NSInteger scheduleIndex;
@@ -92,14 +94,14 @@
         loginFrame = CGRectFromString(@"{{225, 547},{321,66}}");
     }
     
-    loginView = [[FBLoginView alloc] initWithFrame:loginFrame];
-    [loginView setReadPermissions:@[@"public_profile",@"email",@"user_friends",@"user_likes"]];
-    [loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
-    [loginView setPublishPermissions:@[@"publish_actions" ]];
-    [loginView setHidden: YES];
-    [loginView setDelegate:self];
+    //_loginView = [[FBLoginView alloc] initWithFrame:loginFrame];
+    [_loginView setReadPermissions:@[@"public_profile",@"email",@"user_friends",@"user_likes"]];
+    [_loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
+    [_loginView setPublishPermissions:@[@"publish_actions" ]];
+    [_loginView setHidden: YES];
+    [_loginView setDelegate:self];
     [_closeScheduleButton setHidden:YES];
-    [_greyedBackgroundView addSubview:loginView];
+    //[_greyedBackgroundView addSubview:loginView];
     
     if ([_contactTableView respondsToSelector:@selector(setSectionIndexColor:)]) {
         _contactTableView.sectionIndexColor = [UIColor redColor]; // some color
@@ -113,8 +115,8 @@
     }
     */
     //[self refreshFriends];
-    [_scheduleScrollView addSubview:_scheduleImageView];
-    [_scheduleScrollView setDelegate: self];
+    [[UINavigationBar appearance] setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
+
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -123,9 +125,8 @@
         [_progressBar setHidden: YES];
         [_activityIndicator stopAnimating];
         [_closeScheduleButton setHidden:YES];
-        [_scheduleImageView setImage:nil];
         [_greyedBackgroundView setHidden:NO];
-        [loginView setHidden:NO];
+        [_loginView setHidden:NO];
     }else{
         if(!isRefreshing){
             if([[NSUserDefaults standardUserDefaults] boolForKey:@"refreshFriends"]){
@@ -139,7 +140,6 @@
 
 -(void)refreshFriends{
     isRefreshing = YES;
-    [_scheduleImageView setImage:nil];
     [_progressBar setProgress:0.0];
     [_activityIndicator startAnimating];
     [_progressBar setHidden: NO];
@@ -167,13 +167,13 @@
         [userSchedule setObject:section forKey:class];
     }
     
-    [loginView setHidden:YES];
+    [_loginView setHidden:YES];
     
     if([[FBSession activeSession] accessTokenData] == nil){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"Please login to facebook to access this feature" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         [_alertMsg show];
         [_activityIndicator stopAnimating];
-        [loginView setHidden:NO];
+        [_loginView setHidden:NO];
         [_friendRefresher endRefreshing];
     }
     
@@ -304,12 +304,6 @@
     return organizedNames;
 }
 
-/*
--(NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
-{
-    return [[organizedContacts allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-}
-*/
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return [[organizedContacts allKeys] count];
     // Try adding sections 
@@ -371,11 +365,17 @@
     if([reachability isReachable]){
         if(![contactPicFbids containsObject:fbid]){
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                //Crashes here
                 NSString *contactPicString;
                 if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
                     contactPicString = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=160&width=160",fbid];
                 }else{
-                    contactPicString = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=100&width=100",fbid];
+                    CGRect screenRect = [[UIScreen mainScreen] bounds];
+                    CGFloat screenWidth = screenRect.size.width;
+                    CGFloat screenHeight = screenRect.size.height;
+                    NSNumber *fbDim;
+                    fbDim = [NSNumber numberWithInt:200];
+                    contactPicString = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=%@&width=%@",fbid,fbDim,fbDim];
                 }
                 UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contactPicString]]];
                 [contactPics setObject:contactPic forKey:fbid];
@@ -428,10 +428,47 @@
     return cell;
 }
 
-
--(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
-    return _scheduleImageView;
+-(void)viewDidLayoutSubviews
+{
+    if ([_contactTableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [_contactTableView setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([_contactTableView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [_contactTableView setLayoutMargins:UIEdgeInsetsZero];
+    }
 }
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([tableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [tableView setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([tableView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [tableView setLayoutMargins:UIEdgeInsetsZero];
+    }
+    
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [self correctNavBarHeightForOrientation:toInterfaceOrientation];
+}
+
+- (void) correctNavBarHeightForOrientation:(UIInterfaceOrientation)orientation {
+    // This is only needed in on the iPhone, since this is a universal app, check that first.
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone){
+        if (UIInterfaceOrientationIsLandscape(orientation)) {
+            _navBar.frame = CGRectMake(self.navBar.frame.origin.x, self.navBar.frame.origin.y, self.navBar.frame.size.width, 32.0f);
+        } else {
+            _navBar.frame = CGRectMake(self.navBar.frame.origin.x, self.navBar.frame.origin.y, self.navBar.frame.size.width, 44.0f);
+        }
+    }
+}
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -440,18 +477,13 @@
 
 -(void)loginViewFetchedUserInfo:(FBLoginView *)fbloginView user:(id<FBGraphUser>)user{
     if(!isRefreshing){
-        [loginView setHidden:YES];
+        [_loginView setHidden:YES];
         [self refreshFriends];
     }
 }
 
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     NSLog(@"Logged into Facebook");
-}
-
--(void)updateScheduleImage:(UIImage *)image{
-    [_scheduleScrollView setZoomScale:1.0];
-    [_scheduleImageView setImage:contactScheduleImage];
 }
 
 -(IBAction)logout:(id)sender{
@@ -467,9 +499,10 @@
     ContactCell *contact = (ContactCell *) [[self contactTableView] cellForRowAtIndexPath:indexPath];
     vc.fbid = contact.fbid;
     vc.studentName = contact.nameLabel.text;
-
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
     [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
-    [self.tabBarController presentViewController:vc animated:NO completion:NO];
+    [self.tabBarController presentViewController:vc animated:NO completion:nil];
     [vc.view setAlpha:0];
     [UIView animateWithDuration:0.5 animations:^{
         [vc.view setAlpha:1];

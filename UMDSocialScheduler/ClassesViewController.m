@@ -25,7 +25,6 @@
 @property (strong, nonatomic) NSMutableDictionary *contacts;
 @property (strong, nonatomic) UIAlertView *alertMsg;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-
 @end
 
 @implementation ClassesViewController{
@@ -234,10 +233,12 @@
 // 3
 - (UICollectionViewCell *)collectionView:(UICollectionView *)cv cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CourseCollectionCell *cell = (CourseCollectionCell *)[cv dequeueReusableCellWithReuseIdentifier:@"Course" forIndexPath:indexPath];
-    
+    CGRect newFrame = CGRectMake(0, 0, 300, 400);
+    //[cell.mainContentView setFrame:newFrame];
     NSInteger rowNumber = indexPath.row;
+    //[cell.mainContentView.layer setFrame:newFrame];
     cell.layer.cornerRadius = 2.0f;
-    cell.contentView.layer.cornerRadius = 2.0f;
+    cell.mainContentView.layer.cornerRadius = 2.0f;
     NSString *course = [_courseKeys objectAtIndex:rowNumber];
     NSDictionary *properties = [_courses objectForKey:course];
     NSString *section = [NSString stringWithFormat:@"Section: %@",[properties objectForKey:@"section"]];
@@ -271,6 +272,9 @@
                 //[[self classCollectionView] reloadData];
                 NSLog(@"Reloading %@",course);
                 //[[[self classCollectionView] cellForItemAtIndexPath:indexPath] setNeedsLayout];
+                CGRect newFrame = cell.contentView.frame;
+                //newFrame.size.height += 56 * [contacts count];
+                //[cell.contentView setFrame: newFrame];
                 [[self classCollectionView] reloadItemsAtIndexPaths:@[indexPath]];
             });
 
@@ -278,33 +282,7 @@
             NSLog(@"Error: %@",[error description]);
         }];
         [operation start];
-        /*
-            [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                NSError *error;
-                if(data != nil){
-                    NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
-                    NSArray *contacts;
-                    if([[JSON objectForKey:@"data"] count] != 0){
-                        NSLog(@"Contacts found");
-                        contacts = [[NSArray alloc] initWithArray:[JSON objectForKey:@"data"]];
-                    }else{
-                        contacts = [[NSArray alloc] init];
-                    }
-                    [_contacts setObject:contacts forKey:course];
-                    NSLog(@"%@: %lu contacts", course, (unsigned long)[contacts count]);
-                    //[[self classCollectionView] reloadItemsAtIndexPaths:@[indexPath]];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        //[[self classCollectionView] reloadData];
-                        NSLog(@"Reloading %@",course);
-                        [[[self classCollectionView] cellForItemAtIndexPath:indexPath] setNeedsLayout];
-                        [[self classCollectionView] reloadItemsAtIndexPaths:@[indexPath]];
-                    });
-                }
-            }];
-            */
     }
-    
-    
     return cell;
 }
 // 4
@@ -327,12 +305,12 @@
 #pragma mark – UICollectionViewDelegateFlowLayout
 // 1
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CGSize retval = CGSizeMake(280, 150);
-    CourseCollectionCell *cell = (CourseCollectionCell *)[_classCollectionView cellForItemAtIndexPath:indexPath];
-    NSUInteger numContacts = ([[_contacts objectForKey:[cell.courseNumberLabel text]] count]);
+    CGSize retval = CGSizeMake(300, 150);
+    NSUInteger numContacts = ([[_contacts objectForKey:[_courseKeys objectAtIndex:indexPath.row]] count]);
+    //[cell.mainContentView setFrame:newFrame];
     retval.height += 56 * numContacts;
     NSLog(@"IndexPath: %@",[NSNumber numberWithInteger:indexPath.row]);
-    NSLog(@"%@: %lu",[cell.courseNumberLabel text],(unsigned long)numContacts);
+    NSLog(@"%@: %lu",[_courseKeys objectAtIndex:indexPath.row],(unsigned long)numContacts);
     return retval;
 }
 
@@ -340,7 +318,8 @@
 // 3
 - (UIEdgeInsets)collectionView:
 (UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(15, 20, 15, 20);
+    return UIEdgeInsetsMake(15, 0, 15, 0);
+    // Top, Left, Bottom, Right
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
@@ -369,6 +348,26 @@
         viewController.primaryTimes = primTime;
         viewController.bldgCodes = bldgCodes;
     }
+}
+
+-(IBAction)showSchedule:(UIButton *)sender{
+    ScheduleTheaterViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ScheduleTheater"];
+    
+    CGPoint buttonPosition = [sender convertPoint:CGPointZero toView:_classCollectionView];
+    NSIndexPath *indexPath = [_classCollectionView indexPathForItemAtPoint:buttonPosition];
+    NSInteger rowNumber = indexPath.row;
+    NSInteger numContacts = [_contacts count];
+    NSDictionary *selectedContact;
+    //selectedContact = [[NSDictionary alloc] initWithDictionary:[_contacts objectAtIndex:numContacts - (rowNumber - selectedIndex)]];
+    vc.pointOfOrigin = buttonPosition;
+    vc.studentName = [selectedContact objectForKey:@"name"];
+    vc.fbid = [selectedContact objectForKey:@"fbid"];
+    [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
+    [self.tabBarController presentViewController:vc animated:NO completion:NO];
+    [vc.view setAlpha:0];
+    [UIView animateWithDuration:0.5 animations:^{
+        [vc.view setAlpha:1];
+    }];
 }
 
 

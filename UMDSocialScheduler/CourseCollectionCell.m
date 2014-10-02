@@ -10,4 +10,5 @@
 
 @implementation CourseCollectionCell
 
+
 @end

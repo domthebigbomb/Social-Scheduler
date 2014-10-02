@@ -18,8 +18,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet FBProfilePictureView *profilePictureView;
 @property (weak, nonatomic) IBOutlet UIImageView *circleMask;
-@property (weak, nonatomic) IBOutlet UIImageView *borderMask;
 @property (weak, nonatomic) IBOutlet UIImageView *loginContainer;
+@property (weak, nonatomic) IBOutlet UIView *loginContainerView;
+
 @property (weak, nonatomic) IBOutlet UIView *visualView;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 - (IBAction)login:(UIButton *)sender;
@@ -31,6 +32,10 @@
 @property (strong, nonatomic) UIPickerView *semesterPickerView;
 @property (weak, nonatomic) IBOutlet UITextField *semesterField;
 @property (weak, nonatomic) IBOutlet FBLoginView *fbLoginView;
+@property (weak, nonatomic) IBOutlet UILabel *welcomeLabel;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topSpacerHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *welcomeHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameHeight;
 
 @end
 
@@ -67,6 +72,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     NSLog(@"App Loaded");
     _semesterPickerView = [[UIPickerView alloc] init];
     
@@ -108,6 +114,11 @@
     [self loadDesignElements];
     
 }
+
+-(void)viewDidLayoutSubviews{
+    [self setDesignLayout];
+}
+
 
 -(void)viewDidAppear:(BOOL)animated{
     NSLog(@"App Appeared");
@@ -154,21 +165,63 @@
     }
 }
 
--(void)loadDesignElements{
-    // NSString* fontName = @"Avenir-Book";
-    //NSString* boldFontName = @"Avenir-Black";
-    //_loginButton.layer.cornerRadius = 3.0f;
-    //_loginButton.titleLabel.font = [UIFont fontWithName:boldFontName size:20.0f];
-    [_loginButton setTitleColor:[self.view backgroundColor] forState:UIControlStateNormal];
-    
+-(void)setDesignLayout{
     _circleMask.layer.cornerRadius = _circleMask.frame.size.width/2;
     [_circleMask addSubview:_profilePictureView];
-    _borderMask.layer.cornerRadius = _borderMask.frame.size.width/2;
-    [_borderMask addSubview:_circleMask];
+    _loginContainerView.layer.cornerRadius = _loginContainerView.frame.size.width/2;
     _loginContainer.layer.cornerRadius = 4.0f;
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenHeight = screenRect.size.height;
+    if (screenHeight == 480) {
+        _topSpacerHeight.constant = 15;
+        _nameHeight.constant = 24;
+    }else if(screenHeight == 568){
+        _topSpacerHeight.constant = 55;
+    }else if(screenHeight == 667){
+        _topSpacerHeight.constant = 64;
+        _welcomeHeight.constant = 90;
+    }else{
+        _topSpacerHeight.constant = 80;
+        _welcomeHeight.constant = 90;
+    }
 
+}
+
+-(void)loadDesignElements{
+    [_loginButton setTitleColor:[self.view backgroundColor] forState:UIControlStateNormal];
     
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenHeight = screenRect.size.height;
     
+    NSLog(@"Movement: %d",screenHeight == 667);
+    if(UI_USER_INTERFACE_IDIOM() ==UIUserInterfaceIdiomPhone){
+        if(screenHeight >= 960){
+            [_welcomeLabel setFont:[UIFont fontWithName:@"Avenir-Heavy" size:32]];
+            [_statusLabel setFont:[UIFont fontWithName:@"Avenir-Heavy" size:24]];
+        }else if(screenHeight >= 667){
+            [_welcomeLabel setFont:[UIFont fontWithName:@"Avenir-Heavy" size:30]];
+            [_statusLabel setFont:[UIFont fontWithName:@"Avenir-Heavy" size:24]];
+        }else if(screenHeight >= 568){
+            
+        }else{
+            [_statusLabel setFont:[UIFont fontWithName:@"Avenir-Heavy" size:48]];
+        }
+
+    }else{
+        //ipad
+        
+    }
+        if(screenHeight == 568){
+        //iP5
+    }else if(screenHeight == 667){
+        //iP6
+    }else if(screenHeight < 568){
+        //iP4
+    }else{
+        //iP6+
+        
+    }
+
     
     if(UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad){
         CGRect frame = _usernameField.frame;
@@ -375,17 +428,34 @@
 
 // Keyboard Related Methods
 -(void)animateTextField:(UITextField *)textfield up:(BOOL)up{
-    int movementDistance = 120;
+    int movementDistance = 40;
     
-    if(([[UIScreen mainScreen] bounds].size.height - 568) ? YES:NO){
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    CGFloat screenHeight = screenRect.size.height;
+
+    NSLog(@"Movement: %d",screenHeight == 667);
+    if(screenHeight == 568){
+        //iP5
+        movementDistance = 110;
+    }else if(screenHeight == 667){
+        //iP6
+        movementDistance = 140;
+    }else if(screenHeight < 568){
+        //iP4
         movementDistance = 160;
+    }else{
+        //iP6+
+        movementDistance = 140;
     }
     
-    const float movementDuration = 1.5f; // tweak as needed
+    const float movementDuration = 0.3f; // tweak as needed
+    
     
     int movement = (up ? -movementDistance : movementDistance);
+    _superViewCenterConstraint.constant = _superViewCenterConstraint.constant - movement;
+    [self.view setNeedsLayout];
     [UIView animateWithDuration:movementDuration animations:^{
-        _superViewCenterConstraint.constant = _superViewCenterConstraint.constant - movement;
+        [self.view layoutIfNeeded];
     }];
 }
 
@@ -408,7 +478,7 @@
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     if([textField isEqual:_usernameField]){
         [_passwordField becomeFirstResponder];
-    }else{
+    }else {
         [self performSelector:@selector(login:) withObject:self];
     }
     return YES;
@@ -420,7 +490,7 @@
     }
     if([[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"] != nil &&
        ([_usernameField.text length] == 0 && [_passwordField.text length] == 0)){
-        // Enabling Back butto
+        // Enabling Back button
     }
     return YES;
 }
@@ -477,12 +547,8 @@
             [_alertMsg show];
         }else{
             if([[FBSession activeSession] accessTokenData] == nil){
-                /*
-                _actionMsg = [[UIActionSheet alloc] initWithTitle:@"Warning" delegate:self cancelButtonTitle:@"I'll login to Facebook" destructiveButtonTitle:@"destruct" otherButtonTitles: nil];
-                [_actionMsg showInView:self.view];
-                */
                 _alertMsg = [[UIAlertView alloc] initWithTitle:@"Warning" message:
-                             @"You are not logged into Facebook. You will not be able to: \n -Share your schedule to Facebook \n -View friends in your classes \n -View your friends' schedules" delegate:self cancelButtonTitle:@"I'll login" otherButtonTitles:@"Not right now", nil];
+                             @"You are not connected with Facebook. You will not be able to: \n -Share your schedule to Facebook \n -View friends in your classes \n -View your friends' schedules" delegate:self cancelButtonTitle:@"I'll connect" otherButtonTitles:@"Not right now", nil];
                 [_alertMsg show];
             }else{
                 NSString *username = _usernameField.text;

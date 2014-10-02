@@ -25,6 +25,7 @@
 @property (strong, nonatomic) NSMutableArray *contacts;
 @property (strong, nonatomic) UIAlertView *alertMsg;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (weak, nonatomic) IBOutlet UINavigationBar *navBar;
 
 @end
 
@@ -86,6 +87,7 @@
     }else if([_courseKeys count] == 0){
         [self refreshClasses];
     }
+    //[[UINavigationBar appearance] setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin];
 }
 
 -(void)refreshClasses{
@@ -181,12 +183,6 @@
     }else{
         [_courseTableView setUserInteractionEnabled:YES];
     }
-
-    //NSData *data = [NSData dataWithContentsOfURL:bldgURL];
-    
-    
-    //data = [NSURLConnection sendSynchronousRequest:fbLoginRequest returningResponse:&response error:&error];
-    
 }
 
 -(void)animateCellMsg{
@@ -205,6 +201,22 @@
 {
     [super didReceiveMemoryWarning];
 }
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([tableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [tableView setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([tableView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [tableView setLayoutMargins:UIEdgeInsetsZero];
+    }
+    
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
+
 
 -(void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath{
     courseIndex = indexPath.row;
@@ -357,6 +369,7 @@
         [fbCell.loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
         [fbCell.loginView setPublishPermissions:@[@"publish_actions"]];
         [fbCell.loginView setDelegate:self];
+        fbCell.layoutMargins = UIEdgeInsetsZero;
         return fbCell;
     }
     if((rowNumber >= selectedIndex+1 && rowNumber < selectedIndex + numContacts +1)  && showContact){
@@ -403,6 +416,8 @@
                 });
             });
         }
+        cell.layoutMargins = UIEdgeInsetsZero;
+
         return cell;
     }else{
         CourseCell* cell = [tableView dequeueReusableCellWithIdentifier:@"CourseCell"];
@@ -413,7 +428,24 @@
         NSString *section = [NSString stringWithFormat:@"Section: %@",[properties objectForKey:@"section"]];
         [cell.courseNumberLabel setText: course];
         [cell.sectionNumberLabel setText: section];
+        cell.layoutMargins = UIEdgeInsetsZero;
+
         return cell;
+    }
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [self correctNavBarHeightForOrientation:toInterfaceOrientation];
+}
+
+- (void) correctNavBarHeightForOrientation:(UIInterfaceOrientation)orientation {
+    // This is only needed in on the iPhone, since this is a universal app, check that first.
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone){
+        if (UIInterfaceOrientationIsLandscape(orientation)) {
+            _navBar.frame = CGRectMake(self.navBar.frame.origin.x, self.navBar.frame.origin.y, self.navBar.frame.size.width, 32.0f);
+        } else {
+            _navBar.frame = CGRectMake(self.navBar.frame.origin.x, self.navBar.frame.origin.y, self.navBar.frame.size.width, 44.0f);
+        }
     }
 }
 
@@ -479,7 +511,7 @@
     ScheduleTheaterViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"ScheduleTheater"];
     vc.fbid = @"623886246";
     [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
-    [self.tabBarController presentViewController:vc animated:NO completion:NO];
+    [self.tabBarController presentViewController:vc animated:NO completion:nil];
 }
 
 -(IBAction)showSchedule:(UIButton *)sender{
@@ -494,8 +526,10 @@
     vc.pointOfOrigin = buttonPosition;
     vc.studentName = [selectedContact objectForKey:@"name"];
     vc.fbid = [selectedContact objectForKey:@"fbid"];
-    [self.tabBarController setModalPresentationStyle:UIModalPresentationCurrentContext];
-    [self.tabBarController presentViewController:vc animated:NO completion:NO];
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    vc.modalPresentationStyle = UIModalPresentationOverFullScreen;
+    [self.tabBarController setModalPresentationStyle:UIModalPresentationFullScreen];
+    [self.tabBarController presentViewController:vc animated:NO completion:nil];
     [vc.view setAlpha:0];
     [UIView animateWithDuration:0.5 animations:^{
         [vc.view setAlpha:1];

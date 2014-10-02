@@ -9,6 +9,7 @@
 #import "CourseDetailViewController.h"
 #import <AddressBook/AddressBook.h>
 #import <QuartzCore/QuartzCore.h>
+#import "AFNetworking.h"
 
 @interface CourseDetailViewController ()
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
@@ -61,6 +62,7 @@
     backgroundColor = self.view.backgroundColor;
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
+    [locationManager requestWhenInUseAuthorization];
     _mapView.delegate = self;
     routeUpdating = NO;
     oldLocation = [[CLLocation alloc] init];
