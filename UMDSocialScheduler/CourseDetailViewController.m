@@ -256,13 +256,16 @@
                 if([[building objectForKey:@"code"] isEqualToString:[_primaryBldgString substringToIndex:3]]){
                     mainBuilding = [[NSDictionary alloc] initWithDictionary:building];
                     primBldg = [[building objectForKey:@"name"] objectForKey:@"text"];
+                    /*
                     if([primBldg rangeOfString:@" ("].location != NSNotFound){
                         primBldg = [primBldg substringToIndex:[primBldg rangeOfString:@" ("].location];
                     }
                     primBldg = [primBldg stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+                     */
                 }
             }
             // primBldg = @"Chemistry+Building";
+            /*
             NSURL *primSearchURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://nominatim.openstreetmap.org/search?q=%@&viewbox=-76.9605,39.0035,-76.9168,38.9749&bounded=1&format=json&addressdetails=1",primBldg]];
             NSLog(@"Sending Primary Search: %@",[primSearchURL description]);
             [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:primSearchURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *primData, NSError *connectionError) {
@@ -290,6 +293,97 @@
                     [self performSelectorOnMainThread:@selector(placeClassAndZoom:) withObject:bldgPoint waitUntilDone:NO];
                 }
             }];
+            
+             */
+            
+            
+            NSLog(@"Primary Building: %@",[primBldg description]);
+            NSString *bldg = primBldg;
+            if([bldg rangeOfString:@" ("].location != NSNotFound){
+                bldg = [bldg substringToIndex:[bldg rangeOfString:@"("].location];
+            }
+            bldg = [bldg stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+            bldg = [bldg stringByReplacingOccurrencesOfString:@"." withString:@"+"];
+            NSURL *searchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&viewbox=-76.9605,39.0035,-76.9168,38.9749&bounded=1&format=json&addressdetails=1",bldg]];
+            
+            [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:searchURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                NSError *err;
+                //NSData *primData = [NSData dataWithContentsOfURL:primSearchURL];
+                NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+                for(NSDictionary *address in addresses){
+                    if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
+                        primaryAddress = address;
+                    }
+                }
+                if(primaryAddress == nil){
+                    NSString *adjustedBldg = [bldg stringByReplacingOccurrencesOfString:@"+Building" withString:@""];
+                    NSURL *searchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&viewbox=-76.9605,39.0035,-76.9168,38.9749&bounded=1&format=json&addressdetails=1",adjustedBldg]];
+                    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:searchURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                        NSError *err;
+                        //NSData *primData = [NSData dataWithContentsOfURL:primSearchURL];
+                        NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+                        for(NSDictionary *address in addresses){
+                            if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
+                                primaryAddress = address;
+                            }
+                        }
+                        if(primaryAddress == nil){
+                            NSString *collegeBldg = [bldg stringByAppendingString:@"+College+Park"];
+                            NSURL *searchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&format=json&addressdetails=1",collegeBldg]];
+                            [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:searchURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                                NSError *err;
+                                //NSData *primData = [NSData dataWithContentsOfURL:primSearchURL];
+                                NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+                                for(NSDictionary *address in addresses){
+                                    if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
+                                        primaryAddress = address;
+                                    }
+                                }
+
+                                CLLocationDegrees lat = [[primaryAddress objectForKey:@"lat"] doubleValue];
+                                CLLocationDegrees lon = [[primaryAddress objectForKey:@"lon"] doubleValue];
+                                CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
+                                bldgPoint = [[MKPointAnnotation alloc] init];
+                                [bldgPoint setCoordinate:coordinates];
+                                [bldgPoint setSubtitle:[[mainBuilding objectForKey:@"name"] objectForKey:@"text"]];
+                                [bldgPoint setTitle:@"Main"];
+                                selectedPoint = bldgPoint;
+                                // Pin class on the map
+                                // moved away from mkplacemark to mkpoint to customize the labels
+                                [_etaLabel setText:@"Est Time: Getting Location Data"];
+                                [self performSelectorOnMainThread:@selector(placeClassAndZoom:) withObject:bldgPoint waitUntilDone:NO];
+                            }];
+                        }
+                        CLLocationDegrees lat = [[primaryAddress objectForKey:@"lat"] doubleValue];
+                        CLLocationDegrees lon = [[primaryAddress objectForKey:@"lon"] doubleValue];
+                        CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
+                        bldgPoint = [[MKPointAnnotation alloc] init];
+                        [bldgPoint setCoordinate:coordinates];
+                        [bldgPoint setSubtitle:[[mainBuilding objectForKey:@"name"] objectForKey:@"text"]];
+                        [bldgPoint setTitle:@"Main"];
+                        selectedPoint = bldgPoint;
+                        // Pin class on the map
+                        // moved away from mkplacemark to mkpoint to customize the labels
+                        [_etaLabel setText:@"Est Time: Getting Location Data"];
+                        [self performSelectorOnMainThread:@selector(placeClassAndZoom:) withObject:bldgPoint waitUntilDone:NO];
+                    }];
+                    
+                }
+                
+                CLLocationDegrees lat = [[primaryAddress objectForKey:@"lat"] doubleValue];
+                CLLocationDegrees lon = [[primaryAddress objectForKey:@"lon"] doubleValue];
+                CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
+                bldgPoint = [[MKPointAnnotation alloc] init];
+                [bldgPoint setCoordinate:coordinates];
+                [bldgPoint setSubtitle:[[mainBuilding objectForKey:@"name"] objectForKey:@"text"]];
+                [bldgPoint setTitle:@"Main"];
+                selectedPoint = bldgPoint;
+                // Pin class on the map
+                // moved away from mkplacemark to mkpoint to customize the labels
+                [_etaLabel setText:@"Est Time: Getting Location Data"];
+                [self performSelectorOnMainThread:@selector(placeClassAndZoom:) withObject:bldgPoint waitUntilDone:NO];
+            }];
+
            
             
             if(_hasDiscussion){
@@ -299,13 +393,17 @@
                     if([[building objectForKey:@"code"] isEqualToString:[_secondaryBldgString substringToIndex:3]]){
                         secBuilding = [[NSDictionary alloc] initWithDictionary:building];
                         secBldg = [[building objectForKey:@"name"] objectForKey:@"text"];
+                        /*
                         if([secBldg rangeOfString:@" ("].location != NSNotFound){
                             secBldg = [secBldg substringToIndex:[secBldg rangeOfString:@"("].location];
                         }
                         secBldg = [secBldg stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+                         */
                     }
                 }
+                
                 if(![secBldg isEqualToString:primBldg]){
+                    /*
                     NSURL *secSearchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&viewbox=-76.9605,39.0035,-76.9168,38.9749&bounded=1&format=json&addressdetails=1",secBldg]];
                     NSLog(@"Sending Secondary Search: %@",[secSearchURL description]);
                     [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:secSearchURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *secData, NSError *connectionError) {
@@ -329,10 +427,86 @@
                             [self performSelectorOnMainThread:@selector(placeClassAndZoom:) withObject:disBldgPoint waitUntilDone:NO];
                         }
                     }];
+                     */
+                    
+                    NSLog(@"Secondary Building: %@",[secBldg description]);
+                    NSString *bldg = secBldg;
+                    if([bldg rangeOfString:@" ("].location != NSNotFound){
+                        bldg = [bldg substringToIndex:[bldg rangeOfString:@"("].location];
+                    }
+                    bldg = [bldg stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+                    bldg = [bldg stringByReplacingOccurrencesOfString:@"." withString:@"+"];
+                    NSURL *searchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&viewbox=-76.9605,39.0035,-76.9168,38.9749&bounded=1&format=json&addressdetails=1",bldg]];
+                    
+                    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:searchURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                        NSError *err;
+                        NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+                        for(NSDictionary *address in addresses){
+                            if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
+                                secondaryAddress = address;
+                            }
+                        }
+                        if(secondaryAddress == nil){
+                            NSString *adjustedBldg = [bldg stringByReplacingOccurrencesOfString:@"+Building" withString:@""];
+                            NSURL *searchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&viewbox=-76.9605,39.0035,-76.9168,38.9749&bounded=1&format=json&addressdetails=1",adjustedBldg]];
+                            [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:searchURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                                NSError *err;
+                                NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+                                for(NSDictionary *address in addresses){
+                                    if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
+                                        secondaryAddress = address;
+                                    }
+                                }
+                                if(secondaryAddress == nil){
+                                    NSString *collegeBldg = [bldg stringByAppendingString:@"+College+Park"];
+                                    NSURL *searchURL = [NSURL URLWithString:[NSString stringWithFormat: @"http://nominatim.openstreetmap.org/search?q=%@&format=json&addressdetails=1",collegeBldg]];
+                                    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:searchURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+                                        NSError *err;
+                                        NSMutableArray *addresses = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&err];
+                                        for(NSDictionary *address in addresses){
+                                            if([[[address objectForKey:@"address"] objectForKey:@"city"] isEqualToString:@"College Park"]){
+                                                secondaryAddress = address;
+                                            }
+                                        }
+                                        
+                                        CLLocationDegrees lat = [[secondaryAddress objectForKey:@"lat"] doubleValue];
+                                        CLLocationDegrees lon = [[secondaryAddress objectForKey:@"lon"] doubleValue];
+                                        CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
+                                        disBldgPoint = [[MKPointAnnotation alloc] init];
+                                        [disBldgPoint setCoordinate:coordinates];
+                                        [disBldgPoint setSubtitle:[[mainBuilding objectForKey:@"name"] objectForKey:@"text"]];
+                                        [disBldgPoint setTitle:@"Main"];
+                                        [_etaLabel setText:@"Est Time: Getting Location Data"];
+                                        [self performSelectorOnMainThread:@selector(placeClassAndZoom:) withObject:disBldgPoint waitUntilDone:NO];
+                                    }];
+                                }
+                                
+                                CLLocationDegrees lat = [[secondaryAddress objectForKey:@"lat"] doubleValue];
+                                CLLocationDegrees lon = [[secondaryAddress objectForKey:@"lon"] doubleValue];
+                                CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
+                                disBldgPoint = [[MKPointAnnotation alloc] init];
+                                [disBldgPoint setCoordinate:coordinates];
+                                [disBldgPoint setSubtitle:[[mainBuilding objectForKey:@"name"] objectForKey:@"text"]];
+                                [disBldgPoint setTitle:@"Main"];
+                                [_etaLabel setText:@"Est Time: Getting Location Data"];
+                                [self performSelectorOnMainThread:@selector(placeClassAndZoom:) withObject:disBldgPoint waitUntilDone:NO];
+                            }];
+                            
+                        }
+                        
+                        CLLocationDegrees lat = [[secondaryAddress objectForKey:@"lat"] doubleValue];
+                        CLLocationDegrees lon = [[secondaryAddress objectForKey:@"lon"] doubleValue];
+                        CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(lat, lon);
+                        disBldgPoint = [[MKPointAnnotation alloc] init];
+                        [disBldgPoint setCoordinate:coordinates];
+                        [disBldgPoint setSubtitle:[[mainBuilding objectForKey:@"name"] objectForKey:@"text"]];
+                        [disBldgPoint setTitle:@"Main"];
+                        [_etaLabel setText:@"Est Time: Getting Location Data"];
+                        [self performSelectorOnMainThread:@selector(placeClassAndZoom:) withObject:disBldgPoint waitUntilDone:NO];
+                    }];
                 }
             }
         });
-        //dispatch_async(dispatch_get_main_queue(), ^{});
     }
 }
 

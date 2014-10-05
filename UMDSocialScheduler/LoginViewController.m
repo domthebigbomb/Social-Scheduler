@@ -181,6 +181,7 @@
         _topSpacerHeight.constant = 64;
         _welcomeHeight.constant = 90;
     }else{
+        //iP6+
         _topSpacerHeight.constant = 80;
         _welcomeHeight.constant = 90;
     }
@@ -195,7 +196,7 @@
     
     NSLog(@"Movement: %d",screenHeight == 667);
     if(UI_USER_INTERFACE_IDIOM() ==UIUserInterfaceIdiomPhone){
-        if(screenHeight >= 960){
+        if(screenHeight >= 736){
             [_welcomeLabel setFont:[UIFont fontWithName:@"Avenir-Heavy" size:32]];
             [_statusLabel setFont:[UIFont fontWithName:@"Avenir-Heavy" size:24]];
         }else if(screenHeight >= 667){

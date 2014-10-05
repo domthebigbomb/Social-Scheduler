@@ -48,6 +48,7 @@
     NSString *scheduleFbid;
     NSString *termCode;
     AFNetworkReachabilityManager *reachability;
+    AFHTTPRequestOperationManager *manager;
     //FBLoginView *loginView;
     BOOL showSchedule;
     BOOL isRefreshing;
@@ -70,7 +71,7 @@
     contactPics = [[NSMutableDictionary alloc] init];
     contactSchedules = [[NSMutableDictionary alloc] init];
     contactWithMutualClasses = [[NSMutableArray alloc] init];
-    
+    manager = [AFHTTPRequestOperationManager manager];
     isRefreshing = NO;
     
     _friendRefresher = [[UIRefreshControl alloc] init];
@@ -371,22 +372,36 @@
                     contactPicString = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=160&width=160",fbid];
                 }else{
                     CGRect screenRect = [[UIScreen mainScreen] bounds];
-                    CGFloat screenWidth = screenRect.size.width;
                     CGFloat screenHeight = screenRect.size.height;
                     NSNumber *fbDim;
-                    fbDim = [NSNumber numberWithInt:200];
+                    int dim = cell.contactPic.frame.size.height;
+
+                    if(screenHeight >= 736){
+                        fbDim = [NSNumber numberWithInt:dim*3];
+                    }else{
+                        fbDim = [NSNumber numberWithInt:dim*2];
+                    }
                     contactPicString = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=square&height=%@&width=%@",fbid,fbDim,fbDim];
                 }
-                UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contactPicString]]];
-                [contactPics setObject:contactPic forKey:fbid];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    ContactCell *updatedContact = (ContactCell *)[_contactTableView cellForRowAtIndexPath:indexPath];
-                    if(updatedContact){
-                        [cell.contactPic setImage: [contactPics objectForKey:fbid]];
-                        [updatedContact setNeedsLayout];
-                    }
-                });
-            });
+                
+                AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:contactPicString]]];
+                [operation setResponseSerializer:[AFImageResponseSerializer serializer]];
+                [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                    //UIImage *contactPic = [[UIImage alloc] initWithData:responseObject];
+                    [contactPics setObject:responseObject forKey:fbid];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        ContactCell *updatedContact = (ContactCell *)[_contactTableView cellForRowAtIndexPath:indexPath];
+                        if(updatedContact){
+                            [cell.contactPic setImage: [contactPics objectForKey:fbid]];
+                            [updatedContact setNeedsLayout];
+                        }
+                    });
+                } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                    NSLog(@"Error grabbing fb contact pic: %@", [error localizedDescription]);
+                }];
+                [operation start];
+                //UIImage *contactPic = [[UIImage alloc] initWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:contactPicString]]];
+                            });
         }else{
             [cell.contactPic setImage:[contactPics objectForKey:fbid]];
         }
