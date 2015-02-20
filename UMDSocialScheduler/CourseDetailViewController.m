@@ -10,12 +10,12 @@
 #import <AddressBook/AddressBook.h>
 #import <QuartzCore/QuartzCore.h>
 #import "AFNetworking.h"
-
 @interface CourseDetailViewController ()
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIView *mainDetailView;
 @property (strong, nonatomic) UIAlertView *alertView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *dismissButton;
+@property (strong, nonatomic) EKEventStore *eventStore;
 @end
 
 @implementation CourseDetailViewController{
@@ -62,12 +62,17 @@
     backgroundColor = self.view.backgroundColor;
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
-    [locationManager requestWhenInUseAuthorization];
+    if([locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]){
+        [locationManager requestWhenInUseAuthorization];
+    }
     _mapView.delegate = self;
     routeUpdating = NO;
     oldLocation = [[CLLocation alloc] init];
     existingRoute = [[MKPolyline alloc] init];
     selectedPoint = [[MKPointAnnotation alloc] init];
+    _eventStore = [[EKEventStore alloc] init];
+    
+    
     _mainDetailView.layer.masksToBounds = NO;
     _mainDetailView.layer.shadowOffset = CGSizeMake(5, 5);
     _mainDetailView.layer.shadowRadius = 5;
@@ -720,9 +725,185 @@
     updateRoute = YES;
 }
 
+# pragma mark - EKEventCalendar related methods
+-(BOOL)checkForCalendar{
+    NSArray *calendarArray = [_eventStore calendarsForEntityType:EKEntityTypeEvent];
+    NSString *calNameToCheckFor = @"Class";
+    
+    for (EKCalendar *cal in calendarArray) {
+        NSString *calTitle = [cal title];
+        if([calTitle isEqualToString:calNameToCheckFor]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+-(void)eventEditViewController:(EKEventEditViewController *)controller didCompleteWithAction:(EKEventEditViewAction)action{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 -(IBAction)showOpenStreetLicense:(UIButton *)button{
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.openstreetmap.org/copyright"]];
 }
+
+-(IBAction)addToCalendar:(UIBarButtonItem *)sender{
+    EKEventStore *eventStore = [[EKEventStore alloc] init];
+    NSString *termCode = [[NSUserDefaults standardUserDefaults] objectForKey:@"SemesterInfo"];
+    
+    [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+        if(error){
+            NSLog(@"Error requestion calendar: %@", [error description]);
+        }else if(granted){
+            NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+            [gregorian setLocale:[NSLocale currentLocale]];
+            NSDateComponents *nowComponents = [gregorian components:NSYearCalendarUnit | NSWeekCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit fromDate:[NSDate date]];
+
+            NSDateComponents *components = [[NSDateComponents alloc] init];
+            NSInteger startTime = [[_primaryTimes substringToIndex:4] integerValue];
+            NSInteger endTime = [[_primaryTimes substringFromIndex:4] integerValue];
+            NSInteger classLength = (endTime - startTime);
+            NSTimeInterval classInterval = 3600*(classLength/100) + 60*(classLength%100);
+            EKEvent *event = [EKEvent eventWithEventStore:eventStore];
+            NSMutableArray *daysOfTheWeek = [[NSMutableArray alloc] init];
+            [event setTitle:_course];
+                [daysOfTheWeek addObject:[EKRecurrenceDayOfWeek dayOfWeek:EKMonday]];
+            [nowComponents setWeekday:EKMonday];
+            [nowComponents setHour:(startTime/100)];
+            [nowComponents setMinute:(startTime%100)];
+            [nowComponents setYear:2014];
+            NSDate *startDate = [[NSCalendar currentCalendar] dateFromComponents:nowComponents];
+            [event setStartDate:startDate];
+            [event setEndDate: [event.startDate dateByAddingTimeInterval:classInterval]];
+            [event setLocation:_primaryBldgString];
+            EKRecurrenceRule *recurrence = [[EKRecurrenceRule alloc] initRecurrenceWithFrequency:EKRecurrenceFrequencyWeekly
+                                                                                            interval:1
+                                                                                       daysOfTheWeek:daysOfTheWeek
+                                                                                      daysOfTheMonth:nil
+                                                                                     monthsOfTheYear:nil
+                                                                                      weeksOfTheYear:nil
+                                                                                       daysOfTheYear:nil
+                                                                                        setPositions:nil
+                                                                                                 end:nil];;
+            NSLog(@"TermCode: %@", termCode);
+            NSUInteger year = [termCode integerValue]/100;
+            NSUInteger month = [termCode integerValue]%100;
+            NSString *semester;
+            if(month==12){
+                semester = @"Winter";
+            }else if(month==1){
+                semester = @"Spring";
+            }else if(month==5 || month ==7){
+                semester = @"Summer";
+            }else if(month == 8){
+                semester = @"Fall";
+            }else{
+                //default case
+                //semester = @"unknown";
+            }
+
+            NSString *urlString;
+            if(year == 2014){
+                urlString = @"https://www.kimonolabs.com/api/ctf1v4eo?apikey=437387afa6c3bf7f0367e782c707b51d";
+            }else{
+                urlString = @"https://www.kimonolabs.com/api/7p5ilaq8?apikey=437387afa6c3bf7f0367e782c707b51d";
+            }
+            urlString = @"https://www.kimonolabs.com/api/dj3v3tzc?apikey=437387afa6c3bf7f0367e782c707b51d";
+            NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
+            AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
+            operation.responseSerializer = [AFJSONResponseSerializer serializer];
+            [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+                //NSLog(@"Hooray, we got %@", responseObject);
+                NSMutableDictionary *json = (NSMutableDictionary *)responseObject;
+                if(semester){
+                    NSArray *dates = [[json objectForKey:@"results"] objectForKey:semester];
+                    NSLog(@"Semester data: %@", dates);
+                    for(NSDictionary *date in dates){
+                        if([[date objectForKey:@"api"] containsString:@"2014-2015"] &&
+                           ([[date objectForKey:@"titles"] containsString:@"Last Day"] || ([[date objectForKey:@"titles"] containsString:@"End"] ))){
+                            NSString *inputDate = [date objectForKey:@"dates"];
+                            inputDate = [NSString stringWithFormat:@"%@ %lu",inputDate, (unsigned long)year];
+                            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                            [formatter setDateFormat:@"MMMM dd (EEEE) yyy"];
+                            NSCalendar *cal = [NSCalendar currentCalendar];
+                            NSInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
+                            NSDate *endDate = [formatter dateFromString:inputDate];
+                            NSDateComponents *components = [cal components:units fromDate:endDate];
+                            NSInteger month=[components month];       // if necessary
+                            NSInteger day = [components day];
+                            [nowComponents setDay:day];
+                            [nowComponents setMonth:month];
+                            [nowComponents setYear:year];
+                        }
+                    }
+                }else{
+                    //Something went wrong, default
+                    [nowComponents setDay:30];
+                    [nowComponents setMonth:10];
+                }
+                
+                // Make calendar for event
+                if([self checkForCalendar] == NO){
+                    EKSource* localSource;
+                    for (EKSource* source in eventStore.sources) {
+                        if (source.sourceType == EKSourceTypeLocal)
+                        {
+                            localSource = source;
+                            break;
+                        }
+                    }
+                    
+                    if (!localSource)
+                        return;
+                    
+                    EKCalendar *newCalendar = [EKCalendar calendarForEntityType:EKEntityTypeEvent eventStore:eventStore];
+                    newCalendar.source = localSource;
+                    newCalendar.title = @"Class";
+                    [newCalendar setCGColor:[UIColor redColor].CGColor];
+                    
+                    NSError *errorCalendar;
+                    BOOL success = [eventStore saveCalendar:newCalendar commit:YES error:&errorCalendar];
+                    if (success) {
+                        NSLog(@"Saved calendar to event store.");
+                    } else {
+                        NSLog(@"Error saving calendar: %@.", errorCalendar);
+                    }
+                }
+                EKCalendar *calendar = [EKCalendar calendarForEntityType:EKEntityTypeEvent eventStore:eventStore];
+                calendar = [_eventStore calendarWithIdentifier:@"Class"];
+            
+                EKSource *theSource = nil;
+                for (EKSource *source in eventStore.sources) {
+                    if (source.sourceType == EKSourceTypeLocal) {
+                        theSource = source;
+                        break;
+                    }
+                }
+                EKRecurrenceEnd *endRecurrence = [EKRecurrenceEnd recurrenceEndWithEndDate:[[NSCalendar  currentCalendar] dateFromComponents:nowComponents]];
+                [recurrence setRecurrenceEnd:endRecurrence];
+                [event setRecurrenceRules:@[recurrence]];
+                //[event setCalendar:[eventStore defaultCalendarForNewEvents]];
+                [event setCalendar: calendar];
+                [event setNotes:@"Created by UMD Social Scheduler"];
+                
+                // Present popup dialogue
+                EKEventEditViewController *vc = [[EKEventEditViewController alloc] init];
+                vc.event = event;
+                vc.eventStore = eventStore;
+                vc.editViewDelegate = self;
+                [self presentViewController:vc animated:YES completion:nil];
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error){
+                NSLog(@"Oops, something went wrong: %@", [error localizedDescription]);
+            }];
+            
+            [operation start];
+        
+        }else{
+            NSLog(@"Calendar access not granted");
+        }
+    }];
+}
+
 
 - (void)didReceiveMemoryWarning
 {

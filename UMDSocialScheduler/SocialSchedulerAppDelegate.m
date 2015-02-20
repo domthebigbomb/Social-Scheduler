@@ -9,17 +9,29 @@
 #import "SocialSchedulerAppDelegate.h"
 #import "TestFlight.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import <Parse/Parse.h>
 #import "AFNetworking.h"
 @implementation SocialSchedulerAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [FBLoginView class];
+    [FBProfilePictureView class];
     [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
     AFNetworkReachabilityManager *reachability = [AFNetworkReachabilityManager sharedManager];
     [reachability setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
         NSLog(@"Reachability: %@", AFStringFromNetworkReachabilityStatus(status));
     }];
     [reachability startMonitoring];
+    
+    [Parse enableLocalDatastore];
+    
+    // Initialize Parse.
+    [Parse setApplicationId:@"MP9cQ2lLZCqRSLDNxOWlkQWeZayNYgxApcMA7Psj"
+                  clientKey:@"wA2oOo3efjBLxPqk1XLcf1UGKNEnxTOV4jJB0re7"];
+    
+    // [Optional] Track statistics around application opens.
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     return YES;
 }
 

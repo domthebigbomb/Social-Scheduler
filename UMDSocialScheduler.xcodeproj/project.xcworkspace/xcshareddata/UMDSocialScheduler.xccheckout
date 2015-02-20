@@ -14,7 +14,7 @@
 		<string>https://github.com/domthebigbomb/Social-Scheduler.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>UMDSocialScheduler.xcodeproj/project.xcworkspace</string>
+	<string>UMDSocialScheduler.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>F86A7F5DC1CCAB72EF83B6FC5E8E1B15D983DE63</key>

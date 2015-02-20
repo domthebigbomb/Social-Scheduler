@@ -11,7 +11,9 @@
 #import <MapKit/MapKit.h>
 #import "Reachability.h"
 #import <CoreLocation/CoreLocation.h>
-@interface CourseDetailViewController : UIViewController<MKMapViewDelegate, CLLocationManagerDelegate>
+#import <EventKit/EventKit.h>
+#import <EventKitUI/EventKitUI.h>
+@interface CourseDetailViewController : UIViewController<MKMapViewDelegate, CLLocationManagerDelegate, EKEventEditViewDelegate>
 
 @property (strong, nonatomic) NSString *course;
 @property (strong, nonatomic) NSString *section;

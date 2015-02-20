@@ -83,6 +83,7 @@
     semesters = [[NSMutableArray alloc] init];
     semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
     [_fbLoginView setReadPermissions:@[@"public_profile",@"user_friends",@"email",@"user_likes"]];
+    
     [_fbLoginView setDefaultAudience:FBSessionDefaultAudienceFriends];
     [_fbLoginView setPublishPermissions:@[@"publish_actions"]];
     [_fbLoginView setDelegate:self];

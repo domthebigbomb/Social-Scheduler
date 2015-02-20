@@ -10,6 +10,7 @@
 #import "LoginViewController.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import "AFNetworking.h"
+#import <Parse/Parse.h>
 
 @interface SocialSchedulerFirstViewController ()
 - (IBAction)postSchedule:(UIButton *)sender;
@@ -50,7 +51,7 @@
     uploadScheduleURLString = @"render_schedule";
     updateCoursesURLString = @"add_schedule";
     postToFbURLString = @"post_schedule";
-    
+    _visibleWebView.scalesPageToFit = YES;
     //[[UIColor alloc] initWithRed:204.0f green:51.0f blue:51.0f alpha:0.5f]
     UIColor *tintColor =
     [[UIColor alloc] initWithHue:0.0 saturation:.75 brightness:.80 alpha:1.0];
@@ -207,6 +208,11 @@
 -(void)webViewDidFinishLoad:(UIWebView *)webView{
     [_visibleWebView stringByEvaluatingJavaScriptFromString:zoomScript];
     _visibleWebView.delegate = nil;
+    NSUInteger contentHeight = [[_visibleWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"document.body.scrollHeight;"]] intValue];
+    NSUInteger contentWidth = [[_visibleWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"document.body.scrollWidth;"]] intValue];
+    NSLog(@"Webview height:%lf width:%lf", contentHeight, contentWidth);
+    UIImage *low = [self renderLowResSchedule];
+    UIImage *retina = [self getSchedule];
 }
 
 - (void)didReceiveMemoryWarning
@@ -215,21 +221,49 @@
     // Dispose of any resources that can be recreated.
 }
 
--(IBAction)showSchedule:(UIStoryboardSegue *)segue{
+-(void)cancelLogin:(UIStoryboardSegue *)segue{
     
 }
 
--(IBAction)cancelLogin:(UIStoryboardSegue *)segue{
+-(void)showSchedule:(UIStoryboardSegue *)segue{
     
 }
 
--(UIImage *)getSchedule{
+-(UIImage *)renderLowResSchedule{
     UIGraphicsBeginImageContextWithOptions([_visibleWebView bounds].size,NO,0);
     [[_visibleWebView layer] renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *capturedScreen = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    //capturedScreen = [self cropImage:capturedScreen];
     return capturedScreen;
+}
+
+-(UIImage *)getSchedule{
+    
+    UIGraphicsBeginImageContext(CGSizeMake(_visibleWebView.layer.frame.size.width, _visibleWebView.layer.frame.size.height));
+    [_visibleWebView.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    NSData *imageData = UIImagePNGRepresentation(image);
+    PFFile *imageFile = [PFFile fileWithName:@"schedule.png" data:imageData];
+    [imageFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (!error) {
+            if (succeeded) {
+                PFObject *schedule = [[PFObject alloc] initWithClassName:@"Schedule"];
+                schedule[@"image"] = imageFile;
+                [schedule saveInBackground];
+            }
+        } else {
+            // Handle error
+            NSLog(@"Error");
+        }        
+    }];
+//    UIGraphicsBeginImageContext(CGSizeMake(70,100));
+//    [image drawInRect:CGRectMake(0, 0, 70,100)];
+//    image = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+    
+    return image;
 }
 
 - (IBAction)takeSnapshot:(UIButton *)sender {
@@ -241,6 +275,7 @@
     [_shareToFbButton setEnabled:NO];
     [_sharingActivity startAnimating];
     if([[FBSession activeSession] accessTokenData]){
+        NSLog(@"Permissions: %@",[[FBSession activeSession] permissions]);
         NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
         NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
         NSURLRequest *fbLoginRequest = [NSURLRequest requestWithURL:fbLoginURL];

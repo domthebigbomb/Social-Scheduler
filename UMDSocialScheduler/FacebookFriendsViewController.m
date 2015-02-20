@@ -325,7 +325,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellIdentifier = @"ContactCell";
     
-    
     if ([contacts count] == 0){
         cellIdentifier = @"NoFriends";
         UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];

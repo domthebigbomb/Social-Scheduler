@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="14A379a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="It7-Ve-8SO">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14D72i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="It7-Ve-8SO">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -23,7 +24,7 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <dataDetectorType key="dataDetectorTypes"/>
                             </webView>
-                            <navigationBar contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ibi-Qa-qT2">
+                            <navigationBar contentMode="scaleToFill" ambiguous="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ibi-Qa-qT2">
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                                 <color key="barTintColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
@@ -282,7 +283,7 @@
                                                     <rect key="frame" x="10" y="12" width="300" height="65"/>
                                                     <color key="backgroundColor" red="0.61807234116022092" green="0.61807234116022092" blue="0.61807234116022092" alpha="0.75" colorSpace="calibratedRGB"/>
                                                 </view>
-                                                <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g24-l8-4Yj" userLabel="Main View">
+                                                <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g24-l8-4Yj" userLabel="Main View">
                                                     <rect key="frame" x="9" y="10" width="302" height="65"/>
                                                     <subviews>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Dominic Ong" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.75" translatesAutoresizingMaskIntoConstraints="NO" id="JeP-kR-yu3">
@@ -290,7 +291,7 @@
                                                             <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="19"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="No Mutual Classes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="vRW-ix-bb2">
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="No Mutual Classes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="vRW-ix-bb2">
                                                             <rect key="frame" x="65" y="37" width="216" height="20"/>
                                                             <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="14"/>
                                                             <color key="textColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -316,11 +317,11 @@
                                                     </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" secondItem="vRW-ix-bb2" secondAttribute="width" id="0r9-Z4-a37"/>
                                                         <constraint firstItem="JeP-kR-yu3" firstAttribute="leading" secondItem="OjY-65-K41" secondAttribute="trailing" constant="8" id="3bq-Db-5Bk"/>
+                                                        <constraint firstItem="vRW-ix-bb2" firstAttribute="leading" secondItem="g24-l8-4Yj" secondAttribute="leading" constant="65" id="Ulc-lP-Czd"/>
                                                         <constraint firstItem="JeP-kR-yu3" firstAttribute="width" secondItem="g24-l8-4Yj" secondAttribute="width" id="YJp-G6-zJO"/>
+                                                        <constraint firstAttribute="trailing" secondItem="vRW-ix-bb2" secondAttribute="trailing" constant="21" id="ek9-Nr-cVN"/>
                                                         <constraint firstAttribute="trailing" secondItem="noj-eJ-iyX" secondAttribute="trailing" id="f2C-34-ebi"/>
-                                                        <constraint firstItem="vRW-ix-bb2" firstAttribute="leading" secondItem="OjY-65-K41" secondAttribute="trailing" constant="8" id="m1H-2m-YYg"/>
                                                         <constraint firstItem="OjY-65-K41" firstAttribute="leading" secondItem="g24-l8-4Yj" secondAttribute="leading" constant="7" id="oDq-jI-Kjd"/>
                                                     </constraints>
                                                 </view>
@@ -700,7 +701,7 @@
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="oiO-Ze-pxI">
                                 <rect key="frame" x="150" y="250" width="20" height="20"/>
                             </activityIndicatorView>
-                            <navigationBar contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TFL-Ee-DjA">
+                            <navigationBar contentMode="scaleToFill" ambiguous="YES" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TFL-Ee-DjA">
                                 <rect key="frame" x="0.0" y="20" width="320" height="44"/>
                                 <color key="barTintColor" red="0.80000000000000004" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <textAttributes key="titleTextAttributes">
@@ -713,6 +714,12 @@
                                             <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <connections>
                                                 <action selector="logout:" destination="QUy-BD-bpt" id="dPb-0Q-XXF"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" enabled="NO" image="Calendar" id="sEX-CK-qP6">
+                                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <connections>
+                                                <action selector="addToCalendar:" destination="QUy-BD-bpt" id="Vfx-0M-HiW"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
@@ -772,6 +779,12 @@
                                             <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                             <connections>
                                                 <segue destination="DJB-Bg-Zag" kind="unwind" unwindAction="dismissDetails:" id="KHk-vQ-JcJ"/>
+                                            </connections>
+                                        </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" image="Calendar" id="gI0-Mj-2PF">
+                                            <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <connections>
+                                                <action selector="addToCalendar:" destination="JUW-PI-EEF" id="dUS-mT-tsh"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
@@ -941,6 +954,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="nDg-oO-QKF" secondAttribute="trailing" constant="-13" id="c6g-rd-Yeh"/>
                             <constraint firstAttribute="width" secondItem="sjw-gi-1f2" secondAttribute="width" id="gTj-hL-VRs"/>
                             <constraint firstItem="xFr-y2-DUa" firstAttribute="leading" secondItem="rWg-ml-UIH" secondAttribute="leadingMargin" constant="4" id="i6W-QP-hpO"/>
+                            <constraint firstItem="xFr-y2-DUa" firstAttribute="top" secondItem="dFX-bF-peA" secondAttribute="bottom" constant="60" id="kJw-Fa-9ZM"/>
                             <constraint firstItem="ThK-Oh-okn" firstAttribute="top" secondItem="xFr-y2-DUa" secondAttribute="bottom" constant="13" id="xf7-hs-ltT"/>
                         </constraints>
                     </view>
@@ -1212,6 +1226,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Calendar" width="22" height="22"/>
         <image name="Classes" width="26" height="17"/>
         <image name="Profile" width="24" height="21"/>
         <image name="Schedule" width="23" height="25"/>
@@ -1225,7 +1240,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="vHY-dq-VgX"/>
         <segue reference="eSO-mE-iVZ"/>
+        <segue reference="vHY-dq-VgX"/>
     </inferredMetricsTieBreakers>
 </document>
