@@ -16,8 +16,8 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-AccessKeys.h
-AccessKeys.m
+*/AccessKeys.h
+*/AccessKeys.m
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
