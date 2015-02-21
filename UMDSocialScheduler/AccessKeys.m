@@ -10,4 +10,13 @@
 
 @implementation AccessKeys
 
+
++(NSString *)parseApplicationID{
+    return @"MP9cQ2lLZCqRSLDNxOWlkQWeZayNYgxApcMA7Psj";
+}
+
++(NSString *)parseClientKey{
+    return @"wA2oOo3efjBLxPqk1XLcf1UGKNEnxTOV4jJB0re7";
+}
+
 @end

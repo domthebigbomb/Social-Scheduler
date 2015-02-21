@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104514.444401"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "192"
+            endingLineNumber = "192"
             landmarkName = "-connection:didReceiveData:"
             landmarkType = "5">
          </BreakpointContent>
@@ -152,11 +152,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104514.444401"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
             landmarkName = "-viewDidAppear:"
             landmarkType = "5">
          </BreakpointContent>
@@ -264,11 +264,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104514.444401"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
             landmarkName = "-viewDidAppear:"
             landmarkType = "5">
          </BreakpointContent>
@@ -328,11 +328,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "295"
-            endingLineNumber = "295"
+            startingLineNumber = "296"
+            endingLineNumber = "296"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -344,11 +344,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
+            startingLineNumber = "282"
+            endingLineNumber = "282"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -360,11 +360,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "287"
-            endingLineNumber = "287"
+            startingLineNumber = "288"
+            endingLineNumber = "288"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -376,11 +376,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "301"
-            endingLineNumber = "301"
+            startingLineNumber = "302"
+            endingLineNumber = "302"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -392,7 +392,39 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "320"
+            endingLineNumber = "320"
+            landmarkName = "-postSchedule:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
+            timestampString = "446143327.344722"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "322"
+            endingLineNumber = "322"
+            landmarkName = "-postSchedule:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "319"
@@ -408,11 +440,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "321"
-            endingLineNumber = "321"
+            startingLineNumber = "287"
+            endingLineNumber = "287"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -424,43 +456,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "318"
-            endingLineNumber = "318"
-            landmarkName = "-postSchedule:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "286"
             endingLineNumber = "286"
-            landmarkName = "-postSchedule:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "285"
-            endingLineNumber = "285"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -728,11 +728,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104514.444401"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "156"
-            endingLineNumber = "156"
+            startingLineNumber = "158"
+            endingLineNumber = "158"
             landmarkName = "-viewDidAppear:"
             landmarkType = "5">
          </BreakpointContent>
@@ -744,11 +744,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104514.444401"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "210"
-            endingLineNumber = "210"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "-webViewDidFinishLoad:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1192,11 +1192,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "362"
-            endingLineNumber = "362"
+            startingLineNumber = "363"
+            endingLineNumber = "363"
             landmarkName = "-animateShareLabel"
             landmarkType = "5">
             <Locations>
@@ -1238,7 +1238,23 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "338"
+            endingLineNumber = "338"
+            landmarkName = "-postSchedule:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "337"
@@ -1254,11 +1270,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "336"
-            endingLineNumber = "336"
+            startingLineNumber = "326"
+            endingLineNumber = "326"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1270,11 +1286,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "325"
-            endingLineNumber = "325"
+            startingLineNumber = "344"
+            endingLineNumber = "344"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1286,27 +1302,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "343"
-            endingLineNumber = "343"
-            landmarkName = "-postSchedule:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104691.039752"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "302"
-            endingLineNumber = "302"
+            startingLineNumber = "303"
+            endingLineNumber = "303"
             landmarkName = "-postSchedule:"
             landmarkType = "5">
          </BreakpointContent>
@@ -1622,7 +1622,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104514.444401"
+            timestampString = "446142307.596017"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "43"
@@ -2414,18 +2414,28 @@
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            scope = "0"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104514.444401"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "215"
-            endingLineNumber = "215"
-            landmarkName = "-webViewDidFinishLoad:"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "-viewDidLoad"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2436,12 +2446,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104766.7556"
+            timestampString = "446143327.344722"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "252"
-            endingLineNumber = "252"
-            landmarkName = "-getSchedule"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "-viewDidLoad"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2452,28 +2462,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104838.446378"
+            timestampString = "446143403.734538"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
-            landmarkName = "-getSchedule"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "UMDSocialScheduler/SocialSchedulerFirstViewController.m"
-            timestampString = "446104855.360111"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "251"
-            endingLineNumber = "251"
-            landmarkName = "-getSchedule"
+            startingLineNumber = "246"
+            endingLineNumber = "246"
+            landmarkName = "-saveScheduleToServer"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

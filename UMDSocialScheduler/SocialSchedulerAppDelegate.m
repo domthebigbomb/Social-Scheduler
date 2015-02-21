@@ -10,6 +10,7 @@
 #import "TestFlight.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import <Parse/Parse.h>
+#import "AccessKeys.h"
 #import "AFNetworking.h"
 @implementation SocialSchedulerAppDelegate
 
@@ -27,8 +28,8 @@
     [Parse enableLocalDatastore];
     
     // Initialize Parse.
-    [Parse setApplicationId:@"MP9cQ2lLZCqRSLDNxOWlkQWeZayNYgxApcMA7Psj"
-                  clientKey:@"wA2oOo3efjBLxPqk1XLcf1UGKNEnxTOV4jJB0re7"];
+    [Parse setApplicationId:[AccessKeys parseApplicationID]
+                  clientKey:[AccessKeys parseClientKey]];
     
     // [Optional] Track statistics around application opens.
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];

@@ -10,6 +10,7 @@
 #import "LoginViewController.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import "AFNetworking.h"
+#import "UIImage+Trim.h"
 #import <Parse/Parse.h>
 
 @interface SocialSchedulerFirstViewController ()
@@ -26,7 +27,6 @@
 
 @implementation SocialSchedulerFirstViewController{
     NSString *zoomScript;
-    UIImage *scheduleImage;
     NSString *socialSchedulerURLString;
     NSString *uploadScheduleURLString;
     NSString *updateCoursesURLString;
@@ -60,6 +60,18 @@
     _newSchedule = NO;
     
     reachability = [AFNetworkReachabilityManager sharedManager];
+    _newSchedule = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshSchedule"];
+    _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
+    
+    NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
+    [header appendString:@"<head><style type='text/css'>html, body {	height: 100%;	padding: 0;	margin: 0;} "];
+    [header appendString:@"#table {display: table; 	height: 100%;	width: 100%;} "];
+    [header appendString:@"#cell {	display: table-cell; 	vertical-align: middle;}</style></head>"];
+    NSString *body = @"<div id='table'><div id='cell'>";
+    NSString *footer = @"</div></div></body></html>";
+    _htmlString = [NSString stringWithFormat:@"%@ %@ %@ %@",header,body,_htmlString,footer];
+    [_visibleWebView loadHTMLString:_htmlString baseURL:nil];
+    _visibleWebView.delegate = self;
 
 }
 
@@ -67,10 +79,8 @@
 -(void)viewDidAppear:(BOOL)animated{
     NSLog(@"View Did Appear");
 
-    _visibleWebView.delegate = self;
     [_sharingActivity startAnimating];
-    _newSchedule = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshSchedule"];
-    _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
+    
     coursesString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     if(_htmlString != nil){
@@ -78,14 +88,7 @@
     }
     if(_newSchedule == YES || [_htmlString length]>0){
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshSchedule"];
-        NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
-        [header appendString:@"<head><style type='text/css'>html, body {	height: 100%;	padding: 0;	margin: 0;} "];
-        [header appendString:@"#table {display: table; 	height: 100%;	width: 100%;} "];
-        [header appendString:@"#cell {	display: table-cell; 	vertical-align: middle;}</style></head>"];
-        NSString *body = @"<div id='table'><div id='cell'>";
-        NSString *footer = @"</div></div></body></html>";
-        _htmlString = [NSString stringWithFormat:@"%@ %@ %@ %@",header,body,_htmlString,footer];
-        [_visibleWebView loadHTMLString:_htmlString baseURL:nil];
+        
         // Render Schedule in backend
         if(_newSchedule == YES){
             NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
@@ -206,13 +209,15 @@
 }
 
 -(void)webViewDidFinishLoad:(UIWebView *)webView{
+    NSLog(@"Webview finished loading");
     [_visibleWebView stringByEvaluatingJavaScriptFromString:zoomScript];
-    _visibleWebView.delegate = nil;
-    NSUInteger contentHeight = [[_visibleWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"document.body.scrollHeight;"]] intValue];
-    NSUInteger contentWidth = [[_visibleWebView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"document.body.scrollWidth;"]] intValue];
-    NSLog(@"Webview height:%lf width:%lf", contentHeight, contentWidth);
-    UIImage *low = [self renderLowResSchedule];
-    UIImage *retina = [self getSchedule];
+    //_visibleWebView.delegate = nil;
+    [self performSelector:@selector(saveScheduleToServer) withObject:nil afterDelay:0.25f];
+
+}
+
+-(void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
+    NSLog(@"Webview failed to load with error: %@", error.localizedDescription);
 }
 
 - (void)didReceiveMemoryWarning
@@ -229,41 +234,38 @@
     
 }
 
--(UIImage *)renderLowResSchedule{
+-(UIImage *)getSchedule{
     UIGraphicsBeginImageContextWithOptions([_visibleWebView bounds].size,NO,0);
     [[_visibleWebView layer] renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *capturedScreen = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return capturedScreen;
-}
-
--(UIImage *)getSchedule{
-    
-    UIGraphicsBeginImageContext(CGSizeMake(_visibleWebView.layer.frame.size.width, _visibleWebView.layer.frame.size.height));
-    [_visibleWebView.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    
-    NSData *imageData = UIImagePNGRepresentation(image);
-    PFFile *imageFile = [PFFile fileWithName:@"schedule.png" data:imageData];
-    [imageFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        if (!error) {
-            if (succeeded) {
-                PFObject *schedule = [[PFObject alloc] initWithClassName:@"Schedule"];
-                schedule[@"image"] = imageFile;
-                [schedule saveInBackground];
-            }
-        } else {
-            // Handle error
-            NSLog(@"Error");
-        }        
-    }];
-//    UIGraphicsBeginImageContext(CGSizeMake(70,100));
-//    [image drawInRect:CGRectMake(0, 0, 70,100)];
-//    image = UIGraphicsGetImageFromCurrentImageContext();
-//    UIGraphicsEndImageContext();
-    
+    image = [image imageByTrimmingWhitePixelsWithOpacity:100];
     return image;
+}
+
+-(void)saveScheduleToServer{
+    if(_newSchedule){
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshSchedule"];
+        UIImage *scheduleImage = [self getSchedule];
+        NSData *imageData = UIImageJPEGRepresentation(scheduleImage, 0.5f);
+        PFFile *imageFile = [PFFile fileWithName:@"schedule.png" data:imageData];
+        [imageFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (!error) {
+                if (succeeded) {
+                    PFObject *schedule = [[PFObject alloc] initWithClassName:@"Schedule"];
+                    schedule[@"image"] = imageFile;
+                    schedule[@"html"] = _htmlString;
+                    NSArray *courses = [coursesString componentsSeparatedByString:@"|"];
+                    schedule[@"courses"] = courses;
+                    schedule[@"semester"] = termCode;
+                    [schedule saveInBackground];
+                }
+            } else {
+                // Handle error
+                NSLog(@"Error");
+            }
+        }];
+    }
 }
 
 - (IBAction)takeSnapshot:(UIButton *)sender {

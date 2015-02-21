@@ -6,8 +6,13 @@
 //  Copyright (c) 2015 DTech. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
-@interface UIImage_Trim : NSObject
+@interface UIImage (Trim)
+
+- (UIEdgeInsets)transparencyInsetsRequiringFullOpacity:(BOOL)fullyOpaque;
+- (UIImage *)imageByTrimmingTransparentPixels;
+- (UIImage *)imageByTrimmingTransparentPixelsRequiringFullOpacity:(BOOL)fullyOpaque;
+- (UIImage *)imageByTrimmingWhitePixelsWithOpacity:(UInt8)tolerance;
 
 @end

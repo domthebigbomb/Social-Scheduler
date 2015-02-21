@@ -10,4 +10,7 @@
 
 @interface AccessKeys : NSObject
 
++(NSString *)parseApplicationID;
++(NSString *)parseClientKey;
+
 @end
