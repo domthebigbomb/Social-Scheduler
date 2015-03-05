@@ -10,8 +10,10 @@
 #import "ContactCell.h"
 #import "ContactScheduleCell.h"
 #import "ScheduleTheaterViewController.h"
+#import "ScheduleManager.h"
 #import  <QuartzCore/QuartzCore.h>
 #import "AFNetworking.h"
+#import <Parse/Parse.h>
 
 @interface FacebookFriendsViewController ()
 - (IBAction)showSchedule:(UIButton *)sender;
@@ -96,7 +98,7 @@
     }
     
     //_loginView = [[FBLoginView alloc] initWithFrame:loginFrame];
-    [_loginView setReadPermissions:@[@"public_profile",@"email",@"user_friends",@"user_likes"]];
+    [_loginView setReadPermissions:@[@"public_profile",@"email",@"user_friends"]];
     [_loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
     [_loginView setPublishPermissions:@[@"publish_actions" ]];
     [_loginView setHidden: YES];
@@ -149,6 +151,8 @@
     _numFinished = 0;
     NSString *courseString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
     termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+    
+    // Safety Checks
     if(courseString == nil || termCode == nil){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Session Expired" message:@"Please login to refresh class data" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         [_alertMsg show];
@@ -158,6 +162,8 @@
     }
     userSchedule = [[NSMutableDictionary alloc] init];
     NSUInteger index;
+    
+    // Parses schedule (use unknown)
     while(![courseString isEqualToString:@""]){
         index =[courseString rangeOfString:@"|"].location;
         NSString *class = [courseString substringToIndex:index];
@@ -170,6 +176,7 @@
     
     [_loginView setHidden:YES];
     
+    // Ensure logged into facebook
     if([[FBSession activeSession] accessTokenData] == nil){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Facebook Error" message:@"Please login to facebook to access this feature" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil];
         [_alertMsg show];
@@ -178,11 +185,37 @@
         [_friendRefresher endRefreshing];
     }
     
+    // Check internet connection
     if(![reachability isReachable]){
         _alertMsg = [[UIAlertView alloc] initWithTitle:@"Connection Error" message:@"You are not connected to the internet! Please check your settings" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles: nil];
         [_alertMsg show];
         [_friendRefresher endRefreshing];
     }else{
+        PFObject *currentUser = [[ScheduleManager sharedInstance] currentUser];
+        if(currentUser){
+            BOOL isSharing = [currentUser[@"sharing"] boolValue];
+            if(!isSharing){
+                [_sharingEnabledLabel setText:@"No"];
+                [_sharingSwitch setOn:NO];
+            }
+        }
+        // Query parse against existing friends list to retrieve relevant schedules
+        [[ScheduleManager sharedInstance] umdFriendListForTerm:termCode completion:^(NSError *error, NSArray *umdSchedules) {
+            if(!error){
+                NSLog(@"Found %lu schedules", [umdSchedules count]);
+                [_activityIndicator stopAnimating];
+                [_closeScheduleButton setHidden:NO];
+                [_greyedBackgroundView setHidden:YES];
+                [_progressBar setHidden:YES];
+
+                isRefreshing = NO;
+                [_friendRefresher endRefreshing];
+            }else{
+                NSLog(@"Error get friend list from scheduler: %@", [error localizedDescription]);
+            }
+        }];
+        // Check facebook again??
+        
         if([[FBSession activeSession] accessTokenData] != nil){
             NSString *getContactString = [NSString stringWithFormat:@"%@%@",socialSchedulerURLString,getListOfFriendsURLString];
             NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
@@ -201,11 +234,6 @@
                 NSDictionary *loginData = [[NSDictionary alloc] initWithDictionary:[JSON valueForKey:@"data"]];
                 BOOL shareEnabled = [[loginData valueForKey:@"share"] boolValue];
                 NSLog(@"Sharing Enabled: %d",shareEnabled);
-                
-                if(!shareEnabled){
-                    [_sharingEnabledLabel setText:@"No"];
-                    [_sharingSwitch setOn:NO];
-                }
                 
                 NSURLRequest *request = [NSURLRequest requestWithURL:getContactURL];
                 [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
@@ -314,12 +342,6 @@
     NSArray *letters = [[organizedContacts allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     NSString *letter = [letters objectAtIndex:section];
     return [[organizedContacts objectForKey:letter] count];
-    /* old logic
-    if ([contacts count] == 0){
-            return 1;
-    }
-    return [contacts count];
-     */
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -492,7 +514,14 @@
 -(void)loginViewFetchedUserInfo:(FBLoginView *)fbloginView user:(id<FBGraphUser>)user{
     if(!isRefreshing){
         [_loginView setHidden:YES];
-        [self refreshFriends];
+        [[ScheduleManager sharedInstance] setupManagerWithFacebookUserID:[user objectID] completion:^(NSError *error, NSArray *friendList) {
+            if(!error){
+                contacts = [friendList mutableCopy];
+                [self refreshFriends];
+            }else{
+                NSLog(@"Error setting up manager in facebook friend controller");
+            }
+         }];
     }
 }
 

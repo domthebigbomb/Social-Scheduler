@@ -94,6 +94,7 @@
 		0BBF516C1A96F2B400450882 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF51661A96F20D00450882 /* StoreKit.framework */; };
 		0BBF516F1A97937700450882 /* UIImage+Trim.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BBF516E1A97937700450882 /* UIImage+Trim.m */; };
 		0BBF51741A9927FF00450882 /* AccessKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BBF51731A9927FF00450882 /* AccessKeys.m */; };
+		0BBF51771A993FCA00450882 /* ScheduleManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BBF51761A993FCA00450882 /* ScheduleManager.m */; };
 		0BC9322219465E0A00237EF2 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BC9322119465E0A00237EF2 /* Settings.bundle */; };
 		0BC94462198B093500BD3140 /* ScheduleTheaterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BC94461198B093500BD3140 /* ScheduleTheaterViewController.m */; };
 		0BC9A2341948D0F20048562F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BC9A2331948D0F20048562F /* MapKit.framework */; };
@@ -246,6 +247,8 @@
 		0BBF516E1A97937700450882 /* UIImage+Trim.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+Trim.m"; sourceTree = "<group>"; };
 		0BBF51721A9927FF00450882 /* AccessKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessKeys.h; sourceTree = "<group>"; };
 		0BBF51731A9927FF00450882 /* AccessKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AccessKeys.m; sourceTree = "<group>"; };
+		0BBF51751A993FCA00450882 /* ScheduleManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleManager.h; sourceTree = "<group>"; };
+		0BBF51761A993FCA00450882 /* ScheduleManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleManager.m; sourceTree = "<group>"; };
 		0BC9322119465E0A00237EF2 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		0BC94460198B093500BD3140 /* ScheduleTheaterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleTheaterViewController.h; sourceTree = "<group>"; };
 		0BC94461198B093500BD3140 /* ScheduleTheaterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleTheaterViewController.m; sourceTree = "<group>"; };
@@ -461,6 +464,8 @@
 				0B8E0BF418A3704500863181 /* Views */,
 				0B8E0BB718A2099100863181 /* SocialSchedulerAppDelegate.h */,
 				0B8E0BB818A2099100863181 /* SocialSchedulerAppDelegate.m */,
+				0BBF51751A993FCA00450882 /* ScheduleManager.h */,
+				0BBF51761A993FCA00450882 /* ScheduleManager.m */,
 				0BBF51721A9927FF00450882 /* AccessKeys.h */,
 				0BBF51731A9927FF00450882 /* AccessKeys.m */,
 				0B8E0BBA18A2099100863181 /* Main.storyboard */,
@@ -749,6 +754,7 @@
 				0B55C8F719BD60C7002FEE0C /* AFURLSessionManager.m in Sources */,
 				0B55C8F419BD60C7002FEE0C /* AFURLConnectionOperation.m in Sources */,
 				0BF6120F19B7F868005A8DBB /* ClassesViewController.m in Sources */,
+				0BBF51771A993FCA00450882 /* ScheduleManager.m in Sources */,
 				0B55C8F119BD60C7002FEE0C /* AFHTTPSessionManager.m in Sources */,
 				0BBF516F1A97937700450882 /* UIImage+Trim.m in Sources */,
 				0B55C8F219BD60C7002FEE0C /* AFNetworkReachabilityManager.m in Sources */,

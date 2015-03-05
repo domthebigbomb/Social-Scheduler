@@ -15,6 +15,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ScheduleTheaterViewController.h"
 #import "AFNetworking.h"
+#import "ScheduleManager.h"
 
 @interface SocialSchedulerSecondViewController ()
 @property (strong,nonatomic) NSMutableDictionary *courses;
@@ -247,11 +248,15 @@
             isAnimating = YES;
             [_cellMsgLabel setText:@"Log in to Facebook to view friends"];
             [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
-        }else if(!loggedIntoScheduler){
+        }
+        /*
+        else if(!loggedIntoScheduler){
             isAnimating = YES;
             [_cellMsgLabel setText:@"Error connecting Facebook to Scheduler"];
             [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
-        }else{
+        }
+         */
+         else{
             NSInteger row = indexPath.row;
             selectedIndex = row;
             //NSString *course = [_courseKeys objectAtIndex:row];
@@ -259,17 +264,12 @@
             if(!showContact){
                 isUpdating = YES;
                 NSString *course = [_courseKeys objectAtIndex:row];
-
-                NSString *requestString = [NSString stringWithFormat:@"%@%@term=%@&course=%@",socialSchedulerURLString,classesWithContactURLString,termCode,course];
-                NSURL *requestURL = [NSURL URLWithString:requestString];
-                NSURLRequest *request = [NSURLRequest requestWithURL:requestURL];
-                [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-                    NSError *error;
-                    if(data != nil){
-                        NSMutableDictionary *JSON = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error: &error];
-                        _contacts = [[NSMutableArray alloc] initWithArray:[JSON objectForKey:@"data"]];
+                [[ScheduleManager sharedInstance] friendsInCourse:course term:termCode completion:^(NSError *error, NSArray *friendSchedules) {
+                    if(!error){
+                        NSLog(@"Found %@", [friendSchedules firstObject][@"facebookID"]);
                         NSMutableDictionary *properties = [_courses objectForKey:course];
-                        [properties setObject:[[NSArray alloc] initWithArray:[JSON objectForKey:@"data"]]forKey:@"contacts"];
+                        [properties setObject:friendSchedules forKey:@"contacts"];
+                        
                         if([_contacts count] > 0){
                             NSMutableArray *indexPaths = [[NSMutableArray alloc] init];
                             for(int i = 0; i< [_contacts count]; i++){
@@ -280,27 +280,10 @@
                             dispatch_async(dispatch_get_main_queue(), ^{
                                 [_courseTableView beginUpdates];
                                 showContact = YES;
-                                /*
-                                 [_courseTableView insertRowsAtIndexPaths:@[[insertIndexPaths firstObject]] withRowAnimation:UITableViewRowAnimationMiddle];
-                                 NSMutableArray *latterIndexs = [[NSMutableArray alloc] init];
-                                 for(NSIndexPath *path in insertIndexPaths){
-                                 if(![path isEqual:[insertIndexPaths firstObject]]){
-                                 [latterIndexs addObject:path];
-                                 }
-                                 }
-                                 if([latterIndexs count] != 0){
-                                 [_courseTableView insertRowsAtIndexPaths:latterIndexs withRowAnimation: UITableViewRowAnimationTop];
-                                 }
-                                 */
                                 [_courseTableView insertRowsAtIndexPaths:insertIndexPaths withRowAnimation:UITableViewRowAnimationLeft];
                                 [_courseTableView endUpdates];
                                 isUpdating = NO;
                             });
-                        }else{
-                            isUpdating = NO;
-                            
-                            [_cellMsgLabel setText:[NSString stringWithFormat:@"No friends in %@ 😥",course]];
-                            [self performSelectorOnMainThread:@selector(animateCellMsg) withObject:nil waitUntilDone:NO];
                         }
 
                     }
@@ -365,7 +348,7 @@
     NSInteger numContacts = [_contacts count];
     if(indexPath.row == ([_contacts count]+[_courseKeys count])){
         FBLoginCell *fbCell = (FBLoginCell *)[tableView dequeueReusableCellWithIdentifier:@"Facebook"];
-        [fbCell.loginView setReadPermissions:@[@"public_profile",@"user_friends",@"email",@"user_likes"]];
+        [fbCell.loginView setReadPermissions:@[@"public_profile",@"user_friends",@"email"]];
         [fbCell.loginView setDefaultAudience:FBSessionDefaultAudienceFriends];
         [fbCell.loginView setPublishPermissions:@[@"publish_actions"]];
         [fbCell.loginView setDelegate:self];
@@ -455,10 +438,16 @@
 #pragma mark FBLoginViewDelegate methods
 // Facebook login related functions
 -(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
+    NSLog(@"User id: %@", [user objectID]);
+    [[ScheduleManager sharedInstance] setupManagerWithFacebookUserID:[user objectID] completion:nil];
 }
 
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
     NSLog(@"Logged in");
+    loggedIntoFB = YES;
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshClasses"];
+    [_courseTableView reloadData];
+    /*
     NSString *fbLoginString = [NSString stringWithFormat:@"%@%@%@",socialSchedulerURLString,fbLoginURLString,[[FBSession activeSession] accessTokenData]];
     //[_activityIndicator startAnimating];
     NSURL *fbLoginURL = [NSURL URLWithString:fbLoginString];
@@ -473,8 +462,8 @@
             [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshClasses"];
         }
         [_courseTableView reloadData];
-        //[_activityIndicator stopAnimating];
     }];
+     */
 }
 
 -(void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView{

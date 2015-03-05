@@ -9,6 +9,7 @@
 #import "LoginViewController.h"
 #import "SocialSchedulerFirstViewController.h"
 #import "AFNetworking.h"
+#import "ScheduleManager.h"
 
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *superViewCenterConstraint;
@@ -82,7 +83,7 @@
     
     semesters = [[NSMutableArray alloc] init];
     semesters = @[@"Fall 2013",@"Winter 2014",@"Spring 2014",@"Summer I 2014",@"Summer II 2014",@"Fall 2014"];
-    [_fbLoginView setReadPermissions:@[@"public_profile",@"user_friends",@"email",@"user_likes"]];
+    [_fbLoginView setReadPermissions:@[@"public_profile",@"user_friends",@"email"]];
     
     [_fbLoginView setDefaultAudience:FBSessionDefaultAudienceFriends];
     [_fbLoginView setPublishPermissions:@[@"publish_actions"]];
@@ -292,7 +293,17 @@
             htmlString = [htmlString substringFromIndex:3];
             NSLog(@"Trimmed first half");
             htmlString = [htmlString substringToIndex:[htmlString rangeOfString:@"</center>"].location];
+            NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
+            [header appendString:@"<head><style type='text/css'>html, body {	height: 100%;	padding: 0;	margin: 0;} "];
+            [header appendString:@"#table {display: table; 	height: 100%;	width: 100%;} "];
+            [header appendString:@"#cell {	display: table-cell; 	vertical-align: middle;}</style></head>"];
+            NSString *body = @"<div id='table'><div id='cell'>";
+            NSString *footer = @"</div></div></body></html>";
+            htmlString = [NSString stringWithFormat:@"%@ %@ %@ %@",header,body,htmlString,footer];
             
+            htmlString = [htmlString stringByReplacingOccurrencesOfString:@"<img src=\"/graphics/common/pixels/trans.gif\" height=\"30\" width=\"50\">" withString:@""];
+            //htmlString = [htmlString stringByReplacingOccurrencesOfString:@"<img[^>]*>" withString:@"" options:NSCaseInsensitiveSearch | NSRegularExpressionSearch range:NSMakeRange(0, [htmlString length])];
+
             // Extract courses
             NSString *searchString = @"<input type=\"hidden\" name=\"schedstr\" value=\"";
             searchString = @"href=\"javascript:bookstorelist(\'";
@@ -384,16 +395,21 @@
 
 // Facebook login related functions
 -(void)loginViewFetchedUserInfo:(FBLoginView *)loginView user:(id<FBGraphUser>)user{
+    NSLog(@"Facebook fetched user info");
+    NSLog(@"User ID: %@", [user objectID]);
+    //[[ScheduleManager sharedInstance] setFacebookUserID:[user objectID]];
+    [[ScheduleManager sharedInstance] setupManagerWithFacebookUserID:[user objectID] completion:nil];
     _profilePictureView.profileID = [user objectID];
     [_profilePictureView setHidden: NO];
     [_statusLabel setText:[NSString stringWithFormat:@"%@",[user name]]];
 }
 
 - (void)loginViewShowingLoggedInUser:(FBLoginView *)loginView {
-    
+    NSLog(@"Facebook showing logged in");
 }
 
 -(void)loginViewShowingLoggedOutUser:(FBLoginView *)loginView{
+    NSLog(@"Facebook showing logged out");
     [_profilePictureView setHidden:YES];
     _profilePictureView.profileID = nil;
     [_statusLabel setText:@""];
@@ -514,6 +530,7 @@
     SocialSchedulerFirstViewController *vc = (SocialSchedulerFirstViewController *)[((UITabBarController *)[segue destinationViewController]).viewControllers objectAtIndex:0];
     vc.loginData = @"Potato";
     if([[segue identifier] isEqualToString:@"Login"]){
+        
         NSString *webPageCode = htmlString;
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Schedule"];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"Courses"];

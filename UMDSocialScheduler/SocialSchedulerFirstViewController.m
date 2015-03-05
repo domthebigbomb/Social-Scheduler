@@ -12,7 +12,7 @@
 #import "AFNetworking.h"
 #import "UIImage+Trim.h"
 #import <Parse/Parse.h>
-
+#import "ScheduleManager.h"
 @interface SocialSchedulerFirstViewController ()
 - (IBAction)postSchedule:(UIButton *)sender;
 - (IBAction)logout:(UIButton *)sender;
@@ -60,16 +60,11 @@
     _newSchedule = NO;
     
     reachability = [AFNetworkReachabilityManager sharedManager];
+    coursesString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
+    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
     _newSchedule = [[NSUserDefaults standardUserDefaults] boolForKey:@"refreshSchedule"];
     _htmlString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Schedule"];
     
-    NSMutableString *header = [NSMutableString stringWithString:@"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"];
-    [header appendString:@"<head><style type='text/css'>html, body {	height: 100%;	padding: 0;	margin: 0;} "];
-    [header appendString:@"#table {display: table; 	height: 100%;	width: 100%;} "];
-    [header appendString:@"#cell {	display: table-cell; 	vertical-align: middle;}</style></head>"];
-    NSString *body = @"<div id='table'><div id='cell'>";
-    NSString *footer = @"</div></div></body></html>";
-    _htmlString = [NSString stringWithFormat:@"%@ %@ %@ %@",header,body,_htmlString,footer];
     [_visibleWebView loadHTMLString:_htmlString baseURL:nil];
     _visibleWebView.delegate = self;
 
@@ -81,8 +76,7 @@
 
     [_sharingActivity startAnimating];
     
-    coursesString = [[NSUserDefaults standardUserDefaults] stringForKey:@"Courses"];
-    termCode = [[NSUserDefaults standardUserDefaults] stringForKey:@"SemesterInfo"];
+    
     if(_htmlString != nil){
         scheduleHtml = [NSString stringWithString: _htmlString];
     }
@@ -243,28 +237,30 @@
     return image;
 }
 
+- (NSString *)documentsPathForFileName:(NSString *)name {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsPath = [paths objectAtIndex:0];
+    return [documentsPath stringByAppendingPathComponent:name];
+}
+
+-(NSData *)imageFromStorage:(NSString *)relativePath{
+    NSString *fullPath = [self documentsPathForFileName:relativePath];
+    NSData *imgData = [NSData dataWithContentsOfFile:fullPath];
+    return imgData;
+}
+
 -(void)saveScheduleToServer{
     if(_newSchedule){
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"refreshSchedule"];
         UIImage *scheduleImage = [self getSchedule];
+        NSString *relativePath = @"scheduleImage.jpg";
+        NSString *path = [self documentsPathForFileName:[NSString stringWithFormat:@"scheduleImage.jpg"]];
         NSData *imageData = UIImageJPEGRepresentation(scheduleImage, 0.5f);
-        PFFile *imageFile = [PFFile fileWithName:@"schedule.png" data:imageData];
-        [imageFile saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (!error) {
-                if (succeeded) {
-                    PFObject *schedule = [[PFObject alloc] initWithClassName:@"Schedule"];
-                    schedule[@"image"] = imageFile;
-                    schedule[@"html"] = _htmlString;
-                    NSArray *courses = [coursesString componentsSeparatedByString:@"|"];
-                    schedule[@"courses"] = courses;
-                    schedule[@"semester"] = termCode;
-                    [schedule saveInBackground];
-                }
-            } else {
-                // Handle error
-                NSLog(@"Error");
-            }
-        }];
+        [imageData writeToFile:path atomically:YES];
+        [[NSUserDefaults standardUserDefaults] setObject:relativePath forKey:@"schedulePath"];
+        NSMutableArray *courses = [[coursesString componentsSeparatedByString:@"/"] mutableCopy];
+        
+        [[ScheduleManager sharedInstance] trySaveScheduleForTerm:termCode Courses:courses HTML:_htmlString ImageData:imageData];
     }
 }
 
@@ -374,7 +370,7 @@
 
 - (IBAction)shareBarButton:(UIBarButtonItem *)sender {
     UIImage *snapshot = [self getSchedule];
-    NSString *text = @"Shared with UMD Social Scheduler for iOS. Download at www.umdsocialscheduler.com. ";
+    NSString *text = @"Shared with UMD Social Scheduler for iOS. Download here: https://itunes.apple.com/us/app/umd-social-scheduler/id819921928?ls=1&mt=8";
     NSArray* datatoshare = @[snapshot, text];  // ...or other kind of data.
     UIActivityViewController* activityViewController =
     [[UIActivityViewController alloc] initWithActivityItems:datatoshare applicationActivities:nil];
