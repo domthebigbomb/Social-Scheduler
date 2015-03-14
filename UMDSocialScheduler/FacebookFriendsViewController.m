@@ -202,7 +202,7 @@
         // Query parse against existing friends list to retrieve relevant schedules
         [[ScheduleManager sharedInstance] umdFriendListForTerm:termCode completion:^(NSError *error, NSArray *umdSchedules) {
             if(!error){
-                NSLog(@"Found %lu schedules", [umdSchedules count]);
+                NSLog(@"Found %ld schedules", [umdSchedules count]);
                 [_activityIndicator stopAnimating];
                 [_closeScheduleButton setHidden:NO];
                 [_greyedBackgroundView setHidden:YES];

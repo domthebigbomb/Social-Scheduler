@@ -83,7 +83,7 @@
                              NSLog(@"User doesn't exist, adding to parse!");
                              student = [[PFObject alloc] initWithClassName:@"Student"];
                              student[@"facebookID"] = [aUser objectForKey:@"id"];
-                             student[@"schedules"] = [[NSMutableArray alloc] init];
+                             student[@"schedules"] = [[NSMutableDictionary alloc] init];
                              student[@"sharing"] = @YES;
                          }
                          
@@ -112,8 +112,9 @@
                                              schedule[@"courseString"] = [courses componentsJoinedByString:@","];
                                              [schedule saveInBackground];
                                              
-                                             NSMutableArray *schedules = [student[@"schedules"] mutableCopy];
-                                             [schedules addObject:schedule];
+                                             NSMutableDictionary *schedules = [student[@"schedules"] mutableCopy];
+            
+                                             [schedules setObject:schedule forKey:term];
                                              student[@"schedules"] = schedules;
                                              [student saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                                                  if(succeeded){

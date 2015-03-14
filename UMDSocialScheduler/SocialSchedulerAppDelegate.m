@@ -12,6 +12,8 @@
 #import <Parse/Parse.h>
 #import "AccessKeys.h"
 #import "AFNetworking.h"
+//#import <Mixpanel/Mixpanel.h>
+
 @implementation SocialSchedulerAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -24,6 +26,9 @@
         NSLog(@"Reachability: %@", AFStringFromNetworkReachabilityStatus(status));
     }];
     [reachability startMonitoring];
+    
+    //Mixpanel *mixpanel = [Mixpanel sharedInstanceWithToken:@"2cdcaf794c87d3ee702d4804c91b2cb6"];
+    //[mixpanel track:@"Opened app"];
     
     [Parse enableLocalDatastore];
     
