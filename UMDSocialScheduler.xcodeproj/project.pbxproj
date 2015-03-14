@@ -870,21 +870,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler,
-					"$(PROJECT_DIR)",
-					"/Users/domthebigbomb/Documents/iOS_Dev/Frameworks/parse-library-1-2",
-					"$(PROJECT_DIR)/Frameworks",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
 				INFOPLIST_FILE = "UMDSocialScheduler/UMDSocialScheduler-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler/TestFlightSDK2.2.1,
-				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -908,21 +897,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler,
-					"$(PROJECT_DIR)",
-					"/Users/domthebigbomb/Documents/iOS_Dev/Frameworks/parse-library-1-2",
-					"$(PROJECT_DIR)/Frameworks",
-				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
 				INFOPLIST_FILE = "UMDSocialScheduler/UMDSocialScheduler-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler/TestFlightSDK2.2.1,
-				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
