@@ -7,7 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		05EABB5CE904681ED851DDFF /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05EAC83B9912BF4BD5862FE6 /* libPods.a */; };
+		0B25E9B01AB4C8190018646B /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B25E9A91AB4C8190018646B /* Bolts.framework */; };
+		0B25E9B11AB4C8190018646B /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B25E9AA1AB4C8190018646B /* FacebookSDK.framework */; };
+		0B25E9B21AB4C8190018646B /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0B25E9AB1AB4C8190018646B /* FBUserSettingsViewResources.bundle */; };
+		0B25E9B31AB4C8190018646B /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B25E9AC1AB4C8190018646B /* Parse.framework */; };
+		0B25E9B41AB4C8190018646B /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B25E9AD1AB4C8190018646B /* ParseCrashReporting.framework */; };
+		0B25E9B51AB4C8190018646B /* ParseFacebookUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B25E9AE1AB4C8190018646B /* ParseFacebookUtils.framework */; };
+		0B25E9B61AB4C8190018646B /* ParseUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B25E9AF1AB4C8190018646B /* ParseUI.framework */; };
 		0B3B89D5197DB4AB00E89B12 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */; };
 		0B3C9F7218A9631800506FDC /* ContactScheduleCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */; };
 		0B4386B818AAFBF200D50DFC /* SocialSchedulerIpad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B4386B718AAFBF200D50DFC /* SocialSchedulerIpad.storyboard */; };
@@ -51,7 +57,6 @@
 		0B8E0BBF18A2099100863181 /* SocialSchedulerFirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BBE18A2099100863181 /* SocialSchedulerFirstViewController.m */; };
 		0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8E0BC118A2099100863181 /* SocialSchedulerSecondViewController.m */; };
 		0B8E0BC418A2099100863181 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B8E0BC318A2099100863181 /* Images.xcassets */; };
-		0B8E0BCB18A2099100863181 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BCA18A2099100863181 /* XCTest.framework */; };
 		0B8E0BCC18A2099100863181 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BA818A2099100863181 /* Foundation.framework */; };
 		0B8E0BCD18A2099100863181 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8E0BAC18A2099100863181 /* UIKit.framework */; };
 		0B8E0BD518A2099100863181 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B8E0BD318A2099100863181 /* InfoPlist.strings */; };
@@ -76,14 +81,7 @@
 		0BA8C13E18AB1BB4000F3734 /* AppIcon76x76@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12E18AB1BB4000F3734 /* AppIcon76x76@2x.png */; };
 		0BA8C13F18AB1BB4000F3734 /* iTunesArtwork.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C12F18AB1BB4000F3734 /* iTunesArtwork.png */; };
 		0BA8C14018AB1BB4000F3734 /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */; };
-		0BB97CBF1A83D9440044B883 /* FBUserSettingsViewResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BB97CBE1A83D9430044B883 /* FBUserSettingsViewResources.bundle */; };
-		0BB97CC11A83D9930044B883 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BB97CC01A83D9930044B883 /* FacebookSDK.framework */; };
 		0BBF085C1AAA6CB500B1F98E /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF085B1AAA6CB500B1F98E /* libstdc++.dylib */; };
-		0BBF51561A96DDFA00450882 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF51511A96DDFA00450882 /* Bolts.framework */; };
-		0BBF51571A96DDFA00450882 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF51521A96DDFA00450882 /* Parse.framework */; };
-		0BBF51581A96DDFA00450882 /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF51531A96DDFA00450882 /* ParseCrashReporting.framework */; };
-		0BBF51591A96DDFA00450882 /* ParseFacebookUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF51541A96DDFA00450882 /* ParseFacebookUtils.framework */; };
-		0BBF515A1A96DDFA00450882 /* ParseUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF51551A96DDFA00450882 /* ParseUI.framework */; };
 		0BBF515C1A96F1B600450882 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF515B1A96F1B600450882 /* AudioToolbox.framework */; };
 		0BBF515E1A96F1BD00450882 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF515D1A96F1BD00450882 /* CFNetwork.framework */; };
 		0BBF51601A96F1D000450882 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBF515F1A96F1D000450882 /* CoreLocation.framework */; };
@@ -105,14 +103,10 @@
 		0BCAB215197F7198006FC406 /* ipad2xLauncher.png in Resources */ = {isa = PBXBuildFile; fileRef = 0BCAB213197F7198006FC406 /* ipad2xLauncher.png */; };
 		0BD6925319534765007C6081 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BD6925219534765007C6081 /* EventKit.framework */; };
 		0BD797FC19C9D6B500DFD1CF /* CourseSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BD797FB19C9D6B500DFD1CF /* CourseSplitViewController.m */; };
-		0BDC092318A9F5D500BC82CE /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BDC091D18A9F5D500BC82CE /* libTestFlight.a */; };
-		0BDC092518A9F5D500BC82CE /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 0BDC091F18A9F5D500BC82CE /* release_notes.md */; };
 		0BDC092718A9F68500BC82CE /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BDC092618A9F68500BC82CE /* libz.dylib */; };
 		0BDC092A18AAAB0700BC82CE /* ClassContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BDC092918AAAB0700BC82CE /* ClassContactCell.m */; };
 		0BF6120F19B7F868005A8DBB /* ClassesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BF6120E19B7F868005A8DBB /* ClassesViewController.m */; };
 		0BF6121219B8047D005A8DBB /* CourseCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BF6121119B8047D005A8DBB /* CourseCollectionCell.m */; };
-		0BFF8B1218AE899600817BFD /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BFF8B1118AE899600817BFD /* Reachability.m */; };
-		F1EB9AA2B260DEC5F6A1E052 /* libPods-UMD Schedule.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F4241EDF74D732B753AA257E /* libPods-UMD Schedule.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,7 +120,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		05EAC83B9912BF4BD5862FE6 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B25E9A91AB4C8190018646B /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = Frameworks/Bolts.framework; sourceTree = "<group>"; };
+		0B25E9AA1AB4C8190018646B /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = Frameworks/FacebookSDK.framework; sourceTree = "<group>"; };
+		0B25E9AB1AB4C8190018646B /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = FBUserSettingsViewResources.bundle; path = Frameworks/FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
+		0B25E9AC1AB4C8190018646B /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = Frameworks/Parse.framework; sourceTree = "<group>"; };
+		0B25E9AD1AB4C8190018646B /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseCrashReporting.framework; path = Frameworks/ParseCrashReporting.framework; sourceTree = "<group>"; };
+		0B25E9AE1AB4C8190018646B /* ParseFacebookUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtils.framework; path = Frameworks/ParseFacebookUtils.framework; sourceTree = "<group>"; };
+		0B25E9AF1AB4C8190018646B /* ParseUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseUI.framework; path = Frameworks/ParseUI.framework; sourceTree = "<group>"; };
 		0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		0B3C9F7018A9631800506FDC /* ContactScheduleCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactScheduleCell.h; sourceTree = "<group>"; };
 		0B3C9F7118A9631800506FDC /* ContactScheduleCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactScheduleCell.m; sourceTree = "<group>"; };
@@ -202,7 +202,6 @@
 		0B8E0BC118A2099100863181 /* SocialSchedulerSecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SocialSchedulerSecondViewController.m; sourceTree = "<group>"; };
 		0B8E0BC318A2099100863181 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		0B8E0BC918A2099100863181 /* UMDSocialSchedulerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UMDSocialSchedulerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0B8E0BCA18A2099100863181 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		0B8E0BD218A2099100863181 /* UMDSocialSchedulerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UMDSocialSchedulerTests-Info.plist"; sourceTree = "<group>"; };
 		0B8E0BD418A2099100863181 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0B8E0BD618A2099100863181 /* UMDSocialSchedulerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UMDSocialSchedulerTests.m; sourceTree = "<group>"; };
@@ -230,15 +229,7 @@
 		0BA8C12E18AB1BB4000F3734 /* AppIcon76x76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon76x76@2x.png"; sourceTree = "<group>"; };
 		0BA8C12F18AB1BB4000F3734 /* iTunesArtwork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = iTunesArtwork.png; sourceTree = "<group>"; };
 		0BA8C13018AB1BB4000F3734 /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = "<group>"; };
-		0BB97CBE1A83D9430044B883 /* FBUserSettingsViewResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBUserSettingsViewResources.bundle; sourceTree = "<group>"; };
-		0BB97CC01A83D9930044B883 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
-		0BBF08591AAA66A300B1F98E /* libPods.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPods.a; path = "Pods/build/Debug-iphoneos/libPods.a"; sourceTree = "<group>"; };
 		0BBF085B1AAA6CB500B1F98E /* libstdc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.dylib"; path = "usr/lib/libstdc++.dylib"; sourceTree = SDKROOT; };
-		0BBF51511A96DDFA00450882 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = "../Frameworks/parse-library-1-2/Bolts.framework"; sourceTree = "<group>"; };
-		0BBF51521A96DDFA00450882 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Parse.framework; path = "../Frameworks/parse-library-1-2/Parse.framework"; sourceTree = "<group>"; };
-		0BBF51531A96DDFA00450882 /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseCrashReporting.framework; path = "../Frameworks/parse-library-1-2/ParseCrashReporting.framework"; sourceTree = "<group>"; };
-		0BBF51541A96DDFA00450882 /* ParseFacebookUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseFacebookUtils.framework; path = "../Frameworks/parse-library-1-2/ParseFacebookUtils.framework"; sourceTree = "<group>"; };
-		0BBF51551A96DDFA00450882 /* ParseUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ParseUI.framework; path = "../Frameworks/parse-library-1-2/ParseUI.framework"; sourceTree = "<group>"; };
 		0BBF515B1A96F1B600450882 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		0BBF515D1A96F1BD00450882 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		0BBF515F1A96F1D000450882 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -264,12 +255,6 @@
 		0BD6925219534765007C6081 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		0BD797FA19C9D6B500DFD1CF /* CourseSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CourseSplitViewController.h; sourceTree = "<group>"; };
 		0BD797FB19C9D6B500DFD1CF /* CourseSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CourseSplitViewController.m; sourceTree = "<group>"; };
-		0BDC091D18A9F5D500BC82CE /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
-		0BDC091E18A9F5D500BC82CE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		0BDC091F18A9F5D500BC82CE /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
-		0BDC092018A9F5D500BC82CE /* TestFlight+AsyncLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TestFlight+AsyncLogging.h"; sourceTree = "<group>"; };
-		0BDC092118A9F5D500BC82CE /* TestFlight+ManualSessions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "TestFlight+ManualSessions.h"; sourceTree = "<group>"; };
-		0BDC092218A9F5D500BC82CE /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		0BDC092618A9F68500BC82CE /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		0BDC092818AAAB0700BC82CE /* ClassContactCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassContactCell.h; sourceTree = "<group>"; };
 		0BDC092918AAAB0700BC82CE /* ClassContactCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassContactCell.m; sourceTree = "<group>"; };
@@ -277,11 +262,6 @@
 		0BF6120E19B7F868005A8DBB /* ClassesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassesViewController.m; sourceTree = "<group>"; };
 		0BF6121019B8047D005A8DBB /* CourseCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CourseCollectionCell.h; sourceTree = "<group>"; };
 		0BF6121119B8047D005A8DBB /* CourseCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CourseCollectionCell.m; sourceTree = "<group>"; };
-		0BFF8B1018AE899600817BFD /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		0BFF8B1118AE899600817BFD /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		34E8A90FEE084DEEBA218B22 /* Pods-UMD Schedule.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UMD Schedule.debug.xcconfig"; path = "Pods/Target Support Files/Pods-UMD Schedule/Pods-UMD Schedule.debug.xcconfig"; sourceTree = "<group>"; };
-		3C6C8B04E5CE27210228A2B7 /* Pods-UMD Schedule.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UMD Schedule.release.xcconfig"; path = "Pods/Target Support Files/Pods-UMD Schedule/Pods-UMD Schedule.release.xcconfig"; sourceTree = "<group>"; };
-		F4241EDF74D732B753AA257E /* libPods-UMD Schedule.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UMD Schedule.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -290,6 +270,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0BBF085C1AAA6CB500B1F98E /* libstdc++.dylib in Frameworks */,
+				0B25E9B11AB4C8190018646B /* FacebookSDK.framework in Frameworks */,
 				0BBF516C1A96F2B400450882 /* StoreKit.framework in Frameworks */,
 				0BBF516B1A96F22100450882 /* libsqlite3.dylib in Frameworks */,
 				0BDC092718A9F68500BC82CE /* libz.dylib in Frameworks */,
@@ -301,19 +282,15 @@
 				0B3B89D5197DB4AB00E89B12 /* QuartzCore.framework in Frameworks */,
 				0BBF51651A96F20500450882 /* Security.framework in Frameworks */,
 				0BBF51691A96F21400450882 /* SystemConfiguration.framework in Frameworks */,
-				0BBF51561A96DDFA00450882 /* Bolts.framework in Frameworks */,
-				0BBF51571A96DDFA00450882 /* Parse.framework in Frameworks */,
-				0BBF51581A96DDFA00450882 /* ParseCrashReporting.framework in Frameworks */,
-				0BBF51591A96DDFA00450882 /* ParseFacebookUtils.framework in Frameworks */,
-				0BBF515A1A96DDFA00450882 /* ParseUI.framework in Frameworks */,
 				0BD6925319534765007C6081 /* EventKit.framework in Frameworks */,
+				0B25E9B31AB4C8190018646B /* Parse.framework in Frameworks */,
 				0BC9A2341948D0F20048562F /* MapKit.framework in Frameworks */,
-				0BB97CC11A83D9930044B883 /* FacebookSDK.framework in Frameworks */,
 				0B8E0BAD18A2099100863181 /* UIKit.framework in Frameworks */,
-				0BDC092318A9F5D500BC82CE /* libTestFlight.a in Frameworks */,
+				0B25E9B01AB4C8190018646B /* Bolts.framework in Frameworks */,
+				0B25E9B51AB4C8190018646B /* ParseFacebookUtils.framework in Frameworks */,
+				0B25E9B41AB4C8190018646B /* ParseCrashReporting.framework in Frameworks */,
+				0B25E9B61AB4C8190018646B /* ParseUI.framework in Frameworks */,
 				0B8E0BA918A2099100863181 /* Foundation.framework in Frameworks */,
-				05EABB5CE904681ED851DDFF /* libPods.a in Frameworks */,
-				F1EB9AA2B260DEC5F6A1E052 /* libPods-UMD Schedule.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +298,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0B8E0BCB18A2099100863181 /* XCTest.framework in Frameworks */,
 				0B8E0BCD18A2099100863181 /* UIKit.framework in Frameworks */,
 				0B8E0BCC18A2099100863181 /* Foundation.framework in Frameworks */,
 			);
@@ -410,7 +386,6 @@
 		0B8E0B9C18A2099100863181 = {
 			isa = PBXGroup;
 			children = (
-				0BB97CBE1A83D9430044B883 /* FBUserSettingsViewResources.bundle */,
 				0B77469018AD4008006E0550 /* fb_default.jpg */,
 				0B761C1D197F2DD40035620C /* BG.png */,
 				0BCAB210197F70A1006FC406 /* R4Launcher.png */,
@@ -418,13 +393,10 @@
 				0BCAB212197F7198006FC406 /* ipad1xLauncher.png */,
 				0BCAB213197F7198006FC406 /* ipad2xLauncher.png */,
 				0B55C85519BD60C7002FEE0C /* AFNetworking-2.4.0 */,
-				0BFF8B0F18AE899600817BFD /* Reachability */,
-				0BDC091818A9F59100BC82CE /* Testflight SDK */,
 				0B8E0BAE18A2099100863181 /* UMDSocialScheduler */,
 				0B8E0BD018A2099100863181 /* UMDSocialSchedulerTests */,
 				0B8E0BA718A2099100863181 /* Frameworks */,
 				0B8E0BA618A2099100863181 /* Products */,
-				6ABF411CE57B2FC1BD1069E1 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -440,8 +412,14 @@
 		0B8E0BA718A2099100863181 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0B25E9A91AB4C8190018646B /* Bolts.framework */,
+				0B25E9AA1AB4C8190018646B /* FacebookSDK.framework */,
+				0B25E9AB1AB4C8190018646B /* FBUserSettingsViewResources.bundle */,
+				0B25E9AC1AB4C8190018646B /* Parse.framework */,
+				0B25E9AD1AB4C8190018646B /* ParseCrashReporting.framework */,
+				0B25E9AE1AB4C8190018646B /* ParseFacebookUtils.framework */,
+				0B25E9AF1AB4C8190018646B /* ParseUI.framework */,
 				0BBF085B1AAA6CB500B1F98E /* libstdc++.dylib */,
-				0BBF08591AAA66A300B1F98E /* libPods.a */,
 				0BBF516A1A96F22100450882 /* libsqlite3.dylib */,
 				0BBF51681A96F21400450882 /* SystemConfiguration.framework */,
 				0BBF51661A96F20D00450882 /* StoreKit.framework */,
@@ -450,12 +428,6 @@
 				0BBF515F1A96F1D000450882 /* CoreLocation.framework */,
 				0BBF515D1A96F1BD00450882 /* CFNetwork.framework */,
 				0BBF515B1A96F1B600450882 /* AudioToolbox.framework */,
-				0BBF51511A96DDFA00450882 /* Bolts.framework */,
-				0BBF51521A96DDFA00450882 /* Parse.framework */,
-				0BBF51531A96DDFA00450882 /* ParseCrashReporting.framework */,
-				0BBF51541A96DDFA00450882 /* ParseFacebookUtils.framework */,
-				0BBF51551A96DDFA00450882 /* ParseUI.framework */,
-				0BB97CC01A83D9930044B883 /* FacebookSDK.framework */,
 				0B3B89D4197DB4AB00E89B12 /* QuartzCore.framework */,
 				0BD6925219534765007C6081 /* EventKit.framework */,
 				0BC9A2331948D0F20048562F /* MapKit.framework */,
@@ -463,9 +435,6 @@
 				0B8E0BA818A2099100863181 /* Foundation.framework */,
 				0B8E0BAA18A2099100863181 /* CoreGraphics.framework */,
 				0B8E0BAC18A2099100863181 /* UIKit.framework */,
-				0B8E0BCA18A2099100863181 /* XCTest.framework */,
-				05EAC83B9912BF4BD5862FE6 /* libPods.a */,
-				F4241EDF74D732B753AA257E /* libPods-UMD Schedule.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -597,45 +566,6 @@
 			path = "App Icon [Squared]";
 			sourceTree = "<group>";
 		};
-		0BDC091818A9F59100BC82CE /* Testflight SDK */ = {
-			isa = PBXGroup;
-			children = (
-				0BDC091C18A9F5D500BC82CE /* TestFlightSDK2.2.1 */,
-			);
-			name = "Testflight SDK";
-			sourceTree = "<group>";
-		};
-		0BDC091C18A9F5D500BC82CE /* TestFlightSDK2.2.1 */ = {
-			isa = PBXGroup;
-			children = (
-				0BDC091D18A9F5D500BC82CE /* libTestFlight.a */,
-				0BDC091E18A9F5D500BC82CE /* README.md */,
-				0BDC091F18A9F5D500BC82CE /* release_notes.md */,
-				0BDC092018A9F5D500BC82CE /* TestFlight+AsyncLogging.h */,
-				0BDC092118A9F5D500BC82CE /* TestFlight+ManualSessions.h */,
-				0BDC092218A9F5D500BC82CE /* TestFlight.h */,
-			);
-			path = TestFlightSDK2.2.1;
-			sourceTree = "<group>";
-		};
-		0BFF8B0F18AE899600817BFD /* Reachability */ = {
-			isa = PBXGroup;
-			children = (
-				0BFF8B1018AE899600817BFD /* Reachability.h */,
-				0BFF8B1118AE899600817BFD /* Reachability.m */,
-			);
-			path = Reachability;
-			sourceTree = "<group>";
-		};
-		6ABF411CE57B2FC1BD1069E1 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				34E8A90FEE084DEEBA218B22 /* Pods-UMD Schedule.debug.xcconfig */,
-				3C6C8B04E5CE27210228A2B7 /* Pods-UMD Schedule.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -643,11 +573,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0B8E0BDA18A2099100863181 /* Build configuration list for PBXNativeTarget "UMD Schedule" */;
 			buildPhases = (
-				B57CA21A82423104F35B2C69 /* Check Pods Manifest.lock */,
 				0B8E0BA118A2099100863181 /* Sources */,
 				0B8E0BA218A2099100863181 /* Frameworks */,
 				0B8E0BA318A2099100863181 /* Resources */,
-				AEFA93103B1C2C38A220600F /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -722,8 +650,8 @@
 				0B761C1E197F2DD40035620C /* BG.png in Resources */,
 				0BA8C13418AB1BB4000F3734 /* AppIcon40x40@2x.png in Resources */,
 				0B55C8F819BD60C7002FEE0C /* AFNetworking.podspec in Resources */,
+				0B25E9B21AB4C8190018646B /* FBUserSettingsViewResources.bundle in Resources */,
 				0B55C8FB19BD60C7002FEE0C /* CONTRIBUTING.md in Resources */,
-				0BDC092518A9F5D500BC82CE /* release_notes.md in Resources */,
 				0BCAB215197F7198006FC406 /* ipad2xLauncher.png in Resources */,
 				0BA8C13D18AB1BB4000F3734 /* AppIcon76x76.png in Resources */,
 				0BA8C13518AB1BB4000F3734 /* AppIcon50x50.png in Resources */,
@@ -741,7 +669,6 @@
 				0BA8C13118AB1BB4000F3734 /* AppIcon29x29.png in Resources */,
 				0B55C8EC19BD60C7002FEE0C /* .cocoadocs.yml in Resources */,
 				0BA8C13918AB1BB4000F3734 /* AppIcon60x60.png in Resources */,
-				0BB97CBF1A83D9440044B883 /* FBUserSettingsViewResources.bundle in Resources */,
 				0BCAB214197F7198006FC406 /* ipad1xLauncher.png in Resources */,
 				0B55C8F919BD60C7002FEE0C /* AFNetworking.xcworkspace in Resources */,
 				0B77469118AD4008006E0550 /* fb_default.jpg in Resources */,
@@ -769,39 +696,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		AEFA93103B1C2C38A220600F /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-UMD Schedule/Pods-UMD Schedule-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B57CA21A82423104F35B2C69 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		0B8E0BA118A2099100863181 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -826,7 +720,6 @@
 				0B71092619C92CD5000FBCF7 /* ContactCollectionCell.m in Sources */,
 				0B8E0BC218A2099100863181 /* SocialSchedulerSecondViewController.m in Sources */,
 				0B55C93F19BD60C7002FEE0C /* UIProgressView+AFNetworking.m in Sources */,
-				0BFF8B1218AE899600817BFD /* Reachability.m in Sources */,
 				0B55C93A19BD60C7002FEE0C /* AFNetworkActivityIndicatorManager.m in Sources */,
 				0B8E0BF718A5EB8100863181 /* FacebookFriendsViewController.m in Sources */,
 				0B55C8F019BD60C7002FEE0C /* AFHTTPRequestOperationManager.m in Sources */,
@@ -966,7 +859,6 @@
 		};
 		0B8E0BDB18A2099100863181 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 34E8A90FEE084DEEBA218B22 /* Pods-UMD Schedule.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = (
 					"$(ARCHS_STANDARD)",
@@ -983,6 +875,7 @@
 					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler,
 					"$(PROJECT_DIR)",
 					"/Users/domthebigbomb/Documents/iOS_Dev/Frameworks/parse-library-1-2",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";
@@ -1004,7 +897,6 @@
 		};
 		0B8E0BDC18A2099100863181 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C6C8B04E5CE27210228A2B7 /* Pods-UMD Schedule.release.xcconfig */;
 			buildSettings = {
 				ARCHS = (
 					"$(ARCHS_STANDARD)",
@@ -1021,6 +913,7 @@
 					/Users/domthebigbomb/Documents/iOS_Dev/UMDSocialScheduler,
 					"$(PROJECT_DIR)",
 					"/Users/domthebigbomb/Documents/iOS_Dev/Frameworks/parse-library-1-2",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "UMDSocialScheduler/UMDSocialScheduler-Prefix.pch";

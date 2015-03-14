@@ -41,8 +41,7 @@
     UIColor *backgroundColor;
     CLLocationManager *locationManager;
     CLLocation *lastUserLocation;
-    Reachability *internetReachability;
-    NetworkStatus network;
+
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -80,7 +79,6 @@
 
     _etaLabel.layer.cornerRadius = 3.0f;
     
-    internetReachability = [Reachability reachabilityForInternetConnection];
 
     primaryAddress = [[NSDictionary alloc] init];
     secondaryAddress = [[NSDictionary alloc] init];
@@ -248,9 +246,8 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     NSLog(@"Course Detail Did Appear");
-    network = [internetReachability currentReachabilityStatus];
     
-    if(network == NotReachable){
+    if(![AFNetworkReachabilityManager sharedManager].reachable){
         NSLog(@"No Internet");
         [_etaLabel setText:@"No Internet Connction"];
     }else{

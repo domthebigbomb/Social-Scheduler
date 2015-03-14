@@ -7,7 +7,6 @@
 //
 
 #import "SocialSchedulerAppDelegate.h"
-#import "TestFlight.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import <Parse/Parse.h>
 #import "AccessKeys.h"
