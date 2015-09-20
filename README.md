@@ -1,3 +1,5 @@
+Notice: Due to the nature of how this app grabs its data, the app is no longer functional now. However, I am in the process of a redesign overhaul and a workaround that is almost ready to be pushed. I really do apologize for the inconvenience, but I have no control over how the university decides to maintain its webpages.
+
 Social-Scheduler
 ================
 
