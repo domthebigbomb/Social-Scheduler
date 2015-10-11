@@ -1,6 +1,11 @@
 Notice: Due to the nature of how this app grabs its data, the app is no longer functional now. However, I am in the process of a redesign overhaul and a workaround that is almost ready to be pushed. I really do apologize for the inconvenience, but I have no control over how the university decides to maintain its webpages.
 
-Social-Scheduler
+Update: As promised, I have updated the app and the service should be fully functional again!
+
+Check out my revamped version here: https://github.com/domthebigbomb/umdsocialscheduler
+
+
+Social-Scheduler (No longer in use, see above)
 ================
 
 Turning your schedule social!
